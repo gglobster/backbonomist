@@ -1,0 +1,9 @@
+data/*
+data/**
+
+test_data/*
+test_data/**
+
+libs/.DS_Store
+
+.DS_Store
