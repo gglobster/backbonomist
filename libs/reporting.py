@@ -19,4 +19,3 @@ def map_scaffolds(contig):
         print '\t', g_name
         # generate graphical map
         ContigDraw(g_name, fin_gbk_out, map_file)
-    print "maps OK"

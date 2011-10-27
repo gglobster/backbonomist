@@ -140,7 +140,7 @@ def build_scaffolds(contig):
         # set inputs
         g_name = genome['name']
         ctgs_dir = ctgs_root+"/"+g_name+"/"
-        print "\t", g_name
+        print "\t", g_name,
         # set outputs
         mauve_dir = mauve_root+g_name+"/"
         scaffolds_dir = scaffolds_root+g_name+"/"

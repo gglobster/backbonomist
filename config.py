@@ -29,8 +29,8 @@ fct_colors = {'mge': ('#66CC00', 'MGE'),
               'tra': ('#6666FF', 'Transfer'),
               'ctl': ('#FFCC00', 'Control'),
               'oth': ('#99FFFF', 'Other'),
-              'unk': ('#CCCCCC', 'Uncharacterized'),
-              'def': ('#FFFFFF', 'No match')}
+              'unk': ('#FFFFFF', 'Uncharacterized'),
+              'def': ('#CCCCCC', 'No match')}
 
 # concat contigs separator
 separator = "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN"
@@ -40,6 +40,7 @@ g_root_dir = 'data/'+project_id+'/genomes/'
 b_root_dir = 'data/'+project_id+'/backbones/'
 
 directories = {
+'ref_dbs_dir': 'data/ref_dbs/',
 'ori_g_dir': g_root_dir+'original/',
 'gbk_contigs_dir': g_root_dir+'genbank_ctgs/',
 'mfas_contigs_dir': g_root_dir+'mfasta_ctgs/',

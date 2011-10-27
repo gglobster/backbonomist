@@ -29,7 +29,7 @@ def run_prodigal(in_file, an_gbk, an_aa, trn_file, mode):
 def annot_scaffolds(contig):
     """Annotate scaffolds."""
     # locate the COG database
-    cog_db = dirs['blast_db_dir']+"Cog_LE/Cog"
+    cog_db = dirs['ref_dbs_dir']+"Cog_LE/Cog"
     # TODO: add other DB / pfams?
     # set inputs and outputs
     ctg_name = contig['name'] # reference contig
@@ -95,11 +95,10 @@ def annot_scaffolds(contig):
                                  qualifiers=quals)
             features.append(feature)
             counter +=1
-        print "annot",
+        print "annot"
         record.features = features
         record.description = g_name+"_"+ctg_name+"_scaffold"
         record.name = g_name+"_"+ctg_name
         record.dbxrefs = ["Project: "+ctg_name+"-like backbones"]
         record.seq.alphabet = generic_dna
         write_genbank(fin_gbk_out, record)
-        print "OK"
