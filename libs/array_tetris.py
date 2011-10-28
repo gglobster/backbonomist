@@ -75,7 +75,7 @@ def get_anchor_loc(quad_array):
     # collect data
     for row in quad_array:
         a, b, c, d = row
-        size = -abs(abs(a)-abs(b))
+        size = -abs(abs(a)-abs(b)) # size negative'd so biggest shows up first
         loc_start = abs(a)
         loc_end = abs(b)
         orient = abs(a)/a

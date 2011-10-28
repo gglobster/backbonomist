@@ -8,14 +8,14 @@ project_id = 'BCSL'
 prot_db_name = 'Bacteria_prot'
 
 genomes = [{'name': 'pXO1', 'input': 'cgbk', 'file': 'pXO1.gbk'},
-           {'name': 'pBc239', 'input': 'mfas', 'file': 'CP000228.fas'},
-           {'name': 'pAH187_270', 'input': 'mfas', 'file': 'CP001179.fas'},
-           {'name': 'pAH820_272', 'input': 'mfas', 'file': 'CP001285.fas'},
-           {'name': 'p03B_179', 'input': 'mfas', 'file': 'CP001406.fas'},
-           {'name': 'NZ_ACNE0', 'input': 'mfas', 'file': 'NZ_ACNE0.fas'},
-           {'name': 'NZ_ACNF0', 'input': 'mfas', 'file': 'NZ_ACNF0.fas'},
+#           {'name': 'pBc239', 'input': 'mfas', 'file': 'CP000228.fas'},
+#           {'name': 'pAH187_270', 'input': 'mfas', 'file': 'CP001179.fas'},
+#           {'name': 'pAH820_272', 'input': 'mfas', 'file': 'CP001285.fas'},
+#           {'name': 'p03B_179', 'input': 'mfas', 'file': 'CP001406.fas'},
+#           {'name': 'NZ_ACNE0', 'input': 'mfas', 'file': 'NZ_ACNE0.fas'},
+#           {'name': 'NZ_ACNF0', 'input': 'mfas', 'file': 'NZ_ACNF0.fas'},
            {'name': 'NZ_ACNI0', 'input': 'mfas', 'file': 'NZ_ACNI0.fas'},
-           {'name': 'NZ_ACNJ0', 'input': 'mfas', 'file': 'NZ_ACNJ0.fas'},
+#           {'name': 'NZ_ACNJ0', 'input': 'mfas', 'file': 'NZ_ACNJ0.fas'},
            {'name': 'NZ_ACNK0', 'input': 'mfas', 'file': 'NZ_ACNK0.fas'}]
 
             # p03B_179 = p03BB102_179

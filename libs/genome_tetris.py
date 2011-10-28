@@ -183,6 +183,8 @@ def build_scaffolds(contig):
             if ctg_num > 0:
                 contig_gbk = ctgs_dir+g_name+"_"+str(ctg_num)+".gbk"
                 record = load_genbank(contig_gbk)
+                if ctg_anchor['orient'] == -1: # flip record
+                    record.seq = record.seq.reverse_complement()
                 ctg_list.append(record)
             else: # workaround for having a 0 value leftover from stub
                 pass # having it might come in handy in later dev, so it stays
