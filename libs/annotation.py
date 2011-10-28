@@ -1,9 +1,9 @@
-from config import genomes, directories as dirs, blast_prefs
+from config import genomes, directories as dirs, blast_prefs, prot_db_name
 import re, subprocess
 from loaders import load_multifasta, load_genbank
 from writers import write_genbank
 from common import ensure_dir
-from blasting import local_rpsblast_2file
+from blasting import local_blastp_2file
 from parsing import collect_cogs
 from Bio.Alphabet import generic_dna
 from Bio.SeqFeature import SeqFeature, FeatureLocation
@@ -29,7 +29,7 @@ def run_prodigal(in_file, an_gbk, an_aa, trn_file, mode):
 def annot_scaffolds(contig):
     """Annotate scaffolds."""
     # locate the COG database
-    cog_db = dirs['ref_dbs_dir']+"Cog_LE/Cog"
+    prot_db = dirs['ref_dbs_dir']+prot_db_name
     # TODO: add other DB / pfams?
     # set inputs and outputs
     ctg_name = contig['name'] # reference contig
@@ -46,7 +46,7 @@ def annot_scaffolds(contig):
         # set output dirs
         gbk_out_dir = scaff_annot_root+"predict/"
         aa_out_dir = scaff_annot_root+"aa/"
-        blast_out_dir = scaff_annot_root+"rpsblast/"
+        blast_out_dir = scaff_annot_root+"blastp/"
         solid_out_dir = scaff_annot_root+"genbank/"
         ensure_dir(gbk_out_dir)
         ensure_dir(aa_out_dir)
@@ -63,13 +63,17 @@ def annot_scaffolds(contig):
         train_prodigal(g_file, training_file, "-q")
         run_prodigal(scaff_gbk, annot_gbk, annot_aa, training_file, "-q")
         # blast the amino acids against COG
-        print "rpsblast",
-        local_rpsblast_2file(annot_aa, cog_db, blast_out, blast_prefs)
+        print "blastp",
+        local_blastp_2file(annot_aa, prot_db, blast_out, blast_prefs)
         # collect best hits
         rec_cogs = collect_cogs(blast_out)
         # consolidate annotated genbank file
         record = load_genbank(scaff_gbk)
-        features = []
+        ctg_feats = [feature for feature in record.features
+                     if feature.type == 'contig'] # backup contig features
+        record.features = [] # wipe previous features
+        for contig in ctg_feats:
+            record.features.append(contig) # restore contig features
         counter = 1
         gene_count = 0
         while counter < len(rec_cogs)/2:
@@ -93,10 +97,9 @@ def annot_scaffolds(contig):
                                  id='cds_'+str(counter),
                                  type='CDS',
                                  qualifiers=quals)
-            features.append(feature)
+            record.features.append(feature)
             counter +=1
         print "annot"
-        record.features = features
         record.description = g_name+"_"+ctg_name+"_scaffold"
         record.name = g_name+"_"+ctg_name
         record.dbxrefs = ["Project: "+ctg_name+"-like backbones"]

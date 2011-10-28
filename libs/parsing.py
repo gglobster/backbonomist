@@ -31,7 +31,7 @@ def glompX_blast_out(contig):
                 #q_coords = rec_array[0][6], rec_array[0][7]
                 #t_coords = rec_array[0][8], rec_array[0][9]
                 print contig_id,
-                pattern = re.compile(r'('+contig_id+')')
+                pattern = re.compile(r'('+contig_id+')\.gbk')
                 for item in listdir(genome_ctg_dir):
                     match = re.match(pattern, item)
                     if match:
@@ -54,7 +54,10 @@ def mauver_load_k0(file, N_count):
     # set up an array stub to receive non-zero rows (leaves a (1,1) pair)
     stub_array = np.ones(1, dtype=mtype)
     # eliminate rows containing elements of value 0
-    nz_array = extract_nonzero(raw_array, stub_array)
+    try:
+        nz_array = extract_nonzero(raw_array, stub_array)
+    except TypeError:
+        nz_array = np.append(stub_array, raw_array)
     # collapse rows
     cl_array = clump_rows(nz_array, prox_D)
     return cl_array

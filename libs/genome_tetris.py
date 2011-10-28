@@ -7,6 +7,7 @@ from string_ops import multisplit_finder
 from common import ensure_dir
 from config import separator, directories as dirs, genomes
 from Bio.SeqRecord import SeqRecord
+from Bio.SeqFeature import SeqFeature, FeatureLocation
 from Bio.Alphabet import generic_dna
 from aligning import align_mauve
 from parsing import mauver_load_k0
@@ -78,11 +79,9 @@ def unpack_genomes(genome):
             new_record = genome_rec[start:stop]
             new_record.id = g_name+"_"+str(counter)
             records.append(new_record)  # for multifasta output
-            gbk_file = gbk_dir+g_name+"_"+str(counter)\
-                                            +"_"+str(start)\
-                                            +"_"+str(stop)\
-                                            +".gbk"
+            gbk_file = gbk_dir+g_name+"_"+str(counter)+".gbk"
             write_genbank(gbk_file, new_record)
+        print counter, "records"
     else:
         xmsg = "Input file format "\
                +genome['input']\
@@ -192,8 +191,15 @@ def build_scaffolds(contig):
         scaff_record = SeqRecord('', id='temp')
         scaff_bumper = SeqRecord(separator, id='join')
         for record in ctg_list:
+            feat_start = len(scaff_record.seq)
             scaff_record += record
+            feat_stop = len(scaff_record.seq)
             scaff_record += scaff_bumper
+            feat_loc = FeatureLocation(feat_start, feat_stop)
+            feature = SeqFeature(location=feat_loc,
+                                 type='contig',
+                                 qualifiers={'id': record.id})
+            scaff_record.features.append(feature)
         scaff_record.id = g_name+"_"+ctg_name
-        write_genbank(scaff_gbk, scaff_record)
+        write_genbank(scaff_gbk, scaff_record[:-100]) # leave out last bumper
         print ""

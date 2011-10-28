@@ -4,7 +4,7 @@ from loaders import load_multifasta
 from common import ensure_dir
 from datetime import datetime
 from Bio.Blast.Applications import NcbiblastnCommandline, \
-    NcbirpsblastCommandline
+    NcbirpsblastCommandline, NcbiblastpCommandline
 from Bio.Blast import NCBIWWW
 
 def make_blastDB(name, infile, db_type):
@@ -22,6 +22,16 @@ def local_blastn_2file(query_file, dbfile_path, outfile, prefs):
                                   out=outfile,
                                   evalue=prefs['evalue'],
                                   outfmt=prefs['outfmt_pref'])
+    child = subprocess.Popen(str(cline), stdout=subprocess.PIPE, shell=True)
+    output, error = child.communicate() # forces the main script to wait
+
+def local_blastp_2file(query_file, dbfile_path, outfile, prefs):
+    """Perform blastp against local database."""
+    cline = NcbiblastpCommandline(query=query_file,
+                                  db=dbfile_path,
+                                  out=outfile,
+                                  evalue=prefs['evalue'],
+                                  outfmt=5) # must output XML!
     child = subprocess.Popen(str(cline), stdout=subprocess.PIPE, shell=True)
     output, error = child.communicate() # forces the main script to wait
 

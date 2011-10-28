@@ -5,32 +5,71 @@ import numpy
 # input data
 
 project_id = 'BCSL'
+prot_db_name = 'Bacteria_prot'
 
-genomes = [{'name': 'NZ_ACNE0', 'input': 'mfas', 'file': 'NZ_ACNE0.fas'},
+genomes = [{'name': 'pXO1', 'input': 'cgbk', 'file': 'pXO1.gbk'},
+           {'name': 'pBc239', 'input': 'mfas', 'file': 'CP000228.fas'},
+           {'name': 'pAH187_270', 'input': 'mfas', 'file': 'CP001179.fas'},
+           {'name': 'pAH820_272', 'input': 'mfas', 'file': 'CP001285.fas'},
+           {'name': 'p03B_179', 'input': 'mfas', 'file': 'CP001406.fas'},
+           {'name': 'NZ_ACNE0', 'input': 'mfas', 'file': 'NZ_ACNE0.fas'},
            {'name': 'NZ_ACNF0', 'input': 'mfas', 'file': 'NZ_ACNF0.fas'},
            {'name': 'NZ_ACNI0', 'input': 'mfas', 'file': 'NZ_ACNI0.fas'},
            {'name': 'NZ_ACNJ0', 'input': 'mfas', 'file': 'NZ_ACNJ0.fas'},
            {'name': 'NZ_ACNK0', 'input': 'mfas', 'file': 'NZ_ACNK0.fas'}]
 
+            # p03B_179 = p03BB102_179
+
 backbones = [{'name': 'pXO1', 'file': 'pXO1.gbk',
-              'refs': ({'coords': (260,4650),'type': 'rep'},
-                       {'coords': (74185,79173), 'type': 'hel'})}]
+              'refs': ({'coords': (1127,6561),'type': '3_10'},
+                       {'coords': (8991,13756),'type': '12_17'},
+                       {'coords': (19200,20894),'type': '20_20'},
+                       {'coords': (21714,25117),'type': '23_25'},
+                       {'coords': (28490,30979),'type': '30_34'},
+                       {'coords': (38284,40203),'type': '45_46'},
+                       {'coords': (52063,55796),'type': '64_65'},
+                       {'coords': (55987,60586),'type': '66_69'},
+                       {'coords': (61404,63518),'type': '71_74'},
+                       {'coords': (64090,68866),'type': '75_79'},
+                       {'coords': (69021,74102),'type': '80_84'},
+                       {'coords': (74119,77871),'type': '85_90'},
+                       {'coords': (79735,82867),'type': '93_97'},
+                       {'coords': (83606,86696),'type': '98_101'},
+                       {'coords': (87297,91464),'type': '103_107'},
+                       {'coords': (91495,95163),'type': '108_108'},
+                       {'coords': (95212,98847),'type': '109_114'},
+                       {'coords': (100828,102495),'type': '117_118'},
+                       {'coords': (155257,157413),'type': '182_184'},
+                       {'coords': (174223,176584),'type': '207_212'})}]
                         # TODO: make coords loader
 
 # function categories and legend (keys MUST be lowercase)
 
-fct_flags = {'mge': ('transposase', 'bla'),
-             'tra': ('type iv', 'topoisomerase'),
-             'ctl': ('transcriptional regulator', 'bla'),
-             'unk': ('uncharacterized', 'bla'),
-             'def': ('no match', 'bla')} # default
+fct_flags = {'mge': ('transposase', 'transposon', 'intron',
+                     'tyrosine recombinase', 'dna-invertase'),
+             'rep': ('something else', 'replication'),
+             'syn': ('synthase', 'something else'),
+             'tox': ('protective antigen', 'lethal factor',
+                     'virulence factor'),
+             'ger': ('spore germination protein', 'something else'),
+             'tra': ('type iv', 'topoisomerase', 'dna translocase ftsk',
+                     'conjugal transfer'),
+             'ctl': ('transcriptional regulator', 'regulatory protein',
+                     'regulator', 'transcriptional repressor'
+                     'response regulator aspartate phosphatase'),
+             'unk': ('uncharacterized', 'conserved domain protein'),
+             'def': ('no match', 'something else')} # default
 
 fct_colors = {'mge': ('#66CC00', 'MGE'),
+              'rep': ('#FF9900', 'Replication'),
+              'syn': ('#FF00CC', 'Synthesis'),
+              'tox': ('#FF0000', 'Pathogenesis'),
+              'ger': ('#993333', 'Germination'),
               'tra': ('#6666FF', 'Transfer'),
               'ctl': ('#FFCC00', 'Control'),
-              'oth': ('#99FFFF', 'Other'),
-              'unk': ('#FFFFFF', 'Uncharacterized'),
-              'def': ('#CCCCCC', 'No match')}
+              'unk': ('#666666', 'Uncharacterized'),
+              'oth': ('#CCCCCC', 'Other'),
+              'def': ('#FFFFFF', 'No match')}
 
 # concat contigs separator
 separator = "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN"
@@ -57,7 +96,7 @@ directories = {
 }
 
 # Blast parameters
-blast_prefs = {'evalue': 0.001,
+blast_prefs = {'evalue': 0.01,
                'outfmt_pref': 6}
 # Blast results arrays datatypes
 blast_dtypes = numpy.dtype([('query', 'S16'),
