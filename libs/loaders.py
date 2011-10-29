@@ -90,10 +90,11 @@ def read_array(filename, dtype, separator='\t'):
         for i, number in enumerate(fields):
             data[i].append(number)
     for i in xrange(len(dtype)):
+        print data[i]
         data[i] = cast[dtype[i]](data[i])
     return numpy.rec.array(data, dtype=dtype)
 
-def from_dir():
+def from_dir(): # TODO: make poly-use
     """Load filenames in a directory."""
     # get directory contents
     ori_dir = dirs['ori_g_dir']
@@ -109,3 +110,15 @@ def from_dir():
             print "\t"+item, "..."
             it_names.append(item)
     return it_names
+
+def td_txt_file_load(filename, skip_items): # better to use np.loadtxt()
+    """Load raw info from tab-delimited text file."""
+    infile = open(filename, 'r')
+    item_count = 0
+    # option to skip a few lines at the top
+    while item_count < skip_items :
+        infile.readline()
+        item_count += 1
+    rawlines_list = infile.readlines()
+    infile.close()
+    return rawlines_list

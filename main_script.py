@@ -4,7 +4,8 @@ from libs.genome_tetris import unpack_genomes, extract_seg, build_scaffolds
 from libs.blasting import make_genome_DB, basic_batch_blastn
 from libs.parsing import glompX_blast_out
 from libs.annotation import annot_scaffolds
-from libs.reporting import map_scaffolds
+from libs.reporting import map_scaffolds, map_pairwise
+from libs.aligning import align2ref
 from config import directories as dirs, backbones, genomes
 
 if len(argv) > 1 and argv[1] == '-h':
@@ -78,5 +79,17 @@ if step is 8:
         map_scaffolds(bb)
     step +=1
 
-if step > 8:
+if step is 9:
+    print "\n###", step, ". Align pairwise to reference ###\n"
+    for bb in backbones:
+        align2ref(bb)
+    step +=1
+
+if step is 10:
+    print "\n###", step, ". Generate pairwise alignment maps ###\n"
+    for bb in backbones:
+        map_pairwise(bb)
+    step +=1
+    
+if step > 10:
     print "\n### Nothing more to do! ###\n"

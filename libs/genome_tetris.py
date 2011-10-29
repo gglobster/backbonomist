@@ -5,12 +5,12 @@ from loaders import load_genbank, load_multifasta
 from writers import write_genbank, write_fasta
 from string_ops import multisplit_finder
 from common import ensure_dir
-from config import separator, directories as dirs, genomes
+from config import separator, directories as dirs, genomes, prox_D
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from Bio.Alphabet import generic_dna
 from aligning import align_mauve
-from parsing import mauver_load_k0
+from parsing import mauver_load2_k0
 from array_tetris import get_anchor_loc
 
 def unpack_genomes(genome):
@@ -131,7 +131,7 @@ def build_scaffolds(contig):
     ctg_name = contig['name'] # reference contig
     ref_ctg_file = dirs['ref_ctg_dir']+contig['file']
     ctgs_root = dirs['match_out_dir']+ctg_name+"/"
-    mauve_root = dirs['mauve_out_dir']+ctg_name+"/"
+    mauve_root = dirs['mauve_out_dir']+ctg_name+"/scaffolding/"
     scaffolds_root = dirs['scaffolds_dir']+ctg_name+"/"
     print " ", ctg_name
     # cycle through genomes
@@ -166,7 +166,7 @@ def build_scaffolds(contig):
                 # do Mauve alignment
                 align_mauve(file_list, mauve_outfile)
                 # parse Mauve output
-                coords = mauver_load_k0(mauve_outfile+".backbone", 2)
+                coords = mauver_load2_k0(mauve_outfile+".backbone", prox_D)
                 # determine which segment to use as anchor
                 anchor_seg = get_anchor_loc(coords)
                 anchors_array = np.insert(anchors_array, 0,

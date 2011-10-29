@@ -1,9 +1,9 @@
 import re
 import numpy as np
 from os import listdir
-from loaders import read_array, load_genbank
+from loaders import read_array, load_genbank, td_txt_file_load
 from writers import write_genbank
-from config import directories as dirs, blast_dtypes, genomes, prox_D, mtype
+from config import directories as dirs, blast_dtypes, genomes, mtype
 from common import ensure_dir
 from array_tetris import extract_nonzero, clump_rows
 from Bio.Blast import NCBIXML
@@ -40,13 +40,15 @@ def glompX_blast_out(contig):
                         write_genbank(gbk_file, contig)
         print ""
 
-def mauver_load_k0(file, N_count):
+def mauver_load2_k0(file, threshold):
     """Parse Mauve coordinates file to extract segment coordinates.
 
     This loads the coordinates data into a Numpy array. All rows that contain
     a zero value are deleted from the array. Rows are then collapsed if the
     coordinates are close (under a user-specified threshold) and in the same
     orientation. The resulting array is then returned.
+
+    Important note: this function only works for pairwise alignments!
 
     """
     # load file data into numpy array
@@ -59,10 +61,11 @@ def mauver_load_k0(file, N_count):
     except TypeError:
         nz_array = np.append(stub_array, raw_array)
     # collapse rows
-    cl_array = clump_rows(nz_array, prox_D)
+    cl_array = clump_rows(nz_array, threshold)
     return cl_array
 
 def collect_cogs(blast_out):
+    """Collect hits from Blast XML (not just for COGs anymore)."""
     results = {}
     blast_records = NCBIXML.parse(open(blast_out))
     for record in blast_records:
@@ -74,3 +77,13 @@ def collect_cogs(blast_out):
         else:
             results[rec_key] = 'no match'
     return results
+
+def parse_clustal_idstars(filename):
+    """Parse ClustalW output file to estimate identity percentage."""
+    #from analysis.text_manipulation import td_txt_file_load
+    raw_lines = td_txt_file_load(filename, 3)
+    single_line = ''.join(raw_lines)
+    idnstar = re.compile(r"\*")
+    idnalls = re.findall(idnstar, single_line)
+    idntot = len(idnalls)
+    return idntot # total number of identical nucleotide positions

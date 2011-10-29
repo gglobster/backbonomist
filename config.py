@@ -2,7 +2,7 @@ import numpy
 
 # TODO: setup script to generate config file
 
-# input data
+# Input data
 
 project_id = 'BCSL'
 prot_db_name = 'Bacteria_prot'
@@ -43,7 +43,7 @@ backbones = [{'name': 'pXO1', 'file': 'pXO1.gbk',
                        {'coords': (174223,176584),'type': '207_212'})}]
                         # TODO: make coords loader
 
-# function categories and legend (keys MUST be lowercase)
+# Function categories and legend (keys MUST be lowercase)
 
 fct_flags = {'mge': ('transposase', 'transposon', 'intron',
                      'tyrosine recombinase', 'dna-invertase'),
@@ -71,10 +71,10 @@ fct_colors = {'mge': ('#66CC00', 'MGE'),
               'oth': ('#CCCCCC', 'Other'),
               'def': ('#FFFFFF', 'No match')}
 
-# concat contigs separator
+# Concat contigs separator
 separator = "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN"
 
-# project root directory
+# Project root directory
 g_root_dir = 'data/'+project_id+'/genomes/'
 b_root_dir = 'data/'+project_id+'/backbones/'
 
@@ -92,6 +92,8 @@ directories = {
 'scaffolds_dir': b_root_dir+'scaffolds/',
 'mauve_out_dir': b_root_dir+'mauve_out/',
 'scaff_annot_dir': b_root_dir+'annotation/',
+'constructs_dir': b_root_dir+'constructs/',
+'segments_dir': b_root_dir+'segments/',
 'maps_dir': b_root_dir+'maps/'
 }
 
@@ -114,7 +116,15 @@ blast_dtypes = numpy.dtype([('query', 'S16'),
 
 # Mauve executable
 mauve_exec = 'progressiveMauve'
-# datatypes
-mtype = [('A', 'i4'), ('B', 'i4'), ('C', 'i4'), ('D', 'i4')]
-# Proximity threshold for clumping
-prox_D = 2000
+
+# Datatypes
+mtype = [('A','i4'), ('B','i4'), ('C', 'i4'), ('D','i4')]
+segtype = [('A','i4'), ('B','i4'), ('C', 'i4'), ('D','i4'), ('E','i4')]
+
+# Proximity thresholds for clumping
+prox_D = 2000   # for ballpark estimation
+prox_F = 100    # for fine alignment (set to 0 to skip clumping)
+
+# Chopping size to limit length of detailed alignments
+max_size = 3000
+chop_mode = 'exact_size' # 'maxsize_bisect','maxsize_divisor','count_divisor'

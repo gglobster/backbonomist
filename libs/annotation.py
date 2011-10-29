@@ -7,7 +7,7 @@ from blasting import local_blastp_2file
 from parsing import collect_cogs
 from Bio.Alphabet import generic_dna
 from Bio.SeqFeature import SeqFeature, FeatureLocation
-from drawing import ContigDraw
+from os import path
 
 def train_prodigal(seq_file, training_file, mode):
     """Train Prodigal on the entire dataset."""
@@ -35,6 +35,8 @@ def annot_scaffolds(contig):
     ctg_name = contig['name'] # reference contig
     scaff_root = dirs['scaffolds_dir']+ctg_name+"/"
     scaff_annot_root = dirs['scaff_annot_dir']+ctg_name+"/"
+    constructs_root = dirs['constructs_dir']+ctg_name+"/"
+    ensure_dir(constructs_root)
     print " ", ctg_name
     # cycle through genomes
     for genome in genomes:
@@ -47,20 +49,19 @@ def annot_scaffolds(contig):
         gbk_out_dir = scaff_annot_root+"predict/"
         aa_out_dir = scaff_annot_root+"aa/"
         blast_out_dir = scaff_annot_root+"blastp/"
-        solid_out_dir = scaff_annot_root+"genbank/"
         ensure_dir(gbk_out_dir)
         ensure_dir(aa_out_dir)
         ensure_dir(blast_out_dir)
-        ensure_dir(solid_out_dir)
         # set output files
         training_file = dirs['annot_trn_dir']+g_name+"_annot.trn"
         annot_gbk = gbk_out_dir+g_name+"_"+ctg_name+"_annot.gbk"
         annot_aa = aa_out_dir+g_name+"_"+ctg_name+"_aa.fas"
         blast_out = blast_out_dir+g_name+"_"+ctg_name+".xml"
-        fin_gbk_out = solid_out_dir+g_name+"_"+ctg_name+"_fin.gbk"
+        fin_gbk_out = constructs_root+g_name+"_"+ctg_name+"_cstrct.gbk"
         # gene prediction
         print "predict",
-        train_prodigal(g_file, training_file, "-q")
+        if not path.exists(training_file):
+            train_prodigal(g_file, training_file, "-q")
         run_prodigal(scaff_gbk, annot_gbk, annot_aa, training_file, "-q")
         # blast the amino acids against COG
         print "blastp",

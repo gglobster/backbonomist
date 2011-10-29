@@ -247,3 +247,7 @@ def annot_color(fct_flags, annotation):
                 break
             i +=1
     return fct_key
+
+def PairwiseDraw(g_name, cstrct_gbk, ref_ctg_file, segdata, map_file):
+    """Draw pairwise alignment map with similarity shading."""
+    print "map"

@@ -1,5 +1,5 @@
 import numpy as np
-from config import mtype
+from config import mtype, segtype
 
 def extract_nonzero(array_o, array_d):
     """Extract rows that are non-zero into an array of same shape."""
@@ -23,47 +23,135 @@ def clump_rows(array, dist):
         xa2, xb2, xc2, xd2 = array[r_ix]
         # clump if test conditions are fulfilled
         if float(xa1)/float(xc1) > 0 : # same sign
-            #print xa2, xb1, xc2, xd1
-            #print abs(xa2)-abs(xb1), abs(xc2)-abs(xd1)
-            if abs(abs(xa2)-abs(xb1)) < dist \
-            and abs(abs(xc2)-abs(xd1)) < dist:
-                #print "case A yes", r_ix
+            gap1 = abs(abs(xa2)-abs(xb1))
+            gap2 = abs(abs(xc2)-abs(xd1))
+            if gap1 < dist and gap2 < dist and 0.75 < gap1/(gap2+1) < 1.3:
                 xa,xb = xa1,xb2
                 xc,xd = xc1,xd2
                 new_row = xa, xb, xc, xd
                 # delete the original rows
-                #print "before del", len(array)
                 array = np.delete(array, (r_ix-1, r_ix), 0)
-                #print "after del", len(array)
                 # insert the updated row
                 array = np.insert(array, r_ix-1, new_row)
-                #print "after append", len(array)
             else :
-                #print "case A no", r_ix
                 r_ix += 1
         elif float(xa1)/float(xc1) < 0 : # different sign
-            # (!!! may be broken for N>2) TODO: fix this!
-            if abs(abs(xa1)-abs(xb2)) < dist \
-            and abs(abs(xc2)-abs(xd1)) < dist:
-                #print "case B yes", r_ix
+            gap1 = abs(abs(xa1)-abs(xb2))
+            gap2 = abs(abs(xc2)-abs(xd1))
+            if gap1 < dist and gap2 < dist and 0.75 < gap1/(gap2+1) < 1.3:
                 xa,xb = xa2,xb1
                 xc,xd = xc1,xd2
                 new_row = xa,xb,xc,xd
                 # delete the original rows
-                #print "before del", len(array)
                 array = np.delete(array, (r_ix-1, r_ix), 0)
-                #print "after del", len(array)
                 # insert the updated row
                 array = np.insert(array, r_ix-1, new_row)
-                #print "after append", len(array)
             else :
-                #print "case B no", r_ix
                 r_ix += 1
         else : # this should not happen
             print "WTF? This shouldn't happen."
             r_ix += 1
         new_len = len(array)
     return array
+
+def chop_rows(uncut_array, max_size, chop_mode):
+    """Chop rows of coordinates that span too large segments."""
+    # set up an array stub to receive new rows
+    all_rows_list = []
+    for xa, xb, xc, xd in uncut_array:
+        size1 = abs(abs(xa)-abs(xb))
+        pair_list1 = coord_chop(size1, max_size, chop_mode)
+        size2 = abs(abs(xc)-abs(xd))
+        pair_list2 = coord_chop(size2, max_size, chop_mode)
+        try:
+            assert len(pair_list1) == len(pair_list2)
+        except AssertionError:
+            # edge case, cancel chopping for this segment
+            row = xa, xb, xc, xd
+            all_rows_list.append(row)
+        # denormalize coordinates
+        dn_pairs1 = []
+        for a, b in pair_list1:
+            if xa < 0: pair = (xa-a, xa-b)
+            else: pair = (xa+a, xa+b)
+            dn_pairs1.append(pair)
+        dn_pairs2 = []
+        for c, d in pair_list2:
+            if xc < 0: pair = (xc-c, xc-d)
+            else: pair = (xc+c, xc+d)
+            dn_pairs2.append(pair)
+        # consolidate to row format
+        count = 0
+        while count < len(dn_pairs1):
+            row = (dn_pairs1[count][0], dn_pairs1[count][1],
+                   dn_pairs2[count][0], dn_pairs2[count][1])
+            all_rows_list.append(row)
+            count +=1
+    # make a new array from the list of rows
+    chop_array = np.array(all_rows_list, dtype=mtype)
+    chop_array = np.sort(chop_array, order=mtype[0][0])
+    return chop_array
+
+def coord_chop(length, max_size, mode):
+    """Chop a given length into segments and return coordinate pairs."""
+    if length < max_size:
+        mode = None
+    pair_list = []
+    if mode is 'exact_size':
+        counter = 0
+        while counter < length-max_size:
+            new_upper = counter+max_size
+            new_pair = (counter, new_upper)
+            pair_list.append(new_pair)
+            counter = new_upper
+        last_pair = (counter, length)
+        pair_list.append(last_pair)
+    elif mode is 'maxsize_bisect':
+        pair_list = [(0, length)]
+        pair_list = recursive_bisector(pair_list, max_size)
+    elif mode is 'maxsize_divisor':
+        divisor = length/max_size +1
+        approx_size = length/divisor
+        counter = 0
+        origin = 0
+        while counter <= divisor:
+            new_upper = origin+approx_size
+            new_pair = (origin, new_upper)
+            pair_list.append(new_pair)
+            origin = new_upper
+            counter +=1
+        last_pair = (origin, length)
+        pair_list.append(last_pair)
+    elif mode is 'count_divisor':
+        seg_count = max_size # using the size arg to pass the desired seg count
+        target_size = length/seg_count+1
+        pair_list = coord_chop(length, target_size, 'exact_size')
+    else:
+        pair_list = [(0, length)]
+    return pair_list
+
+def recursive_bisector(pair_list, size):
+    """Bisect coordinate pairs in a list until all are below threshold."""
+    # ensure that the values are integers
+    max_size = int(size)
+    index = 0
+    pair_count = len(pair_list)
+    while index < pair_count:
+        pair = pair_list[index]
+        start, end = int(pair[0]), int(pair[1])
+        pair_length = end-start
+        if pair_length > max_size :
+            midpoint = start+(pair_length/2)
+            pair_1 = (start, midpoint)
+            pair_2 = (midpoint, end)
+            pair_list.pop(index)
+            pair_list.insert(index, pair_1)
+            pair_list.insert(index+1, pair_2)
+        else :
+            index +=1
+        # update length of pair list for loop conditional
+        pair_count = len(pair_list)
+    return pair_list
 
 def get_anchor_loc(quad_array):
     """Determine which segment is largest and where it hits."""
@@ -85,4 +173,3 @@ def get_anchor_loc(quad_array):
     sl_array = np.sort(sl_array, order='size')
     anchor = sl_array[0]
     return anchor
-
