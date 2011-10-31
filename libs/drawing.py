@@ -52,25 +52,30 @@ def Canvasser(hCan,vCan,transX,transY,outfile) :
     return canvasN
 
 ## BaseDraw : draws contig baselines and features ##
-def BaseDraw(canvas, pName, cLen, feat_list) :
+def BaseDraw(canvas, pName, cLen, feat_list, annot_key, Y_map, X_shift) :
     # draw plasmid baseline
-    BaseL(cLen, canvas)
+    BaseL(cLen, canvas, Y_map)
     # label the baseline with plasmid name and size
-    LabeL(pName, cLen, canvas)
+    LabeL(pName, cLen, canvas, Y_map)
+    # label the annotations list
+    Y_annot = 0
+    y_annot_adj = Y_map-doL-dop*12-(Y_annot*ck_vsp)-Y_map
+    canvas.drawString(X_shift, y_annot_adj, pName)
+    Y_annot +=2
     # filter and draw annotation features
     ORFcnt = 0
-    Y_pos = 0
     for feature in feat_list :
         if feature.type == 'CDS' or feature.type == 'cds':
             ORFcnt += 1
-            Y_pos = ORFeus(canvas, feature, ORFcnt, Y_pos)
+            Y_annot = ORFeus(canvas, feature, ORFcnt, Y_map, Y_annot,
+                             X_shift, annot_key)
         if feature.type == 'contig':
             TigTicker(canvas, feature)
 
 ## BaseL : Draws phage baselines ##
-def BaseL(cLen, canvas) :
+def BaseL(cLen, canvas, Y_map) :
     canvas.setLineWidth(3)
-    y0 = 0
+    y0 = Y_map
     x0 = 0              # all sequences are aligned on the left
     x1 = cLen*u         # convert sequence length to workspace dimensions
     pBL = canvas.beginPath()
@@ -80,9 +85,9 @@ def BaseL(cLen, canvas) :
     pBL.close()
 
 ## LabeL : Labels baselines with plasmid name and size ##
-def LabeL(cName, cLen, canvas) :
+def LabeL(cName, cLen, canvas, Y_map) :
     canvas.setFillColor(black)
-    y0 = 0
+    y0 = Y_map
     x0 = -pNsize                # retreat into the left margin to write out name and size
     y1 = y0 + ck_vsp/10         # bump name up a bit from BL level
     y2 = y0 - ck_vsp            # bump size down a bit from BL level
@@ -93,31 +98,31 @@ def LabeL(cName, cLen, canvas) :
     canvas.drawString(x0,y2,pLenStr+' kb')
 
 ## ORFeus : Draws plasmid ORFs ##
-def ORFeus(canvas, feature, count, Y_pos) :
+def ORFeus(canvas, feature, count, Y_map, Y_annot, X_shift, annot_key) :
     canvas.setLineWidth(1)
     # extract relevant properties of the CDS feature
     flag = feature.qualifiers.get('flag') # not presently in use
     shape = feature.qualifiers.get('shape')
-    annotation = feature.qualifiers.get('fct')
+    annotation = feature.qualifiers.get(annot_key)
     # evaluate what strand the ORF is on (determines direction of arrow)
     cstrand = feature.strand
     if cstrand == None:
         cstrand = 1
     # take start and end points
-    location 	= feature.location
-    Zs 			= location.nofuzzy_start
-    Ze 			= location.nofuzzy_end
-    featL 		= Ze - Zs
+    location = feature.location
+    Zs = location.nofuzzy_start
+    Ze = location.nofuzzy_end
+    featL = Ze - Zs
     # calculate X axis coordinates (expr of cstrand has changed!)
     if cstrand == -1 :	# reverse orientation
-        xs,xe 	= Ze*u,Zs*u		# start and end
-        xn 		= xe+minL*u		# neck of arrow
+        xs,xe = Ze*u,Zs*u		# start and end
+        xn = xe+minL*u		# neck of arrow
     else :				# forward orientation
-        xs,xe 	= Zs*u,Ze*u		# start and end
-        xn 		= xe-minL*u		# neck of arrow
-    midLZ 	= ((Zs+Ze)/2)*u	# middle of ORF for optional label
+        xs,xe = Zs*u,Ze*u		# start and end
+        xn = xe-minL*u		# neck of arrow
+    midLZ = ((Zs+Ze)/2)*u	# middle of ORF for optional label
     # set Y axis coordinates
-    y0 = 0
+    y0 = Y_map
     yt,yb,ynt,ynb = y0+w,y0-w,y0+h,y0-h
     # initialize path
     pORF = canvas.beginPath()
@@ -156,34 +161,34 @@ def ORFeus(canvas, feature, count, Y_pos) :
     # write CDS numbers
     canvas.drawCentredString(midLZ,y0-doL,str(count))
     # write annotation line
-    if annotation[0] == 'no match':
+    if annotation[0] == 'no match' or annotation[0] == 'hypothetical protein':
         pass
     else:
-        y_annot = y0-doL-dop*12-(Y_pos*ck_vsp)
-        canvas.drawString(-pNsize, y_annot, str(count)+'. '+annotation[0])
+        y_annot_adj = y0-doL-dop*12-(Y_annot*ck_vsp)-Y_map
+        canvas.drawString(X_shift, y_annot_adj, str(count)+'. '+annotation[0])
         canvas.setFont(rFont, NfSize)
-        Y_pos +=1
-    return Y_pos
+        Y_annot +=1
+    return Y_annot
 
 def TigTicker(canvas, feature):
     """Draw contig separators."""
     # get contig name
     name = feature.qualifiers.get('id')[0]
     # take start and end points
-    location 	= feature.location
-    Zs 			= location.nofuzzy_start
-    Ze 			= location.nofuzzy_end
-    xs,xe 	= Zs*u,Ze*u		# start and end
+    location = feature.location
+    Zs = location.nofuzzy_start
+    Ze = location.nofuzzy_end
+    xs,xe = Zs*u,Ze*u		# start and end
     # set Y axis coordinates
-    y0 = h+dop
+    y0 = (h+dop)*2
     # draw
     canvas.setLineWidth(2)
     ttl = canvas.beginPath()
     ttl.moveTo(xs,y0)
-    ttl.lineTo(xs,y0+h*2.5)
-    ttl.lineTo(xs+dop,y0+h*2.5)
+    ttl.lineTo(xs,y0-h*2.5)
+    ttl.lineTo(xs+dop,y0-h*2.5)
     canvas.drawPath(ttl, stroke=1, fill=0)
-    canvas.drawString(xs+dop*2,y0+h*2,name)
+    canvas.drawString(xs+dop*2,y0-h*3,name)
     ttl.close()
 
 def SeqScale(canvas, scX, incrT, incrN, dip, dop) :
@@ -206,35 +211,6 @@ def SeqScale(canvas, scX, incrT, incrN, dip, dop) :
     canvas.drawRightString(scX,dip+dop,'0')
     canvas.drawString(scX+incrT*incrN,dip+dop,str(incrN)+' kb')
 
-def ContigDraw(cName, in_file, out_file):
-    """Draw sequence map of a single contig to file."""
-    # load contig record
-    seq_record = load_genbank(in_file)
-    ctg_length = len(seq_record.seq)
-    features = seq_record.features
-    cds = [feature for feature in features
-           if feature.type == 'CDS' or feature.type == 'cds']
-    annot_cds = [1 for feature in cds
-                 if feature.qualifiers.get('fct')[0] != 'no match']
-    annot_cnt = sum(annot_cds)
-    # calculate main canvas dimensions
-    if ctg_length < 25000:
-        hCan = 32*cm
-    else:
-        hCan = hmar*2 + pNsize + ctg_length*u
-    vCan = dBL + vmar*2 + annot_cnt*ck_vsp
-    transX = hmar + pNsize
-    transY = dBL + vmar + annot_cnt*ck_vsp
-    # set up main canvas
-    canvas_main = Canvasser(hCan, vCan, transX, transY, out_file)
-    # draw contig baseline and features
-    BaseDraw(canvas_main, cName, ctg_length, features)
-    # draw scale
-    SeqScale(canvas_main, scX, incrT, incrN, dip, dop )
-    # write to file and finalize the figure
-    canvas_main.showPage()
-    canvas_main.save()
-
 def annot_color(fct_flags, annotation):
     """Look up the color to use based on annotation keywords."""
     annot_line = annotation[0].lower()
@@ -248,6 +224,95 @@ def annot_color(fct_flags, annotation):
             i +=1
     return fct_key
 
-def PairwiseDraw(g_name, cstrct_gbk, ref_ctg_file, segdata, map_file):
+def ContigDraw(cName, in_file, out_file, X_map):
+    """Draw sequence map of a single contig to file."""
+    # load contig record
+    seq_record = load_genbank(in_file)
+    ctg_len = len(seq_record.seq)
+    features = seq_record.features
+    cds = [feature for feature in features
+           if feature.type == 'CDS' or feature.type == 'cds']
+    annot_cds = [1 for feature in cds
+                 if feature.qualifiers.get('fct')[0] != 'no match']
+    annot_cnt = sum(annot_cds)
+    # calculate main canvas dimensions
+    if ctg_len < 25000:
+        hCan = 32*cm
+    else:
+        hCan = hmar*2 + pNsize + ctg_len*u
+    vCan = dBL + vmar*3 + annot_cnt*ck_vsp
+    transX = hmar + pNsize
+    transY = dBL + vmar + annot_cnt*ck_vsp
+    # set up main canvas
+    canvas_main = Canvasser(hCan, vCan, transX, transY, out_file)
+    # draw contig baseline and features
+    BaseDraw(canvas_main, cName, ctg_len, features, 'fct', vmar, X_map)
+    # draw scale
+    SeqScale(canvas_main, (ctg_len*u)-pNsize, incrT, incrN, dip, dop )
+    # write to file and finalize the figure
+    canvas_main.showPage()
+    canvas_main.save()
+
+def PairwiseDraw(ref_name, g_name, query_file, ref_file, segdata, map_file):
     """Draw pairwise alignment map with similarity shading."""
-    print "map"
+    # load ref and query records
+    # ref first
+    ref_record = load_genbank(ref_file)
+    ref_length = len(ref_record.seq)
+    ref_feat = ref_record.features
+    ref_cds = [feature for feature in ref_feat
+               if feature.type == 'CDS' or feature.type == 'cds']
+    ref_annot_cds = [1 for feature in ref_cds
+                     if feature.qualifiers.get('product')[0] !=
+                        'hypothetical protein']
+    ref_annot_cnt = sum(ref_annot_cds)
+    # now query
+    query_record = load_genbank(query_file)
+    query_length = len(query_record.seq)
+    query_feat = query_record.features
+    query_cds = [feature for feature in query_feat
+                 if feature.type == 'CDS' or feature.type == 'cds']
+    query_annot_cds = [1 for feature in query_cds
+                       if feature.qualifiers.get('fct')[0] != 'no match']
+    query_annot_cnt = sum(query_annot_cds)
+     # calculate main canvas dimensions
+    ctg_len = max(ref_length, query_length)
+    annot_cnt = max(ref_annot_cnt, query_annot_cnt)
+    if ctg_len < 50000:
+        hCan = 32*cm
+    else:
+        hCan = hmar*2 + pNsize + ctg_len*u
+    vCan = dBL + vmar*6 + annot_cnt*ck_vsp
+    transX = hmar + pNsize
+    transY = dBL + vmar*2 + annot_cnt*ck_vsp
+    # set up main canvas
+    m_canvas = Canvasser(hCan, vCan, transX, transY, map_file)
+    # draw ref baseline and features
+    BaseDraw(m_canvas, ref_name, ref_length, ref_feat, 'product', vmar*3, 0)
+    # draw query baseline and features
+    BaseDraw(m_canvas, g_name, query_length, query_feat, 'fct', vmar,
+             query_length*u/2)
+    # draw scale
+    SeqScale(m_canvas, (ctg_len*u)-pNsize, incrT, incrN, dip, dop )
+    # write to file and finalize the figure
+    m_canvas.showPage()
+    m_canvas.save()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

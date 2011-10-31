@@ -42,4 +42,5 @@ def map_pairwise(contig):
         # load segments TODO: add idp-based clumping
         segdata = np.loadtxt(segments_file, skiprows=1, dtype=segtype)
         # generate graphical map
-        PairwiseDraw(g_name, cstrct_gbk, ref_ctg_file, segdata, map_file)
+        PairwiseDraw(ctg_name, g_name, cstrct_gbk, ref_ctg_file, segdata,
+                     map_file)
