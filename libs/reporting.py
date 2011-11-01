@@ -1,6 +1,8 @@
 from config import directories as dirs, genomes, segtype
 from common import ensure_dir
+from array_tetris import offset_q2r_coords
 from drawing import ContigDraw, PairwiseDraw
+from loaders import load_genbank
 import numpy as np
 
 def map_scaffolds(contig):
@@ -41,6 +43,17 @@ def map_pairwise(contig):
         print '\t', g_name
         # load segments TODO: add idp-based clumping
         segdata = np.loadtxt(segments_file, skiprows=1, dtype=segtype)
+        # TODO: process segpairs for clumping and/or offsetting
+        # offset coordinates where desired
+        g_offset = genome['offset']
+        if g_offset[0] != 0 or g_offset[1] != 0:
+            q_len = len(load_genbank(cstrct_gbk).seq)
+            segdata = offset_q2r_coords(segdata, q_len, g_offset)
+        # determine whether to flip the query sequence (negative offset)
+        if g_offset[1] < 0:
+            q_invert = True
+        else:
+            q_invert = False
         # generate graphical map
         PairwiseDraw(ctg_name, g_name, cstrct_gbk, ref_ctg_file, segdata,
-                     map_file)
+                     map_file, q_invert, g_offset)

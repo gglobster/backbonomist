@@ -173,3 +173,92 @@ def get_anchor_loc(quad_array):
     sl_array = np.sort(sl_array, order='size')
     anchor = sl_array[0]
     return anchor
+
+def offset_q2r_coords(data_array, q_len, value_pair):
+    """Offset segment coordinates in array to specified values.
+
+    This is tailored for pairwise alignments in which the reference and
+    query sequences are not treated equally. The reference is treated as a
+    linear molecule and its coordinates (first pair in array quintet) get
+    nudged to the right. The query is treated as a circular molecule and its
+    coordinates (second pair in array quintet) are looped around the zero
+    position.
+    """
+    # set up an array stub to receive new rows
+    all_rows_list = []
+    # run offsetting
+    r_off, q_off = value_pair
+    for xa, xb, xc, xd, idp in data_array:
+        xao = nudge_coord(xa, r_off)
+        xbo = nudge_coord(xb, r_off)
+        xco = offset_coord(xc, q_len, q_off)
+        xdo = offset_coord(xd, q_len, q_off)
+        offset_row = (xao, xbo, xco, xdo, idp)
+        all_rows_list.append(offset_row)
+    # make a new array from the list of rows
+    offset_array = np.array(all_rows_list, dtype=segtype)
+    return offset_array
+
+def offset_coord(coord, length, offset) :
+    """Calculate coordinate offset."""
+    # calculate linear coordinate change
+    coft = (abs(coord)-abs(offset)+1)
+    if coft < 0 :
+        coff = length + coft
+    else :
+        coff = coft
+    # invert sequence if offset is negative
+    if offset < 0 :
+        cofi = length - coff
+    else :
+        cofi = coff
+    # recall original sign
+    if coord < 0 :
+        sign0 = -1
+    else :
+        sign0 = 1
+    # set final sign
+    coff7 = sign0 * cofi
+    return coff7
+
+def nudge_coord(coord, offset) :
+    """Calculate coordinate offset."""
+    # calculate linear coordinate change
+    coft = (abs(coord)+abs(offset)+1)
+    # recall original sign
+    if coord < 0 :
+        sign0 = -1
+    else :
+        sign0 = 1
+    # set final sign
+    coff7 = sign0 * coft
+    return coff7
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

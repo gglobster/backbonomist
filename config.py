@@ -7,16 +7,26 @@ import numpy
 project_id = 'BCSL'
 prot_db_name = 'Bacteria_prot'
 
-genomes = [{'name': 'pXO1', 'input': 'cgbk', 'file': 'pXO1.gbk'},
-#           {'name': 'pBc239', 'input': 'mfas', 'file': 'CP000228.fas'},
-#           {'name': 'pAH187_270', 'input': 'mfas', 'file': 'CP001179.fas'},
-#           {'name': 'pAH820_272', 'input': 'mfas', 'file': 'CP001285.fas'},
-#           {'name': 'p03B_179', 'input': 'mfas', 'file': 'CP001406.fas'},
-#           {'name': 'NZ_ACNE0', 'input': 'mfas', 'file': 'NZ_ACNE0.fas'},
-#           {'name': 'NZ_ACNF0', 'input': 'mfas', 'file': 'NZ_ACNF0.fas'},
-           {'name': 'NZ_ACNI0', 'input': 'mfas', 'file': 'NZ_ACNI0.fas'},
-#           {'name': 'NZ_ACNJ0', 'input': 'mfas', 'file': 'NZ_ACNJ0.fas'},
-           {'name': 'NZ_ACNK0', 'input': 'mfas', 'file': 'NZ_ACNK0.fas'}]
+genomes = [{'name': 'pXO1', 'input': 'cgbk', 'file': 'pXO1.gbk',
+            'offset': (0,10000)},
+#           {'name': 'pBc239', 'input': 'mfas', 'file': 'CP000228.fas',
+#            'offset': (0,0)},
+#           {'name': 'pAH187_270', 'input': 'mfas', 'file': 'CP001179.fas',
+#            'offset': (0,0)},
+#           {'name': 'pAH820_272', 'input': 'mfas', 'file': 'CP001285.fas',
+#            'offset': (0,0)},
+#           {'name': 'p03B_179', 'input': 'mfas', 'file': 'CP001406.fas',
+#            'offset': (0,0)},
+#           {'name': 'NZ_ACNE0', 'input': 'mfas', 'file': 'NZ_ACNE0.fas',
+#            'offset': (0,0)},
+#           {'name': 'NZ_ACNF0', 'input': 'mfas', 'file': 'NZ_ACNF0.fas',
+#            'offset': (0,0)},
+#           {'name': 'NZ_ACNI0', 'input': 'mfas', 'file': 'NZ_ACNI0.fas',
+#            'offset': (0,0)},
+#           {'name': 'NZ_ACNJ0', 'input': 'mfas', 'file': 'NZ_ACNJ0.fas',
+#            'offset': (0,0)},
+           {'name': 'NZ_ACNK0', 'input': 'mfas', 'file': 'NZ_ACNK0.fas',
+            'offset': (15000,0)}]
 
             # p03B_179 = p03BB102_179
 
@@ -46,19 +56,21 @@ backbones = [{'name': 'pXO1', 'file': 'pXO1.gbk',
 # Function categories and legend (keys MUST be lowercase)
 
 fct_flags = {'mge': ('transposase', 'transposon', 'intron',
-                     'tyrosine recombinase', 'dna-invertase'),
+                     'tyrosine recombinase', 'dna-invertase',
+                     'reverse transcriptase'),
              'rep': ('something else', 'replication'),
              'syn': ('synthase', 'something else'),
              'tox': ('protective antigen', 'lethal factor',
                      'virulence factor'),
              'ger': ('spore germination protein', 'something else'),
-             'tra': ('type iv', 'topoisomerase', 'dna translocase ftsk',
-                     'conjugal transfer'),
+             'tra': ('type iv', 'type ii/iv', 'topoisomerase',
+                     'dna translocase ftsk', 'conjugal transfer',
+                     'conjugation protein'),
              'ctl': ('transcriptional regulator', 'regulatory protein',
                      'regulator', 'transcriptional repressor'
                      'response regulator aspartate phosphatase'),
              'unk': ('uncharacterized', 'conserved domain protein'),
-             'def': ('no match', 'something else')} # default
+             'def': ('no match', 'hypothetical protein', 'pXO1-')} # default
 
 fct_colors = {'mge': ('#66CC00', 'MGE'),
               'rep': ('#FF9900', 'Replication'),
@@ -128,3 +140,11 @@ prox_F = 100    # for fine alignment (set to 0 to skip clumping)
 # Chopping size to limit length of detailed alignments
 max_size = 3000
 chop_mode = 'exact_size' # 'maxsize_bisect','maxsize_divisor','count_divisor'
+
+# Identity percentage cutoffs and color coding
+idpt = {95: '#444444',     # top similarity class (HexColor('#444444'))
+        80: '#777777',     # upper middle class (HexColor('#777777'))
+        70: '#BBBBBB',     # lower middle class (HexColor('#BBBBBB'))
+        50: '#DDDDDD',     # low similarity class (HexColor('#DDDDDD'))
+         0: '#FFFFFF'}     # lower than cutoff (HexColor('#FFFFFF'))
+
