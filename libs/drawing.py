@@ -401,8 +401,17 @@ def PairwiseDraw(ref_name, q_name, q_file, ref_file, segs, map_file, q_inv,
     for xa, xb, xc, xd, idp in segs:
         # evaluate color shading category
         sh_color = HexColor(SimColor(idp))
-        # draw shading
-        Shadowfax(m_canvas, xa, xb, xc, xd, ref_Y, query_Y, sh_color)
+        # check for split
+        if abs(xa) > abs(xb) or abs(xc) > abs(xd):
+            coords1, coords2 = shade_split(xa, xb, xc, xd, q_len)
+            xa1, xb1, xc1, xd1 = coords1
+            xa2, xb2, xc2, xd2 = coords2
+            # draw shading
+            Shadowfax(m_canvas, xa1, xb1, xc1, xd1, ref_Y, query_Y, sh_color)
+            Shadowfax(m_canvas, xa2, xb2, xc2, xd2, ref_Y, query_Y, sh_color)
+        else:
+            # draw shading
+            Shadowfax(m_canvas, xa, xb, xc, xd, ref_Y, query_Y, sh_color)
     # write to file and finalize the figure
     m_canvas.showPage()
     m_canvas.save()
@@ -444,6 +453,23 @@ def Shadowfax(canvas_def, xa, xb, xc, xd, aby0, cdy0, sh_color):
     puck.lineTo(dx,cdy1)
     canvas_def.drawPath(puck, stroke=1, fill=0)
     puck.close()
+
+def shade_split(xa, xb, xc, xd, q_len):
+    """Split shaded areas that sit across the map origin.
+
+    This assumes that xa -> xb is always non-split since it is on the
+    reference, which is treated as linear, not circular. It also assumes that
+    only reference-side segments can be of negative sign.
+    """
+    if xa > 0:
+        xa1, xb1, xc1, xd1 = xa, xa+q_len-xc, xc, q_len
+        xa2, xb2, xc2, xd2 = xa+q_len-xc, xb, 1, xd
+    else: # xa <0
+        xa1, xb1, xc1, xd1 = xa, xa-xd, 1, xd
+        xa2, xb2, xc2, xd2 = xa-xd, xb, xc, q_len
+    coords1 = xa1, xb1, xc1, xd1
+    coords2 = xa2, xb2, xc2, xd2
+    return coords1, coords2
 
 def Flipper(axr,bxr) :
     """Flip negative coordinates."""

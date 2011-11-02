@@ -43,7 +43,6 @@ def map_pairwise(contig):
         print '\t', g_name
         # load segments TODO: add idp-based clumping
         segdata = np.loadtxt(segments_file, skiprows=1, dtype=segtype)
-        # TODO: process segpairs for clumping and/or offsetting
         # offset coordinates where desired
         g_offset = genome['offset']
         if g_offset[0] != 0 or g_offset[1] != 0:
