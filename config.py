@@ -8,25 +8,25 @@ project_id = 'BCSL'
 prot_db_name = 'Bacteria_prot'
 
 genomes = [{'name': 'pXO1', 'input': 'cgbk', 'file': 'pXO1.gbk',
-            'offset': (0,10000)},
+            'offset': (0,8000), 'ignore': (0, 0)},
 #           {'name': 'pBc239', 'input': 'mfas', 'file': 'CP000228.fas',
-#            'offset': (0,0)},
+#            'offset': (0,0), 'ignore': (0, 0)},
 #           {'name': 'pAH187_270', 'input': 'mfas', 'file': 'CP001179.fas',
-#            'offset': (0,0)},
+#            'offset': (0,0), 'ignore': (0, 0)},
 #           {'name': 'pAH820_272', 'input': 'mfas', 'file': 'CP001285.fas',
-#            'offset': (0,0)},
+#            'offset': (0,0), 'ignore': (0, 0)},
 #           {'name': 'p03B_179', 'input': 'mfas', 'file': 'CP001406.fas',
-#            'offset': (0,0)},
+#            'offset': (0,0), 'ignore': (0, 0)},
 #           {'name': 'NZ_ACNE0', 'input': 'mfas', 'file': 'NZ_ACNE0.fas',
-#            'offset': (0,0)},
+#            'offset': (0,0), 'ignore': (0, 0)},
 #           {'name': 'NZ_ACNF0', 'input': 'mfas', 'file': 'NZ_ACNF0.fas',
-#            'offset': (0,0)},
+#            'offset': (0,0), 'ignore': (0, 0)},
 #           {'name': 'NZ_ACNI0', 'input': 'mfas', 'file': 'NZ_ACNI0.fas',
-#            'offset': (0,0)},
+#            'offset': (0,0), 'ignore': (0, 0)},
 #           {'name': 'NZ_ACNJ0', 'input': 'mfas', 'file': 'NZ_ACNJ0.fas',
-#            'offset': (0,0)},
+#            'offset': (0,0), 'ignore': (0, 0)},
            {'name': 'NZ_ACNK0', 'input': 'mfas', 'file': 'NZ_ACNK0.fas',
-            'offset': (15000,0)}]
+            'offset': (15000,0), 'ignore': (68, 0)}]
 
             # p03B_179 = p03BB102_179
 

@@ -90,7 +90,7 @@ def read_array(filename, dtype, separator='\t'):
         for i, number in enumerate(fields):
             data[i].append(number)
     for i in xrange(len(dtype)):
-        print data[i]
+        #print data[i]
         data[i] = cast[dtype[i]](data[i])
     return numpy.rec.array(data, dtype=dtype)
 

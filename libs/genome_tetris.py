@@ -126,6 +126,12 @@ def build_scaffolds(contig):
     maps should reveal any such problems. The order can be fixed manually
     using the Mauve Contig Mover, which is part of Mauve 2.
 
+    In some cases it is clear from looking at the maps generated further on
+    that some contigs are included based on spurious hits. It is possible to
+    make them be ignored and left out of the scaffold by listing their ID
+    number in the genome dictionaries in the config file then rerunning the
+    pipeline from this step.
+
     """
     # set inputs and outputs
     ctg_name = contig['name'] # reference contig
@@ -158,22 +164,23 @@ def build_scaffolds(contig):
             match = pattern.match(item)
             if match:
                 ctg_num = match.group(1)
-                print ctg_num,
-                # set inputs
-                file_list = (ref_ctg_file, ctgs_dir+item)
-                # set Mauve output
-                mauve_outfile = mauve_dir+ctg_num+".mauve"
-                # do Mauve alignment
-                align_mauve(file_list, mauve_outfile)
-                # parse Mauve output
-                coords = mauver_load2_k0(mauve_outfile+".backbone", prox_D)
-                # determine which segment to use as anchor
-                anchor_seg = get_anchor_loc(coords)
-                anchors_array = np.insert(anchors_array, 0,
-                                          (ctg_num,
-                                           anchor_seg['start'],
-                                           anchor_seg['end'],
-                                           anchor_seg['orient']))
+                if int(ctg_num) not in genome['ignore']:
+                    print ctg_num,
+                    # set inputs
+                    file_list = (ref_ctg_file, ctgs_dir+item)
+                    # set Mauve output
+                    mauve_outfile = mauve_dir+ctg_num+".mauve"
+                    # do Mauve alignment
+                    align_mauve(file_list, mauve_outfile)
+                    # parse Mauve output
+                    coords = mauver_load2_k0(mauve_outfile+".backbone", prox_D)
+                    # determine which segment to use as anchor
+                    anchor_seg = get_anchor_loc(coords)
+                    anchors_array = np.insert(anchors_array, 0,
+                                              (ctg_num,
+                                               anchor_seg['start'],
+                                               anchor_seg['end'],
+                                               anchor_seg['orient']))
         # order contigs by anchor location
         anchors_array = np.sort(anchors_array, order='start')
         # load contig records from the genbank files in the matches directory

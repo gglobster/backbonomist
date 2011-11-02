@@ -78,18 +78,28 @@ def BaseDraw(canvas, cName, cLen, feats, key, dop_Y, Y0, X_shift,
             fct_key = annot_color(fct_flags, annot)
             color_hex = HexColor(fct_colors[fct_key][0])
             # calculate coordinates for canvas
-            featL, midLZ, coords = ORFcoords(feature, Y0, cLen, offset,
-                                             offset_mode)
-            # draw feature
-            ORFeus(canvas, featL, coords, color_hex)
+            featL, midLZ, coords, split_flag = ORFcoords(feature, Y0, cLen,
+                                                         offset, offset_mode)
+            # check for CDS sitting across the origin
+            if split_flag:
+                # split coords
+                coords1, featL1, coords2, featL2 = ORFsplit(coords, cLen)
+                # draw square feature
+                ORFeus(canvas, featL1, coords1, color_hex, shape='square')
+                # draw arrow feature
+                ORFeus(canvas, featL2, coords2, color_hex, shape=None)
+            else:
+                # draw arrow feature
+                ORFeus(canvas, featL, coords, color_hex, shape=None)
             # write annotation line and CDS number
             if map_mode == 'single' and Y_annot > annot_cnt/2:
                 X_shift = (cLen/2)*u
                 if not shift_flag:
                     Y_annot -= annot_cnt/2
                     shift_flag = True
-            Y_annot = ORFannot(canvas, annot, Y_annot, ORFcnt, Y0+dop_Y, midLZ,
-                               X_shift)
+            Y_annot = ORFannot(canvas, cLen, annot, Y_annot, ORFcnt, Y0+dop_Y,
+                               midLZ,
+                               X_shift, split_flag)
 
 ## BaseL : Draws phage baselines ##
 def BaseL(cLen, canvas, Y_map, offset, offset_mode) :
@@ -125,7 +135,8 @@ def LabeL(cName, cLen, canvas, Y_map) :
     canvas.setFont(rFont,NfSize)
     canvas.drawString(x0,y2,pLenStr+' kb')
 
-def ORFannot(canvas, annot, Y_annot, ORFcnt, cnt_Y, midLZ, X_shift):
+def ORFannot(canvas, cLen, annot, Y_annot, ORFcnt, cnt_Y, midLZ, X_shift,
+             split_flag):
     """Write annotation to feature list."""
     if annot == 'no match' or \
        annot == 'hypothetical protein' or \
@@ -133,7 +144,11 @@ def ORFannot(canvas, annot, Y_annot, ORFcnt, cnt_Y, midLZ, X_shift):
         pass
     else:
         # write CDS numbers
-        canvas.drawCentredString(midLZ, cnt_Y, str(ORFcnt))
+        if split_flag:
+            canvas.drawCentredString(1*u, cnt_Y, "]"+str(ORFcnt))
+            canvas.drawCentredString(cLen*u, cnt_Y, str(ORFcnt)+"[")
+        else:
+            canvas.drawCentredString(midLZ, cnt_Y, str(ORFcnt))
         # write annotation
         y_annot_adj = y_adj-(Y_annot*ck_vsp)
         canvas.setFont(rFont, SfSize)
@@ -170,20 +185,46 @@ def ORFcoords(feature, Y_map, cLen, offset, offset_mode):
         xs,xe = Zs*u,Ze*u		# start and end
         xn = xe-minL*u		# neck of arrow
     midLZ = ((Zs+Ze)/2)*u	# middle of ORF for optional label
+    # evaluate splits
+    split_flag = False
+    if (xs < xe and cstrand == -1) or (xs > xe and cstrand == 1):
+        midLZ = 0
+        split_flag = True
     # set Y axis coordinates
     y0 = Y_map
     yt,yb,ynt,ynb = y0+w,y0-w,y0+h,y0-h
     coords = xs, xe, xn, y0, yt, yb, ynt, ynb
-    return featL, midLZ, coords
+    return featL, midLZ, coords, split_flag
 
-def ORFeus(canvas, featL, coords, color_hex):
+def ORFsplit(coords, cLen):
+    """Split CDS that sit across the map origin."""
+    xs, xe, xn, y0, yt, yb, ynt, ynb = coords
+    if xs < xe:
+        coords1 = xs, 1*u, xn, y0, yt, yb, ynt, ynb
+        coords2 = cLen*u, xe, xn, y0, yt, yb, ynt, ynb
+        featL1 = xs/u
+        featL2 = cLen-xe/u
+    else:
+        coords1 = xs, cLen*u, xn, y0, yt, yb, ynt, ynb
+        coords2 = 1*u, xe, xn, y0, yt, yb, ynt, ynb
+        featL1 = cLen-xs/u
+        featL2 = xe/u
+    return coords1, featL1, coords2, featL2
+
+def ORFeus(canvas, featL, coords, color_hex, shape):
     """Draw CDS and write count."""
     xs, xe, xn, y0, yt, yb, ynt, ynb = coords
     canvas.setLineWidth(1)
     # initialize path
     pORF = canvas.beginPath()
+    if shape == 'square':
+        pORF.moveTo(xs,ynt)
+        pORF.lineTo(xe,ynt)
+        pORF.lineTo(xe,ynb)
+        pORF.lineTo(xs,ynb)
+        pORF.lineTo(xs,ynt)
     # draw triangle-shaped ORFS
-    if featL <= minL:
+    elif featL <= minL:
         pORF.moveTo(xs,yt)
         pORF.lineTo(xe,y0)
         pORF.lineTo(xs,yb)
@@ -204,7 +245,6 @@ def ORFeus(canvas, featL, coords, color_hex):
     canvas.drawPath(pORF, stroke=1, fill=1)
     pORF.close()
     canvas.setFillColor(black)
-    canvas.setFont(rFont, SfSize)
 
 def TigTicker(canvas, feature, cLen, offset, offset_mode):
     """Draw contig separators."""
@@ -263,7 +303,7 @@ def SeqScale(canvas, scX, incrT, incrN, dip, dop) :
 
 def annot_color(fct_flags, annotation):
     """Look up the color to use based on annotation keywords."""
-    annot_line = annotation[0].lower()
+    annot_line = annotation.lower()
     fct_key = 'oth'
     for key in fct_flags:
         i = 0
