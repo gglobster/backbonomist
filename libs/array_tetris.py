@@ -234,6 +234,30 @@ def nudge_coord(coord, offset) :
     coff7 = sign0 * coft
     return coff7
 
+def shade_split(xa, xb, xc, xd, q_len):
+    """Split shaded areas that sit across the map origin.
+
+    This assumes that xa -> xb is always non-split since it is on the
+    reference, which is treated as linear, not circular. It also assumes that
+    only reference-side segments can be of negative sign.
+    """
+    if xa > 0:
+        xa1, xb1, xc1, xd1 = xa, xa+q_len-xc, xc, q_len
+        xa2, xb2, xc2, xd2 = xa+q_len-xc, xb, 1, xd
+    else: # xa <0
+        xa1, xb1, xc1, xd1 = xa, xa-xd, 1, xd
+        xa2, xb2, xc2, xd2 = xa-xd, xb, xc, q_len
+    coords1 = xa1, xb1, xc1, xd1
+    coords2 = xa2, xb2, xc2, xd2
+    return coords1, coords2
+
+def coord_flipper(axr,bxr) :
+    """Flip negative coordinates."""
+    if axr < 0 :
+        ax,bx = abs(bxr),abs(axr)
+    else :
+        ax,bx = axr,bxr
+    return ax,bx
 
 
 

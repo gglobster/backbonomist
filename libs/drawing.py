@@ -4,7 +4,8 @@ from reportlab.lib.units import cm
 from reportlab.lib.colors import black, white, HexColor
 from loaders import load_genbank
 from config import fct_flags, fct_colors, idpt
-from array_tetris import offset_coord, nudge_coord
+from array_tetris import offset_coord, nudge_coord, shade_split, \
+    coord_flipper
 
 ### Hardcoded presets ###
 ## General proportions ##
@@ -157,6 +158,21 @@ def ORFannot(canvas, cLen, annot, Y_annot, ORFcnt, cnt_Y, midLZ, X_shift,
         Y_annot +=1
     return Y_annot
 
+def ORFsplit(coords, cLen):
+    """Split CDS that sit across the map origin."""
+    xs, xe, xn, y0, yt, yb, ynt, ynb = coords
+    if xs < xe:
+        coords1 = xs, 1*u, xn, y0, yt, yb, ynt, ynb
+        coords2 = cLen*u, xe, xn, y0, yt, yb, ynt, ynb
+        featL1 = xs/u
+        featL2 = cLen-xe/u
+    else:
+        coords1 = xs, cLen*u, xn, y0, yt, yb, ynt, ynb
+        coords2 = 1*u, xe, xn, y0, yt, yb, ynt, ynb
+        featL1 = cLen-xs/u
+        featL2 = xe/u
+    return coords1, featL1, coords2, featL2
+
 def ORFcoords(feature, Y_map, cLen, offset, offset_mode):
     """Calculate CDS coordinates in drawing space."""
     # evaluate what strand the ORF is on (determines direction of arrow)
@@ -195,21 +211,6 @@ def ORFcoords(feature, Y_map, cLen, offset, offset_mode):
     yt,yb,ynt,ynb = y0+w,y0-w,y0+h,y0-h
     coords = xs, xe, xn, y0, yt, yb, ynt, ynb
     return featL, midLZ, coords, split_flag
-
-def ORFsplit(coords, cLen):
-    """Split CDS that sit across the map origin."""
-    xs, xe, xn, y0, yt, yb, ynt, ynb = coords
-    if xs < xe:
-        coords1 = xs, 1*u, xn, y0, yt, yb, ynt, ynb
-        coords2 = cLen*u, xe, xn, y0, yt, yb, ynt, ynb
-        featL1 = xs/u
-        featL2 = cLen-xe/u
-    else:
-        coords1 = xs, cLen*u, xn, y0, yt, yb, ynt, ynb
-        coords2 = 1*u, xe, xn, y0, yt, yb, ynt, ynb
-        featL1 = cLen-xs/u
-        featL2 = xe/u
-    return coords1, featL1, coords2, featL2
 
 def ORFeus(canvas, featL, coords, color_hex, shape):
     """Draw CDS and write count."""
@@ -422,8 +423,8 @@ def Shadowfax(canvas_def, xa, xb, xc, xd, aby0, cdy0, sh_color):
     # convert sequence-scale values to canvas-space
     axr, bxr, cxr, dxr = xa*u, xb*u, xc*u, xd*u
     # check for negatives that need to be flipped
-    ax, bx = Flipper(axr,bxr)
-    cx, dx = Flipper(cxr,dxr)
+    ax, bx = coord_flipper(axr,bxr)
+    cx, dx = coord_flipper(cxr,dxr)
     # these are the actual Y coordinates that will be used to draw the cues
     aby1 = aby0-da
     aby2 = aby1-tm
@@ -453,31 +454,6 @@ def Shadowfax(canvas_def, xa, xb, xc, xd, aby0, cdy0, sh_color):
     puck.lineTo(dx,cdy1)
     canvas_def.drawPath(puck, stroke=1, fill=0)
     puck.close()
-
-def shade_split(xa, xb, xc, xd, q_len):
-    """Split shaded areas that sit across the map origin.
-
-    This assumes that xa -> xb is always non-split since it is on the
-    reference, which is treated as linear, not circular. It also assumes that
-    only reference-side segments can be of negative sign.
-    """
-    if xa > 0:
-        xa1, xb1, xc1, xd1 = xa, xa+q_len-xc, xc, q_len
-        xa2, xb2, xc2, xd2 = xa+q_len-xc, xb, 1, xd
-    else: # xa <0
-        xa1, xb1, xc1, xd1 = xa, xa-xd, 1, xd
-        xa2, xb2, xc2, xd2 = xa-xd, xb, xc, q_len
-    coords1 = xa1, xb1, xc1, xd1
-    coords2 = xa2, xb2, xc2, xd2
-    return coords1, coords2
-
-def Flipper(axr,bxr) :
-    """Flip negative coordinates."""
-    if axr < 0 :
-        ax,bx = abs(bxr),abs(axr)
-    else :
-        ax,bx = axr,bxr
-    return ax,bx
 
 def SimColor(idp) :
     """Evaluate class of similarity."""
