@@ -3,26 +3,28 @@ import numpy as np
 from os import listdir
 from loaders import read_array, load_genbank, td_txt_file_load
 from writers import write_genbank
-from config import directories as dirs, blast_dtypes, genomes, mtype
+from config import directories as dirs, p_root_dir, blast_dtypes, genomes, \
+    mtype
 from common import ensure_dir
 from array_tetris import extract_nonzero, clump_rows
 from Bio.Blast import NCBIXML
 
-def glompX_blast_out(contig):
+def glompX_blast_out(contig, run_id):
     """Collect Blast results and extract match contigs."""
     # load inputs
     nick = contig['name']
-    match_root = dirs['match_out_dir']+nick+"/"
+    run_root = p_root_dir+run_id+"/"
+    match_root = run_root+dirs['match_out_dir']+nick+"/"
     print " ", nick
     # collect
     for ref in contig['refs']:
         print "\t", ref['type'], "...",
-        blast_dir = dirs['blast_out_dir']+nick+"/"+ref['type']+"/"
-        ensure_dir(blast_dir)
+        blast_dir = run_root+dirs['blast_out_dir']+nick+"/"+ref['type']+"/"
+        ensure_dir([blast_dir])
         for genome in genomes:
             g_name = genome['name']
             matches_dir = match_root+g_name+"/"
-            ensure_dir(matches_dir)
+            ensure_dir([matches_dir])
             blast_infile = blast_dir+g_name+"_out.txt"
             genome_ctg_dir = dirs['gbk_contigs_dir']+g_name+"/"
             rec_array = read_array(blast_infile, blast_dtypes)

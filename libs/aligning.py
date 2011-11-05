@@ -1,7 +1,8 @@
-import subprocess
+import os, subprocess, re
+from os import listdir
 from Bio.Align.Applications import ClustalwCommandline
 from Bio.Align.Applications import MuscleCommandline
-from config import mauve_exec, directories as dirs, genomes, prox_F, \
+from config import mauve_exec, directories as dirs, p_root_dir, genomes, \
     max_size, chop_mode
 from common import ensure_dir
 from parsing import mauver_load2_k0, parse_clustal_idstars
@@ -38,13 +39,105 @@ def align_mauve(file_list, output):
     # TODO: should set up something to parse Mauve errors
     return report
 
+def align_ctg2ref(contig, run_id):
+    """Align contigs pairwise to the reference contig."""
+    # set inputs and outputs
+    ref_ctg_name = contig['name'] # reference contig
+    run_root = p_root_dir+run_id+"/"
+    ref_ctg_file = dirs['ori_g_dir']+contig['file']
+    mauve_root = run_root+dirs['mauve_out_dir']+ref_ctg_name+"/contigs/"
+    segments_root = run_root+dirs['aln_seg_dir']+ref_ctg_name+"/contigs/"
+    q_ctgs_root = run_root+dirs['match_out_dir']+ref_ctg_name+"/"
+    ensure_dir([segments_root]) 
+    print " ", ref_ctg_name
+    # cycle through genomes
+    for genome in genomes:
+        # set inputs and outputs
+        g_name = genome['name']
+        print "\t", g_name, "..."
+        ctgs_gbk_dir = q_ctgs_root+g_name+"/"
+        mauve_dir = mauve_root+g_name+"/"
+        aln_segs_root = segments_root+g_name+"/"
+        ensure_dir([mauve_dir])
+        # list genbank files in matches directory
+        dir_contents = listdir(ctgs_gbk_dir)
+        for item in dir_contents:
+            pattern = re.compile(r'.*_(\d*)\.gbk$')
+            match = pattern.match(item)
+            if match:
+                ctg_num = match.group(1)
+                print ctg_num,
+                # set inputs and outputs
+                q_contig = ctgs_gbk_dir+item
+                file_list = (ref_ctg_file, q_contig)
+                mauve_outfile = mauve_dir+ctg_num+".mauve"
+                aln_segs_dir = aln_segs_root+ctg_num+"/"
+                ensure_dir([aln_segs_dir])
+                segfile = aln_segs_dir+ctg_num+"_"+ref_ctg_name+"_segs.txt"
+                open(segfile, 'w').write('')
+                # do Mauve alignment
+                align_mauve(file_list, mauve_outfile)
+                # parse Mauve output (without initial clumping)
+                coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
+                # chop segments that are too long
+                chop_array = chop_rows(coords, max_size, chop_mode)
+                # make detailed pairwise alignments of the segments
+                ref_rec = load_genbank(ref_ctg_file)
+                query_rec = load_genbank(q_contig)
+                iter_align(chop_array, ref_rec, query_rec, aln_segs_dir,
+                           segfile)
+        print ""
+
+def align_cstrct2ref(contig, run_id):
+    """Align constructs pairwise to the reference contig."""
+    # set inputs and outputs
+    ctg_name = contig['name'] # reference contig
+    run_root = p_root_dir+run_id+"/"
+    ref_ctg_file = dirs['ori_g_dir']+contig['file']
+    mauve_root = run_root+dirs['mauve_out_dir']+ctg_name+"/constructs/"
+    segments_root = run_root+dirs['aln_seg_dir']+ctg_name+"/constructs/"
+    constructs_root = run_root+dirs['constructs_dir']+ctg_name+"/"
+    ensure_dir([segments_root])
+    print " ", ctg_name
+    # cycle through genomes
+    for genome in genomes:
+        # set inputs
+        g_name = genome['name']
+        cstrct_gbk = constructs_root+g_name+"_"+ctg_name+"_cstrct.gbk"
+        file_list = (ref_ctg_file, cstrct_gbk)
+        print "\t", g_name, "...",
+        # set outputs
+        mauve_dir = mauve_root+g_name+"/"
+        aln_segs_dir = segments_root+g_name+"/"
+        ensure_dir([mauve_dir, aln_segs_dir])
+        mauve_outfile = mauve_dir+g_name+"_"+ctg_name+".mauve"
+        segfile = aln_segs_dir+g_name+"_"+ctg_name+"_segs.txt"
+        open(segfile, 'w').write('')
+        # purge any pre-existing sslist file
+        sslist_file = cstrct_gbk+".sslist"
+        if os.path.isfile(sslist_file):
+            try: os.remove(sslist_file)
+            except Exception: raise
+        # do Mauve alignment
+        align_mauve(file_list, mauve_outfile)
+        # parse Mauve output (without initial clumping)
+        coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
+        print len(coords), '->',
+        # chop segments that are too long
+        chop_array = chop_rows(coords, max_size, chop_mode)
+        print len(chop_array), 'segments <', max_size, 'bp', 
+        # make detailed pairwise alignments of the segments
+        ref_rec = load_genbank(ref_ctg_file)
+        query_rec = load_genbank(cstrct_gbk)
+        id = iter_align(chop_array, ref_rec, query_rec, aln_segs_dir, segfile)
+        print "@", id, "% id. overall"
+
 def iter_align(coord_array, ref_rec, query_rec, aln_dir, segs_file):
     """Iterate through array of coordinates to make pairwise alignments."""
     # set up the root subdirectories
     seqs = aln_dir+"input_seqs/"
     alns = aln_dir+"output_alns/"
-    ensure_dir(seqs)
-    ensure_dir(alns)
+    ensure_dir([seqs, alns])
     aln_id = 0
     aln_len = 0
     # cycle through segments
@@ -77,42 +170,5 @@ def iter_align(coord_array, ref_rec, query_rec, aln_dir, segs_file):
         # write details out to segments file
         line = "\t".join([str(xa), str(xb), str(xc), str(xd), str(idp)+"\n"])
         open(segs_file, 'a').write(line)
-    print "@", int((float(aln_id)/aln_len)*100), "% id. overall"
-    
-
-def align2ref(contig):
-    """Align constructs pairwise to the reference contig."""
-    # set inputs and outputs
-    ctg_name = contig['name'] # reference contig
-    ref_ctg_file = dirs['ref_ctg_dir']+contig['file']
-    mauve_root = dirs['mauve_out_dir']+ctg_name+"/constructs/"
-    segments_root = dirs['segments_dir']+ctg_name+"/"
-    constructs_root = dirs['constructs_dir']+ctg_name+"/"
-    ensure_dir(segments_root)
-    print " ", ctg_name
-    # cycle through genomes
-    for genome in genomes:
-        # set inputs
-        g_name = genome['name']
-        cstrct_gbk = constructs_root+g_name+"_"+ctg_name+"_cstrct.gbk"
-        file_list = (ref_ctg_file, cstrct_gbk)
-        print "\t", g_name, "...",
-        # set outputs
-        mauve_dir = mauve_root+g_name+"/"
-        ensure_dir(mauve_dir)
-        mauve_outfile = mauve_dir+g_name+"_"+ctg_name+".mauve"
-        segfile = segments_root+g_name+"_"+ctg_name+"_segs.txt"
-        open(segfile, 'w').write('')
-        # do Mauve alignment
-        align_mauve(file_list, mauve_outfile)
-        # parse Mauve output (without initial clumping)
-        coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
-        print len(coords), '->',
-        # chop segments that are too long
-        chop_array = chop_rows(coords, max_size, chop_mode)
-        print len(chop_array), 'segments <', max_size, 'bp', 
-        # make detailed pairwise alignments of the segments
-        ref_rec = load_genbank(ref_ctg_file)
-        query_rec = load_genbank(cstrct_gbk)
-        iter_align(chop_array, ref_rec, query_rec, segments_root, segfile)
-
+    overall_id = int((float(aln_id)/aln_len)*100)
+    return overall_id

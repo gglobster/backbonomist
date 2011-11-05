@@ -1,5 +1,5 @@
 import os, subprocess, re
-from config import blast_prefs, directories as dirs, genomes
+from config import blast_prefs, directories as dirs, p_root_dir, genomes
 from loaders import load_multifasta
 from common import ensure_dir
 from datetime import datetime
@@ -61,23 +61,25 @@ def make_genome_DB(genome):
     # load inputs
     fas_dir = dirs['mfas_contigs_dir']
     db_dir = dirs['blast_db_dir']
+    ensure_dir([fas_dir, db_dir])
     g_name = genome['name']
     print " ", g_name, "...",
     # make DB
     make_blastDB(db_dir+g_name, fas_dir+g_name+'_contigs.fas', 'nucl')
     print "DB ready"
 
-def basic_batch_blastn(contig):
+def basic_batch_blastn(contig, run_id):
     """Send batch jobs to Blast. Muxes to multiple reference DBs."""
     # load inputs
     nick = contig['name']
-    in_root = dirs['ref_seg_dir']+nick+"/"
+    run_root = p_root_dir+run_id+"/"
+    in_root = run_root+dirs['ref_seg_dir']+nick+"/"
     print " ", nick
     # do blastn
     for ref in contig['refs']:
         input_file = in_root+nick+"_"+ref['type']+".fas"
-        out_dir = dirs['blast_out_dir']+nick+"/"+ref['type']+"/"
-        ensure_dir(out_dir)
+        out_dir = run_root+dirs['blast_out_dir']+nick+"/"+ref['type']+"/"
+        ensure_dir([out_dir])
         print "\t", ref['type'], "...",
         for genome in genomes:
             g_name = genome['name']

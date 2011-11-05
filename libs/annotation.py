@@ -1,4 +1,5 @@
-from config import genomes, directories as dirs, blast_prefs, prot_db_name
+from config import genomes, directories as dirs, p_root_dir, blast_prefs, \
+    prot_db_name
 import re, subprocess
 from loaders import load_multifasta, load_genbank
 from writers import write_genbank
@@ -26,17 +27,19 @@ def run_prodigal(in_file, an_gbk, an_aa, trn_file, mode):
     output, error = child.communicate()
     return output
 
-def annot_scaffolds(contig):
+def annot_scaffolds(contig, run_id):
     """Annotate scaffolds."""
     # locate the COG database
     prot_db = dirs['ref_dbs_dir']+prot_db_name
     # TODO: add other DB / pfams?
     # set inputs and outputs
     ctg_name = contig['name'] # reference contig
-    scaff_root = dirs['scaffolds_dir']+ctg_name+"/"
-    scaff_annot_root = dirs['scaff_annot_dir']+ctg_name+"/"
-    constructs_root = dirs['constructs_dir']+ctg_name+"/"
-    ensure_dir(constructs_root)
+    run_root = p_root_dir+run_id+"/"
+    scaff_root = run_root+dirs['scaffolds_dir']+ctg_name+"/"
+    scaff_annot_root = run_root+dirs['scaff_annot_dir']+ctg_name+"/"
+    constructs_root = run_root+dirs['constructs_dir']+ctg_name+"/"
+    annot_trn_root = dirs['annot_trn_dir']
+    ensure_dir([constructs_root, annot_trn_root])
     print " ", ctg_name
     # cycle through genomes
     for genome in genomes:
@@ -49,11 +52,9 @@ def annot_scaffolds(contig):
         gbk_out_dir = scaff_annot_root+"predict/"
         aa_out_dir = scaff_annot_root+"aa/"
         blast_out_dir = scaff_annot_root+"blastp/"
-        ensure_dir(gbk_out_dir)
-        ensure_dir(aa_out_dir)
-        ensure_dir(blast_out_dir)
+        ensure_dir([gbk_out_dir, aa_out_dir, blast_out_dir])
         # set output files
-        training_file = dirs['annot_trn_dir']+g_name+"_annot.trn"
+        training_file = annot_trn_root+g_name+"_annot.trn"
         annot_gbk = gbk_out_dir+g_name+"_"+ctg_name+"_annot.gbk"
         annot_aa = aa_out_dir+g_name+"_"+ctg_name+"_aa.fas"
         blast_out = blast_out_dir+g_name+"_"+ctg_name+".xml"

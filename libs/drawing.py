@@ -93,7 +93,7 @@ def BaseDraw(canvas, cName, cLen, feats, key, dop_Y, Y0, X_shift,
                 # draw arrow feature
                 ORFeus(canvas, featL, coords, color_hex, shape=None)
             # write annotation line and CDS number
-            if map_mode == 'single' and Y_annot > annot_cnt/2:
+            if map_mode == 'single' and Y_annot-1 > annot_cnt/2:
                 X_shift = (cLen/2)*u
                 if not shift_flag:
                     Y_annot -= annot_cnt/2
@@ -327,10 +327,11 @@ def ContigDraw(cName, in_file, out_file):
                  if feature.qualifiers.get('fct')[0] != 'no match']
     annot_cnt = sum(annot_cds)
     # calculate main canvas dimensions
-    if ctg_len < 25000:
-        hCan = 32*cm
+    if ctg_len*u < 2000:
+        seq_len = 2000
     else:
-        hCan = hmar*2 + pNsize + ctg_len*u
+        seq_len = ctg_len*u
+    hCan = hmar*2 + pNsize + seq_len
     vCan = dBL + vmar*4 + (annot_cnt/2)*ck_vsp
     transX = hmar + pNsize
     transY = dBL + vmar*2 + (annot_cnt/2)*ck_vsp
@@ -374,15 +375,16 @@ def PairwiseDraw(ref_name, q_name, q_file, ref_file, segs, map_file, q_inv,
                        if feature.qualifiers.get('fct')[0] != 'no match']
     query_annot_cnt = sum(query_annot_cds)
      # calculate main canvas dimensions
-    if ref_len > q_len:
+    if ref_len+g_offset[0] > q_len:
         ctg_len = ref_len+g_offset[0]
     else:
         ctg_len = q_len
     annot_cnt = max(ref_annot_cnt, query_annot_cnt)
-    if ctg_len < 50000:
-        hCan = 32*cm
+    if ctg_len*u < 2000:
+        seq_len = 2000
     else:
-        hCan = hmar*2 + pNsize + ctg_len*u
+        seq_len = ctg_len*u
+    hCan = hmar*2 + pNsize + seq_len
     vCan = dBL + vmar*6 + annot_cnt*ck_vsp
     transX = hmar + pNsize
     transY = dBL + vmar*2 + annot_cnt*ck_vsp

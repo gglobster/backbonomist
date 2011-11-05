@@ -5,7 +5,7 @@ from loaders import load_genbank, load_multifasta
 from writers import write_genbank, write_fasta
 from string_ops import multisplit_finder
 from common import ensure_dir
-from config import separator, directories as dirs, genomes, prox_D
+from config import separator, directories as dirs, p_root_dir, genomes, prox_D
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from Bio.Alphabet import generic_dna
@@ -46,7 +46,7 @@ def unpack_genomes(genome):
     # prep output destinations
     mfas_dir = dirs['mfas_contigs_dir']
     gbk_dir = dirs['gbk_contigs_dir']+g_name+"/"
-    ensure_dir(gbk_dir)
+    ensure_dir([mfas_dir, gbk_dir])
     fas_file = mfas_dir+g_name+"_contigs.fas"
     records = []
     # select unpacking method
@@ -89,15 +89,15 @@ def unpack_genomes(genome):
         raise Exception(xmsg)
     # write master file
     write_fasta(fas_file, records)
-    return genome['name']
 
-def extract_seg(contig):
+def extract_seg(contig, run_id):
     """Extract reference segments using coordinates."""
     # file info
     ctg_name = contig['name']
-    in_file = dirs['ref_ctg_dir']+contig['file']
-    out_root = dirs['ref_seg_dir']+ctg_name+"/"
-    ensure_dir(out_root)
+    run_root = p_root_dir+run_id+"/"
+    in_file = dirs['ori_g_dir']+contig['file']
+    out_root = run_root+dirs['ref_seg_dir']+ctg_name+"/"
+    ensure_dir([out_root])
     print " ", ctg_name, "...",
     # open record
     record = load_genbank(in_file)
@@ -111,11 +111,12 @@ def extract_seg(contig):
         print ref['type'],
     print ""
 
-def build_scaffolds(contig):
+def build_scaffolds(contig, run_id):
     """Build a scaffold of contigs based on the reference.
 
     This takes contigs that gave positive hits when blasted with reference
-    segments. Now the contigs are aligned against the complete reference to
+    segments. The contigs were aligned against the complete reference in a
+    previous step for mapping purposes. Now the output of that step is re-used
     determine their position. A caveat is that if there are natural local
     rearrangements in the sequence relative to the reference, they may not be
     resolved appropriately. The problem is somewhat moderated by the fact that
@@ -123,8 +124,8 @@ def build_scaffolds(contig):
     to position the contig within the scaffold. But if the rearranged region
     takes up a significant portion of the contig length, the anchoring will
     probably not be called correctly. Visual inspection of the finalized
-    maps should reveal any such problems. The order can be fixed manually
-    using the Mauve Contig Mover, which is part of Mauve 2.
+    maps should help diagnose any such problems. The order can be fixed
+    manually using the Mauve Contig Mover, which is part of Mauve 2.
 
     In some cases it is clear from looking at the maps generated further on
     that some contigs are included based on spurious hits. It is possible to
@@ -135,22 +136,21 @@ def build_scaffolds(contig):
     """
     # set inputs and outputs
     ctg_name = contig['name'] # reference contig
-    ref_ctg_file = dirs['ref_ctg_dir']+contig['file']
-    ctgs_root = dirs['match_out_dir']+ctg_name+"/"
-    mauve_root = dirs['mauve_out_dir']+ctg_name+"/scaffolding/"
-    scaffolds_root = dirs['scaffolds_dir']+ctg_name+"/"
+    run_root = p_root_dir+run_id+"/"
+    ctgs_root = run_root+dirs['match_out_dir']+ctg_name+"/"
+    mauve_root = run_root+dirs['mauve_out_dir']+ctg_name+"/contigs/"
+    scaffolds_root = run_root+dirs['scaffolds_dir']+ctg_name+"/"
     print " ", ctg_name
     # cycle through genomes
     for genome in genomes:
         # set inputs
         g_name = genome['name']
         ctgs_dir = ctgs_root+"/"+g_name+"/"
-        print "\t", g_name,
+        print "\t", g_name, "...",
         # set outputs
         mauve_dir = mauve_root+g_name+"/"
         scaffolds_dir = scaffolds_root+g_name+"/"
-        ensure_dir(mauve_dir)
-        ensure_dir(scaffolds_dir)
+        ensure_dir([mauve_dir, scaffolds_dir])
         scaff_fas = scaffolds_dir+g_name+"_"+ctg_name+"_scaffold.fas"
         scaff_gbk = scaffolds_dir+g_name+"_"+ctg_name+"_scaffold.gbk"
         # list genbank files in matches directory
@@ -167,13 +167,9 @@ def build_scaffolds(contig):
                 if int(ctg_num) not in genome['ignore']:
                     print ctg_num,
                     # set inputs
-                    file_list = (ref_ctg_file, ctgs_dir+item)
-                    # set Mauve output
-                    mauve_outfile = mauve_dir+ctg_num+".mauve"
-                    # do Mauve alignment
-                    align_mauve(file_list, mauve_outfile)
+                    mauve_file = mauve_dir+ctg_num+".mauve"
                     # parse Mauve output
-                    coords = mauver_load2_k0(mauve_outfile+".backbone", prox_D)
+                    coords = mauver_load2_k0(mauve_file+".backbone", prox_D)
                     # determine which segment to use as anchor
                     anchor_seg = get_anchor_loc(coords)
                     anchors_array = np.insert(anchors_array, 0,
