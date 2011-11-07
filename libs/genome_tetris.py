@@ -9,9 +9,9 @@ from config import separator, directories as dirs, p_root_dir, genomes, prox_D
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from Bio.Alphabet import generic_dna
-from aligning import align_mauve
 from parsing import mauver_load2_k0
 from array_tetris import get_anchor_loc
+from annotation import annot_ctgs
 
 def unpack_genomes(genome):
     """Unpack genome files.
@@ -58,6 +58,7 @@ def unpack_genomes(genome):
         counter = 0
         for rec in genome_recs:
             counter +=1
+            ctg_num = str(counter)
             new_id = g_name+"_"+str(counter)  # workaround for long ids
             new_seq = rec.seq
             new_seq.alphabet = generic_dna
@@ -65,6 +66,7 @@ def unpack_genomes(genome):
             records.append(new_rec)  # for multifasta output
             gbk_file = gbk_dir+new_id+".gbk"
             write_genbank(gbk_file, new_rec)
+            annot_ctgs(genome, gbk_file, ctg_num)
         print counter, "records"
     elif genome['input'] is 'cgbk':
         # load in genome data
@@ -76,16 +78,16 @@ def unpack_genomes(genome):
         counter = 0
         for (start, stop) in coord_pairs:
             counter +=1
+            ctg_num = str(counter)
             new_record = genome_rec[start:stop]
-            new_record.id = g_name+"_"+str(counter)
+            new_record.id = g_name+"_"+ctg_num
             records.append(new_record)  # for multifasta output
-            gbk_file = gbk_dir+g_name+"_"+str(counter)+".gbk"
+            gbk_file = gbk_dir+g_name+"_"+ctg_num+".gbk"
             write_genbank(gbk_file, new_record)
+            annot_ctgs(genome, gbk_file, ctg_num)
         print counter, "records"
     else:
-        xmsg = "Input file format "\
-               +genome['input']\
-               +" unspecified or unsupported"
+        xmsg = "Input file format "+genome['input']+" unspecified/unsupported"
         raise Exception(xmsg)
     # write master file
     write_fasta(fas_file, records)

@@ -1,7 +1,7 @@
 from config import genomes, directories as dirs, p_root_dir, blast_prefs, \
     prot_db_name
 import re, subprocess
-from loaders import load_multifasta, load_genbank
+from loaders import load_genbank
 from writers import write_genbank
 from common import ensure_dir
 from blasting import local_blastp_2file
@@ -27,8 +27,78 @@ def run_prodigal(in_file, an_gbk, an_aa, trn_file, mode):
     output, error = child.communicate()
     return output
 
-def annot_scaffolds(contig, run_id):
-    """Annotate scaffolds."""
+def annot_ctgs(genome, gbk_file, ctg_num):
+    """Predict ORFs on contigs."""
+    # locate the COG database
+    prot_db = dirs['ref_dbs_dir']+prot_db_name
+    # TODO: add other DB / pfams?
+    # set inputs and outputs
+    g_name = genome['name']
+    g_file = dirs['ori_g_dir']+genome['file']
+    ctg_root = dirs['gbk_contigs_dir']+g_name+"/"
+    ctg_annot_root = dirs['annot_ctg_dir']+g_name+"/"
+    ctg_gbk_dir = ctg_annot_root+"genbank/"
+    ctg_predict_dir = ctg_annot_root+"predict/"
+    ctg_aa_dir = ctg_annot_root+"aa/"
+    blast_out_dir = ctg_annot_root+"blastp/"
+    trn_dir = dirs['annot_trn_dir']
+    training_file = trn_dir+g_name+"_annot.trn"
+    predict_gbk = ctg_predict_dir+g_name+"_"+ctg_num+"_predict.gbk"
+    predict_aa = ctg_aa_dir+g_name+"_"+ctg_num+"_aa.fas"
+    blast_out = blast_out_dir+g_name+"_"+ctg_num+".xml"
+    annot_gbk = ctg_predict_dir+g_name+"_"+ctg_num+"_annot.gbk"
+    ensure_dir([trn_dir, ctg_root, ctg_gbk_dir, ctg_predict_dir, ctg_aa_dir,
+                blast_out_dir])
+    # predictions
+    print "predict",
+    if not path.exists(training_file):
+        train_prodigal(g_file, training_file, "-q")
+    run_prodigal(gbk_file, annot_gbk, predict_aa, training_file, "-q")
+    # blast the amino acids against COG
+    print "blastp",
+    #local_blastp_2file(predict_aa, prot_db, blast_out, blast_prefs)
+    # collect best hits
+    rec_cogs = collect_cogs(blast_out)
+    # consolidate annotated genbank file
+
+    ## TODO: sort out this clusterfuck (I think it needs to be adapted to
+    ## TODO: skip stuff relevant to the scaffolding process)
+
+
+    counter = 1
+    gene_count = 0
+    while counter < len(rec_cogs)/2:
+        # TODO: improve this whole bit, e.g. add protein translation etc
+        gene_count +=1
+        # get feature details from description line
+        # necessary because the prodigal output is not parser-friendly
+        this_prot = 'Query_'+str(counter)
+        annotation = rec_cogs[this_prot]
+        defline = rec_cogs[this_prot+"_def"]
+        pattern = re.compile('.+#\s(\d+)\s#\s(\d+)\s#\s(\S*1)\s#\sID.+')
+        match = pattern.match(defline)
+        start_pos = int(match.group(1))
+        end_pos = int(match.group(2))
+        strand_pos = int(match.group(3))
+        feat_loc = FeatureLocation(start_pos, end_pos)
+        # consolidation feature annotations
+        quals = {'note': defline, 'fct': annotation}
+        feature = SeqFeature(location=feat_loc,
+                             strand=strand_pos,
+                             id='cds_'+str(counter),
+                             type='CDS',
+                             qualifiers=quals)
+        record.features.append(feature)
+        counter +=1
+    print "annot"
+    record.description = g_name+"_"+ctg_num
+    record.name = g_name+"_"+ctg_num
+    record.seq.alphabet = generic_dna
+    write_genbank(predict_gbk, record)
+
+
+def annot_scaffolds(contig, run_id, mode):
+    """Annotate scaffolds (predict ORFs, optionally assign function)."""
     # locate the COG database
     prot_db = dirs['ref_dbs_dir']+prot_db_name
     # TODO: add other DB / pfams?
@@ -37,9 +107,9 @@ def annot_scaffolds(contig, run_id):
     run_root = p_root_dir+run_id+"/"
     scaff_root = run_root+dirs['scaffolds_dir']+ctg_name+"/"
     scaff_annot_root = run_root+dirs['scaff_annot_dir']+ctg_name+"/"
-    constructs_root = run_root+dirs['constructs_dir']+ctg_name+"/"
+    scaff_cons_root = run_root+dirs['constructs_dir']+ctg_name+"/"
     annot_trn_root = dirs['annot_trn_dir']
-    ensure_dir([constructs_root, annot_trn_root])
+    ensure_dir([scaff_cons_root, annot_trn_root])
     print " ", ctg_name
     # cycle through genomes
     for genome in genomes:
@@ -58,7 +128,7 @@ def annot_scaffolds(contig, run_id):
         annot_gbk = gbk_out_dir+g_name+"_"+ctg_name+"_annot.gbk"
         annot_aa = aa_out_dir+g_name+"_"+ctg_name+"_aa.fas"
         blast_out = blast_out_dir+g_name+"_"+ctg_name+".xml"
-        fin_gbk_out = constructs_root+g_name+"_"+ctg_name+"_cstrct.gbk"
+        fin_gbk_out = scaff_cons_root+g_name+"_"+ctg_name+"_cstrct.gbk"
         # gene prediction
         print "predict",
         if not path.exists(training_file):

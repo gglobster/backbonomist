@@ -150,6 +150,7 @@ directories = {
 'mfas_contigs_dir': p_root_dir+'genomes/mfasta_ctgs/',
 'blast_db_dir': p_root_dir+'genomes/blast_db/',
 'annot_trn_dir': p_root_dir+'genomes/annot_trn/',
+'annot_ctg_dir': p_root_dir+'genomes/annot_ctgs/',
 # the following are run-dependent
 'ref_seg_dir': 'ref_segments/',
 'blast_out_dir': 'blast_out/',
