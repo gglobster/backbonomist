@@ -1,7 +1,7 @@
 from config import genomes, directories as dirs, p_root_dir, blast_prefs, \
     prot_db_name
 import re, subprocess
-from loaders import load_genbank
+from loaders import load_genbank, load_multifasta
 from writers import write_genbank
 from common import ensure_dir
 from blasting import local_blastp_2file
@@ -28,53 +28,35 @@ def run_prodigal(in_file, an_gbk, an_aa, trn_file, mode):
     return output
 
 def annot_ctgs(genome, gbk_file, ctg_num):
-    """Predict ORFs on contigs."""
-    # locate the COG database
-    prot_db = dirs['ref_dbs_dir']+prot_db_name
-    # TODO: add other DB / pfams?
+    """Predict ORFs on contigs (no functional annotation)."""
     # set inputs and outputs
     g_name = genome['name']
     g_file = dirs['ori_g_dir']+genome['file']
-    ctg_root = dirs['gbk_contigs_dir']+g_name+"/"
     ctg_annot_root = dirs['annot_ctg_dir']+g_name+"/"
-    ctg_gbk_dir = ctg_annot_root+"genbank/"
-    ctg_predict_dir = ctg_annot_root+"predict/"
+    ctg_predict_dir = ctg_annot_root+"gbk_feat/"
     ctg_aa_dir = ctg_annot_root+"aa/"
-    blast_out_dir = ctg_annot_root+"blastp/"
+    ctg_gbk_dir = ctg_annot_root+"gbk_full/"
     trn_dir = dirs['annot_trn_dir']
-    training_file = trn_dir+g_name+"_annot.trn"
-    predict_gbk = ctg_predict_dir+g_name+"_"+ctg_num+"_predict.gbk"
+    training_file = dirs['annot_trn_dir']+g_name+"_annot.trn"
+    predict_gbk = ctg_predict_dir+g_name+"_"+ctg_num+"_feats.gbk"
     predict_aa = ctg_aa_dir+g_name+"_"+ctg_num+"_aa.fas"
-    blast_out = blast_out_dir+g_name+"_"+ctg_num+".xml"
-    annot_gbk = ctg_predict_dir+g_name+"_"+ctg_num+"_annot.gbk"
-    ensure_dir([trn_dir, ctg_root, ctg_gbk_dir, ctg_predict_dir, ctg_aa_dir,
-                blast_out_dir])
+    full_gbk = ctg_gbk_dir+g_name+"_"+ctg_num+"_full.gbk"
+    ensure_dir([trn_dir, ctg_predict_dir, ctg_aa_dir, ctg_gbk_dir])
     # predictions
-    print "predict",
     if not path.exists(training_file):
         train_prodigal(g_file, training_file, "-q")
-    run_prodigal(gbk_file, annot_gbk, predict_aa, training_file, "-q")
-    # blast the amino acids against COG
-    print "blastp",
-    #local_blastp_2file(predict_aa, prot_db, blast_out, blast_prefs)
-    # collect best hits
-    rec_cogs = collect_cogs(blast_out)
+    if not path.exists(predict_aa):
+        run_prodigal(gbk_file, predict_gbk, predict_aa, training_file, "-q")
     # consolidate annotated genbank file
-
-    ## TODO: sort out this clusterfuck (I think it needs to be adapted to
-    ## TODO: skip stuff relevant to the scaffolding process)
-
-
+    gbk_record = load_genbank(gbk_file)
+    gbk_record.features = []
+    aa_record = load_multifasta(predict_aa)
     counter = 1
-    gene_count = 0
-    while counter < len(rec_cogs)/2:
+    for aa_rec in aa_record:
         # TODO: improve this whole bit, e.g. add protein translation etc
-        gene_count +=1
         # get feature details from description line
-        # necessary because the prodigal output is not parser-friendly
-        this_prot = 'Query_'+str(counter)
-        annotation = rec_cogs[this_prot]
-        defline = rec_cogs[this_prot+"_def"]
+        # necessary because prodigal output fails to load as gbk record
+        defline = aa_rec.description
         pattern = re.compile('.+#\s(\d+)\s#\s(\d+)\s#\s(\S*1)\s#\sID.+')
         match = pattern.match(defline)
         start_pos = int(match.group(1))
@@ -82,22 +64,20 @@ def annot_ctgs(genome, gbk_file, ctg_num):
         strand_pos = int(match.group(3))
         feat_loc = FeatureLocation(start_pos, end_pos)
         # consolidation feature annotations
-        quals = {'note': defline, 'fct': annotation}
+        quals = {'note': defline, 'fct': 'no match'}
         feature = SeqFeature(location=feat_loc,
                              strand=strand_pos,
                              id='cds_'+str(counter),
                              type='CDS',
                              qualifiers=quals)
-        record.features.append(feature)
+        gbk_record.features.append(feature)
         counter +=1
-    print "annot"
-    record.description = g_name+"_"+ctg_num
-    record.name = g_name+"_"+ctg_num
-    record.seq.alphabet = generic_dna
-    write_genbank(predict_gbk, record)
+    gbk_record.description = g_name+"_"+ctg_num
+    gbk_record.name = g_name+"_"+ctg_num
+    gbk_record.seq.alphabet = generic_dna
+    write_genbank(full_gbk, gbk_record)
 
-
-def annot_scaffolds(contig, run_id, mode):
+def annot_scaffolds(contig, run_id):
     """Annotate scaffolds (predict ORFs, optionally assign function)."""
     # locate the COG database
     prot_db = dirs['ref_dbs_dir']+prot_db_name
@@ -152,7 +132,7 @@ def annot_scaffolds(contig, run_id, mode):
             # TODO: improve this whole bit, e.g. add protein translation etc
             gene_count +=1
             # get feature details from description line
-            # necessary because the prodigal output is not parser-friendly
+            # necessary because prodigal output fails to load as gbk record
             this_prot = 'Query_'+str(counter)
             annotation = rec_cogs[this_prot]
             defline = rec_cogs[this_prot+"_def"]

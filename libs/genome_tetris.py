@@ -67,7 +67,6 @@ def unpack_genomes(genome):
             gbk_file = gbk_dir+new_id+".gbk"
             write_genbank(gbk_file, new_rec)
             annot_ctgs(genome, gbk_file, ctg_num)
-        print counter, "records"
     elif genome['input'] is 'cgbk':
         # load in genome data
         genome_rec = load_genbank(inpath)
@@ -85,10 +84,10 @@ def unpack_genomes(genome):
             gbk_file = gbk_dir+g_name+"_"+ctg_num+".gbk"
             write_genbank(gbk_file, new_record)
             annot_ctgs(genome, gbk_file, ctg_num)
-        print counter, "records"
     else:
         xmsg = "Input file format "+genome['input']+" unspecified/unsupported"
         raise Exception(xmsg)
+    print counter, "contigs"
     # write master file
     write_fasta(fas_file, records)
 
@@ -103,6 +102,7 @@ def extract_seg(contig, run_id):
     print " ", ctg_name, "...",
     # open record
     record = load_genbank(in_file)
+    count = 0
     for ref in contig['refs']:
         # extract segment
         segment = record[ref['coords'][0]:ref['coords'][1]]
@@ -110,8 +110,8 @@ def extract_seg(contig, run_id):
         # write to file
         out_file = out_root+ctg_name+"_"+ref['type']+".fas"
         write_fasta(out_file, segment)
-        print ref['type'],
-    print ""
+        count +=1
+    print count, "segments"
 
 def build_scaffolds(contig, run_id):
     """Build a scaffold of contigs based on the reference.
@@ -170,15 +170,20 @@ def build_scaffolds(contig, run_id):
                     print ctg_num,
                     # set inputs
                     mauve_file = mauve_dir+ctg_num+".mauve"
-                    # parse Mauve output
-                    coords = mauver_load2_k0(mauve_file+".backbone", prox_D)
-                    # determine which segment to use as anchor
-                    anchor_seg = get_anchor_loc(coords)
-                    anchors_array = np.insert(anchors_array, 0,
-                                              (ctg_num,
-                                               anchor_seg['start'],
-                                               anchor_seg['end'],
-                                               anchor_seg['orient']))
+                    bb_file = mauve_file+".backbone"
+                    try:
+                        # parse Mauve output
+                        coords = mauver_load2_k0(bb_file, prox_D)
+                        # determine which segment to use as anchor
+                        anchor_seg = get_anchor_loc(coords)
+                        anchors_array = np.insert(anchors_array, 0,
+                                                  (ctg_num,
+                                                   anchor_seg['start'],
+                                                   anchor_seg['end'],
+                                                   anchor_seg['orient']))
+                    except IOError:
+                        print "ERROR: Mauve alignment file unavailable"
+                        print "\t\t",
         # order contigs by anchor location
         anchors_array = np.sort(anchors_array, order='start')
         # load contig records from the genbank files in the matches directory

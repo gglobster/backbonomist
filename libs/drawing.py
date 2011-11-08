@@ -56,7 +56,7 @@ def Canvasser(hCan,vCan,transX,transY,outfile) :
     return canvasN
 
 def BaseDraw(canvas, cName, cLen, feats, key, dop_Y, Y0, X_shift,
-             map_mode, annot_cnt, offset, offset_mode) :
+             map_mode, annot_cnt, offset, offset_mode, seq_len) :
     """Draw contig baseline and features."""
     # draw plasmid baseline
     BaseL(cLen, canvas, Y0, offset, offset_mode)
@@ -94,7 +94,7 @@ def BaseDraw(canvas, cName, cLen, feats, key, dop_Y, Y0, X_shift,
                 ORFeus(canvas, featL, coords, color_hex, shape=None)
             # write annotation line and CDS number
             if map_mode == 'single' and Y_annot-1 > annot_cnt/2:
-                X_shift = (cLen/2)*u
+                X_shift = seq_len/2
                 if not shift_flag:
                     Y_annot -= annot_cnt/2
                     shift_flag = True
@@ -340,7 +340,7 @@ def ContigDraw(cName, in_file, out_file):
     canvas = Canvasser(hCan, vCan, transX, transY, out_file)
     # draw contig baseline and features
     BaseDraw(canvas, cName, ctg_len, feats, 'fct', -doL, ctg_Y, 0, 'single',
-             annot_cnt, None, None)
+             annot_cnt, None, None, seq_len)
     # draw scale
     SeqScale(canvas, (ctg_len*u)-pNsize, incrT, incrN, dip, dop )
     # write to file and finalize the figure
@@ -396,10 +396,10 @@ def PairwiseDraw(ref_name, q_name, q_file, ref_file, segs, map_file, q_inv,
     SeqScale(m_canvas, (ctg_len*u)-pNsize, incrT, incrN, dip, dop )
     # draw ref baseline and features
     BaseDraw(m_canvas, ref_name, ref_len, ref_feat, 'product', doL, ref_Y,
-             0, 'dual', annot_cnt, g_offset[0], 'nudge')
+             0, 'dual', annot_cnt, g_offset[0], 'nudge', seq_len)
     # draw query baseline and features
     BaseDraw(m_canvas, q_name, q_len, q_feat, 'fct', -doL, query_Y,
-             q_len*u/2, 'dual', annot_cnt, g_offset[1], 'offset')
+             seq_len/2, 'dual', annot_cnt, g_offset[1], 'offset', seq_len)
     # draw pairwise similarity shading
     for xa, xb, xc, xd, idp in segs:
         # evaluate color shading category

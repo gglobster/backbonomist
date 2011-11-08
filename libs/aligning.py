@@ -54,7 +54,7 @@ def align_ctg2ref(contig, run_id):
     for genome in genomes:
         # set inputs and outputs
         g_name = genome['name']
-        print "\t", g_name, "..."
+        print "\t", g_name, "...",
         ctgs_gbk_dir = q_ctgs_root+g_name+"/"
         mauve_dir = mauve_root+g_name+"/"
         aln_segs_root = segments_root+g_name+"/"
@@ -77,15 +77,19 @@ def align_ctg2ref(contig, run_id):
                 open(segfile, 'w').write('')
                 # do Mauve alignment
                 align_mauve(file_list, mauve_outfile)
-                # parse Mauve output (without initial clumping)
-                coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
-                # chop segments that are too long
-                chop_array = chop_rows(coords, max_size, chop_mode)
-                # make detailed pairwise alignments of the segments
-                ref_rec = load_genbank(ref_ctg_file)
-                query_rec = load_genbank(q_contig)
-                iter_align(chop_array, ref_rec, query_rec, aln_segs_dir,
-                           segfile)
+                try:
+                    # parse Mauve output (without initial clumping)
+                    coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
+                    # chop segments that are too long
+                    chop_array = chop_rows(coords, max_size, chop_mode)
+                    # make detailed pairwise alignments of the segments
+                    ref_rec = load_genbank(ref_ctg_file)
+                    query_rec = load_genbank(q_contig)
+                    iter_align(chop_array, ref_rec, query_rec, aln_segs_dir,
+                               segfile)
+                except IOError:
+                    print "ERROR: Mauve alignment failed"
+                    print "\t\t",
         print ""
 
 def align_cstrct2ref(contig, run_id):
@@ -120,17 +124,21 @@ def align_cstrct2ref(contig, run_id):
             except Exception: raise
         # do Mauve alignment
         align_mauve(file_list, mauve_outfile)
-        # parse Mauve output (without initial clumping)
-        coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
-        print len(coords), '->',
-        # chop segments that are too long
-        chop_array = chop_rows(coords, max_size, chop_mode)
-        print len(chop_array), 'segments <', max_size, 'bp', 
-        # make detailed pairwise alignments of the segments
-        ref_rec = load_genbank(ref_ctg_file)
-        query_rec = load_genbank(cstrct_gbk)
-        id = iter_align(chop_array, ref_rec, query_rec, aln_segs_dir, segfile)
-        print "@", id, "% id. overall"
+        try:
+            # parse Mauve output (without initial clumping)
+            coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
+            print len(coords), '->',
+            # chop segments that are too long
+            chop_array = chop_rows(coords, max_size, chop_mode)
+            print len(chop_array), 'segments <', max_size, 'bp',
+            # make detailed pairwise alignments of the segments
+            ref_rec = load_genbank(ref_ctg_file)
+            query_rec = load_genbank(cstrct_gbk)
+            id = iter_align(chop_array, ref_rec, query_rec, aln_segs_dir, segfile)
+            print "@", id, "% id. overall"
+        except IOError:
+            print "ERROR: Mauve alignment failed"
+            print "\t\t",
 
 def iter_align(coord_array, ref_rec, query_rec, aln_dir, segs_file):
     """Iterate through array of coordinates to make pairwise alignments."""
