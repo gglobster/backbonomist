@@ -12,7 +12,7 @@ from array_tetris import offset_coord, nudge_coord, shade_split, \
 u 		= 0.0125		# conversion factor for sequence length-related values (0.0125, increase for short sequences)
 hmar 	= 1*cm			# horizontal margin to canvas (1*cm)
 vmar 	= 2*cm			# vertical margin to canvas (2*cm)
-pNsize 	= 4*cm			# width to set aside for plasmid names (2.5*cm)
+pNsize 	= 5*cm			# width to set aside for plasmid names (2.5*cm)
 di 		= 0.18*cm		# half-length of interruption/frameshift tick marks (0.18*cm)
 doL 	= 0.7*cm		# distance of ORF labels from their ORF (0.7*cm)
 minL 	= 700			# minimum ORF size (in base pairs) for 'full arrows' (700, decrease for short seq)
@@ -44,6 +44,22 @@ incrN 	= 5				# increment number (5, or 1 for short sequences)
 dip 	= -2*cm			# starting point on Y axis (-2*cm)
 dop 	= 0.3*cm		# size of vertical tick
 
+## Color key settings ##
+ckX 		= 5*cm		# starting point on X axis (5*cm)
+ckY 		= dip		# starting point on Y axis (dip, same as legend scale, but can take any numerical value)
+ck_hsp 		= 170		# horizontal spacing between columns (170)
+ck_vsp 		= 17		# vertical spacing between items (17)
+ck_boxX 	= 12		# horizontal side size of box (10)
+ck_boxY 	= 12		# vertical side size of box (10)
+ck_htxoff 	= 20		# horizontal offset for text from box origin (1)
+ck_vtxoff 	= 1			# vertical offset for text from box origin (20)
+lay_MAX 	= 2			# maximum items in a column (4, can also be a fraction of len(functions))
+
+## Heatmap key settings ##
+hk_u		= 3		    # length conversion factor (1.5)
+hkY			= dip		# starting point on Y axis (dip)
+hk_boxX		= ck_boxX*2	# horizontal side size of box (ck_boxY)
+
 ## Canvasser : Initialize canvas ##
 def Canvasser(hCan,vCan,transX,transY,outfile) :
     canvasN = canvas.Canvas(outfile, pagesize=(hCan,vCan))
@@ -64,7 +80,10 @@ def BaseDraw(canvas, cName, cLen, feats, key, dop_Y, Y0, X_shift,
     LabeL(cName, cLen, canvas, Y0)
     # label the annotations list
     Y_annot = 0
-    canvas.drawString(X_shift, y_adj, cName)
+    if map_mode != 'n':
+        canvas.setFont(bFont, LfSize)
+        canvas.drawString(X_shift, y_adj, cName)
+    canvas.setFont(rFont, SfSize)
     Y_annot +=2
     # filter and draw annotation features
     ORFcnt = 0
@@ -93,17 +112,17 @@ def BaseDraw(canvas, cName, cLen, feats, key, dop_Y, Y0, X_shift,
                 # draw arrow feature
                 ORFeus(canvas, featL, coords, color_hex, shape=None)
             # write annotation line and CDS number
-            if map_mode == 'single' and Y_annot-1 > annot_cnt/2:
-                X_shift = seq_len/2
-                if not shift_flag:
-                    Y_annot -= annot_cnt/2
-                    shift_flag = True
-            Y_annot = ORFannot(canvas, cLen, annot, Y_annot, ORFcnt, Y0+dop_Y,
-                               midLZ,
-                               X_shift, split_flag)
+            if map_mode != 'n':
+                if map_mode == 'single' and Y_annot-1 > annot_cnt/2:
+                    X_shift = seq_len/2
+                    if not shift_flag:
+                        Y_annot -= annot_cnt/2
+                        shift_flag = True
+                Y_annot = ORFannot(canvas, cLen, annot, Y_annot, ORFcnt,
+                                   Y0+dop_Y, midLZ, X_shift, split_flag)
 
-## BaseL : Draws phage baselines ##
-def BaseL(cLen, canvas, Y_map, offset, offset_mode) :
+def BaseL(cLen, canvas, Y_map, offset, offset_mode):
+    """Draw sequence baseline."""
     canvas.setLineWidth(3)
     y0 = Y_map
     Zs = 0              # all sequences are initially aligned on the left
@@ -123,8 +142,8 @@ def BaseL(cLen, canvas, Y_map, offset, offset_mode) :
     canvas.drawPath(pBL, stroke=1, fill=0)
     pBL.close()
 
-## LabeL : Labels baselines with plasmid name and size ##
 def LabeL(cName, cLen, canvas, Y_map) :
+    """Label baselines with genome/contig name and size."""
     canvas.setFillColor(black)
     y0 = Y_map
     x0 = -pNsize                # retreat into the left margin to write out name and size
@@ -185,7 +204,7 @@ def ORFcoords(feature, Y_map, cLen, offset, offset_mode):
     Ze = location.nofuzzy_end
     featL = Ze - Zs
     # calculate offset coordinates
-    if offset_mode == 'offset':
+    if offset_mode == 'loop':
         Zs = offset_coord(Zs, cLen, offset)
         Ze = offset_coord(Ze, cLen, offset)
     elif offset_mode == 'nudge':
@@ -256,7 +275,7 @@ def TigTicker(canvas, feature, cLen, offset, offset_mode):
     Zs = location.nofuzzy_start
     Ze = location.nofuzzy_end
     # calculate offset coordinates
-    if offset_mode == 'offset':
+    if offset_mode == 'loop':
         offZs = offset_coord(Zs, cLen, offset)
         offZe = offset_coord(Ze, cLen, offset)
     elif offset_mode == 'nudge':
@@ -342,13 +361,13 @@ def ContigDraw(cName, in_file, out_file):
     BaseDraw(canvas, cName, ctg_len, feats, 'fct', -doL, ctg_Y, 0, 'single',
              annot_cnt, None, None, seq_len)
     # draw scale
-    SeqScale(canvas, (ctg_len*u)-pNsize, incrT, incrN, dip, dop )
+    SeqScale(canvas, (ctg_len*u)-pNsize, incrT, incrN, dip, dop)
     # write to file and finalize the figure
     canvas.showPage()
     canvas.save()
 
 def PairwiseDraw(ref_name, q_name, q_file, ref_file, segs, map_file, q_inv,
-                 g_offset):
+                 g_offset, mode1, mode2):
     """Draw pairwise alignment map with similarity shading."""
     # load ref and query records
     # ref first
@@ -374,32 +393,40 @@ def PairwiseDraw(ref_name, q_name, q_file, ref_file, segs, map_file, q_inv,
     query_annot_cds = [1 for feature in query_cds
                        if feature.qualifiers.get('fct')[0] != 'no match']
     query_annot_cnt = sum(query_annot_cds)
-     # calculate main canvas dimensions
+    # calculate main canvas dimensions - horizontal
     if ref_len+g_offset[0] > q_len:
         ctg_len = ref_len+g_offset[0]
     else:
         ctg_len = q_len
-    annot_cnt = max(ref_annot_cnt, query_annot_cnt)
     if ctg_len*u < 2000:
         seq_len = 2000
     else:
         seq_len = ctg_len*u
     hCan = hmar*2 + pNsize + seq_len
-    vCan = dBL + vmar*6 + annot_cnt*ck_vsp
+    # calculate main canvas dimensions - vertical
+    if mode1 == 'single' and mode2 == 'n':
+        annot_cnt = ref_annot_cnt
+        annot_len = annot_cnt/2
+    else:
+        annot_cnt = max(ref_annot_cnt, query_annot_cnt)
+        annot_len = annot_cnt
+    vCan = dBL + vmar*6 + annot_len*ck_vsp
     transX = hmar + pNsize
-    transY = dBL + vmar*2 + annot_cnt*ck_vsp
+    transY = dBL + vmar*2 + annot_len*ck_vsp
     ref_Y = vmar*3
     query_Y = vmar
     # set up main canvas
     m_canvas = Canvasser(hCan, vCan, transX, transY, map_file)
     # draw scale
     SeqScale(m_canvas, (ctg_len*u)-pNsize, incrT, incrN, dip, dop )
+    # draw shading legend
+    HeaKey(m_canvas, -pNsize, -pNsize/2)
     # draw ref baseline and features
     BaseDraw(m_canvas, ref_name, ref_len, ref_feat, 'product', doL, ref_Y,
-             0, 'dual', annot_cnt, g_offset[0], 'nudge', seq_len)
+             0, mode1, annot_cnt, g_offset[0], 'nudge', seq_len)
     # draw query baseline and features
     BaseDraw(m_canvas, q_name, q_len, q_feat, 'fct', -doL, query_Y,
-             seq_len/2, 'dual', annot_cnt, g_offset[1], 'offset', seq_len)
+             seq_len/2, mode2, annot_cnt, g_offset[1], 'loop', seq_len)
     # draw pairwise similarity shading
     for xa, xb, xc, xd, idp in segs:
         # evaluate color shading category
@@ -457,14 +484,35 @@ def Shadowfax(canvas_def, xa, xb, xc, xd, aby0, cdy0, sh_color):
     canvas_def.drawPath(puck, stroke=1, fill=0)
     puck.close()
 
-def SimColor(idp) :
+def SimColor(idp):
     """Evaluate class of similarity."""
     id_cats = [x for x in idpt if idp>=x]
     sh_hex = idpt[max(id_cats)]
     return sh_hex
 
-
-
+def HeaKey(canvas, hkX, hkY):
+    """Draw color key for the heat map."""
+    canvas.setLineWidth(1)
+    canvas.setLineCap(0)
+    canvas.setFillColor(black)
+    canvas.setFont(bFont, LfSize)
+    canvas.drawString(hkX, hkY, "Nt id. %")
+    # draw heatmap color scale
+    canvas.setFont(rFont, NfSize)
+    hk_list = sorted(idpt.iterkeys(), reverse=True)
+    hk_list.insert(0, 100)
+    hk_i = 0
+    hkY -= hk_boxX*1.5
+    canvas.drawCentredString(hkX+hk_boxX+incrN*3, hkY, str(100))
+    while hk_i < len(hk_list)-1:
+        hk_boxY = (hk_list[hk_i]-hk_list[hk_i+1])*hk_u
+        hkY -= hk_boxY
+        canvas.setFillColor(HexColor(idpt[hk_list[hk_i+1]]))
+        canvas.rect(hkX, hkY, hk_boxX, hk_boxY, fill=1)
+        canvas.setFillColor(black)
+        canvas.drawCentredString(hkX+hk_boxX+incrN*3, hkY,
+                                 str(hk_list[hk_i+1]))
+        hk_i += 1
 
 
 

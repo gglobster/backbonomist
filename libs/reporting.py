@@ -31,15 +31,15 @@ def prep_maps(ref_ctg, run_id):
         ctg_aln_maps_dir = ctg_aln_maps_root+g_name+"/"
         ensure_dir([ctg_aln_maps_dir])
         # maps of contigs aligned to reference
-        map_ctg_alns(ref_ctg, genome, ctg_segs_root, ctg_aln_maps_dir)
         print "ctg_aln",
+        map_ctg_alns(ref_ctg, genome, ctg_segs_root, ctg_aln_maps_dir)
         # map of scaffold construct
-        map_cst_annot(ref_ctg, genome, cstrct_gbk, cst_ann_maps_root)
         print "cst_annot",
+        map_cst_annot(ref_ctg, genome, cstrct_gbk, cst_ann_maps_root)
         # map of construct aligned to reference
+        print "cst_aln"
         map_cst_aln(ref_ctg, genome, cstrct_gbk, cst_segs_root,
                     cst_aln_maps_root)
-        print "cst_aln"
 
 def map_ctg_alns(ref_ctg, genome, ctg_segs_root, maps_root):
     """Generate maps of contigs aligned to reference."""
@@ -58,22 +58,18 @@ def map_ctg_alns(ref_ctg, genome, ctg_segs_root, maps_root):
         try:
             # load segments TODO: add idp-based clumping
             segdata = np.loadtxt(seg_file, skiprows=1, dtype=segtype)
-            # offset coordinates where desired
-            g_offset = genome['offset']
-            if g_offset[0] != 0 or g_offset[1] != 0:
-                q_len = len(load_genbank(ctg_gbk).seq)
-                segdata = offset_q2r_coords(segdata, q_len, g_offset)
-            # determine whether to flip the query sequence (negative offset)
-            if g_offset[1] < 0:
-                q_invert = True
-            else:
-                q_invert = False
+            # deactivate offsetting
+            g_offset = (0,0)
+            q_invert = False
             # generate graphical map
-            PairwiseDraw(ref_ctg_n, g_name, ctg_gbk, ref_ctg_file, segdata,
-                         map_file, q_invert, g_offset)
+            PairwiseDraw(ref_ctg_n, g_name+"_"+ctg_num, ctg_gbk, ref_ctg_file,
+                         segdata, map_file, q_invert, g_offset, 'single', 'n')
         except IOError:
-            print "ERROR: could not load segments data for", g_name, ctg_num
-            print "\t\t",
+            print "\nERROR: could not load segments data for", g_name, ctg_num
+            print "\t\t\t",
+        except StopIteration:
+            print "\nERROR: could not make map for", g_name, ctg_num
+            print "\t\t\t",
 
 def map_cst_annot(ref_ctg, genome, cstrct_gbk, maps_root):
     """Generate map of annotated scaffold construct."""
@@ -106,7 +102,7 @@ def map_cst_aln(ref_ctg, genome, cstrct_gbk, segs_root, maps_root):
             q_invert = False
         # generate graphical map
         PairwiseDraw(ref_ctg_n, g_name, cstrct_gbk, ref_ctg_file, segdata,
-                     map_file, q_invert, g_offset)
+                     map_file, q_invert, g_offset, 'dual', 'dual')
     except IOError:
-        print "ERROR: could not load segments data for", g_name
-        print "\t\t",
+        print "\nERROR: could not load segments data for", g_name
+        print "\t\t\t",

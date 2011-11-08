@@ -88,8 +88,8 @@ def align_ctg2ref(contig, run_id):
                     iter_align(chop_array, ref_rec, query_rec, aln_segs_dir,
                                segfile)
                 except IOError:
-                    print "ERROR: Mauve alignment failed"
-                    print "\t\t",
+                    print "\nERROR: Mauve alignment failed"
+                    print "\t\t\t",
         print ""
 
 def align_cstrct2ref(contig, run_id):
@@ -137,8 +137,8 @@ def align_cstrct2ref(contig, run_id):
             id = iter_align(chop_array, ref_rec, query_rec, aln_segs_dir, segfile)
             print "@", id, "% id. overall"
         except IOError:
-            print "ERROR: Mauve alignment failed"
-            print "\t\t",
+            print "\nERROR: Mauve alignment failed"
+            print "\t\t\t",
 
 def iter_align(coord_array, ref_rec, query_rec, aln_dir, segs_file):
     """Iterate through array of coordinates to make pairwise alignments."""
