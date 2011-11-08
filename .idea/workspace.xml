@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8a8c4471-b7cc-4e82-9f85-bbe4467ee0f6" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/mapping.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config.py" afterPath="$PROJECT_DIR$/config.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libs/aligning.py" afterPath="$PROJECT_DIR$/libs/aligning.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libs/drawing.py" afterPath="$PROJECT_DIR$/libs/drawing.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libs/reporting.py" afterPath="$PROJECT_DIR$/libs/reporting.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main_script.py" afterPath="$PROJECT_DIR$/main_script.py" />
     </list>
     <ignored path="backbonomist.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -64,10 +64,10 @@
         <splitter split-orientation="horizontal" split-proportion="0.5">
           <split-first>
             <leaf>
-              <file leaf-file-name="reporting.py" pinned="false" current="false" current-in-tab="true">
-                <entry file="file://$PROJECT_DIR$/libs/reporting.py">
+              <file leaf-file-name="mapping.py" pinned="false" current="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/libs/mapping.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="92" column="42" selection-start="4035" selection-end="4035" vertical-scroll-proportion="0.9534643">
+                    <state line="72" column="0" selection-start="3166" selection-end="3166" vertical-scroll-proportion="0.0">
                       <folding />
                     </state>
                   </provider>
@@ -91,10 +91,10 @@
                   </provider>
                 </entry>
               </file>
-              <file leaf-file-name="genome_tetris.py" pinned="false" current="false" current-in-tab="false">
+              <file leaf-file-name="genome_tetris.py" pinned="false" current="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/libs/genome_tetris.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="184" column="70" selection-start="8241" selection-end="8241" vertical-scroll-proportion="0.0">
+                    <state line="152" column="24" selection-start="6517" selection-end="6517" vertical-scroll-proportion="0.3950362">
                       <folding />
                     </state>
                   </provider>
@@ -112,7 +112,7 @@
               <file leaf-file-name="drawing.py" pinned="false" current="false" current-in-tab="false">
                 <entry file="file://$PROJECT_DIR$/libs/drawing.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="394" column="42" selection-start="15192" selection-end="15192" vertical-scroll-proportion="0.0">
+                    <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
                       <folding />
                     </state>
                   </provider>
@@ -122,10 +122,10 @@
           </split-first>
           <split-second>
             <leaf>
-              <file leaf-file-name="config.py" pinned="false" current="true" current-in-tab="true">
+              <file leaf-file-name="config.py" pinned="false" current="false" current-in-tab="false">
                 <entry file="file://$PROJECT_DIR$/config.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="24" column="57" selection-start="1062" selection-end="1062" vertical-scroll-proportion="0.36960986">
+                    <state line="50" column="44" selection-start="2422" selection-end="2422" vertical-scroll-proportion="0.0">
                       <folding />
                     </state>
                   </provider>
@@ -134,7 +134,16 @@
               <file leaf-file-name="main_script.py" pinned="false" current="false" current-in-tab="false">
                 <entry file="file://$PROJECT_DIR$/main_script.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="82" column="17" selection-start="2456" selection-end="2456" vertical-scroll-proportion="0.0">
+                    <state line="7" column="29" selection-start="321" selection-end="321" vertical-scroll-proportion="0.0">
+                      <folding />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="reporting.py" pinned="false" current="true" current-in-tab="true">
+                <entry file="file://$PROJECT_DIR$/libs/reporting.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
                       <folding />
                     </state>
                   </provider>
@@ -164,8 +173,8 @@
         <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/libs/annotation.py" />
         <option value="$PROJECT_DIR$/libs/genome_tetris.py" />
-        <option value="$PROJECT_DIR$/libs/drawing.py" />
         <option value="$PROJECT_DIR$/libs/reporting.py" />
+        <option value="$PROJECT_DIR$/libs/drawing.py" />
       </list>
     </option>
   </component>
@@ -214,6 +223,20 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="backbonomist" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="backbonomist" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="libs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Favorites" />
@@ -252,6 +275,22 @@
       <module name="backbonomist" />
       <option name="SCRIPT_NAME" value="" />
       <option name="PARAMETERS" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="PythonDocTestRunConfigurationType" factoryName="Python's doctests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <module name="backbonomist" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
       <method />
     </configuration>
     <list size="0" />
@@ -369,19 +408,9 @@
         <state line="25" column="19" selection-start="801" selection-end="816" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/libs/genome_tetris.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="184" column="70" selection-start="8241" selection-end="8241" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/libs/parsing.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="71" column="23" selection-start="2915" selection-end="2915" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main_script.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="82" column="17" selection-start="2456" selection-end="2456" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libs/aligning.py">
@@ -398,23 +427,44 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/libs/drawing.py">
+    <entry file="file://$PROJECT_DIR$/libs/mapping.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="394" column="42" selection-start="15192" selection-end="15192" vertical-scroll-proportion="0.0">
+        <state line="72" column="0" selection-start="3166" selection-end="3166" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/libs/reporting.py">
+    <entry file="file://$PROJECT_DIR$/libs/drawing.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="92" column="42" selection-start="4035" selection-end="4035" vertical-scroll-proportion="0.9534643">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/genome_tetris.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="152" column="24" selection-start="6517" selection-end="6517" vertical-scroll-proportion="0.3950362">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/config.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="57" selection-start="1062" selection-end="1062" vertical-scroll-proportion="0.36960986">
+        <state line="50" column="44" selection-start="2422" selection-end="2422" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_script.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="29" selection-start="321" selection-end="321" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/reporting.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>

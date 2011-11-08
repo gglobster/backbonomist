@@ -27,7 +27,7 @@ genomes = [{'name': 'pXO1', 'input': 'cgbk', 'file': 'pXO1.gbk',
            # BI batch 1
            {'name': 'IS075', 'input': 'mfas', 'file': 'IS075.fas',
             'offset': (0,0), 'ignore': (0, 0)},
-           {'name': 'Schrouff', 'input': 'mfas', 'file': 'BSchrouff.fas',
+           {'name': 'Schrouff', 'input': 'mfas', 'file': 'Schrouff.fas',
             'offset': (0,0), 'ignore': (0, 0)},
            {'name': 'TIAC129', 'input': 'mfas', 'file': 'TIAC129.fas',
             'offset': (0,0), 'ignore': (0, 0)},

@@ -1,4 +1,3 @@
-from Bio import GenBank
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm
 from reportlab.lib.colors import black, white, HexColor

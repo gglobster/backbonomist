@@ -5,7 +5,7 @@ from libs.genome_tetris import unpack_genomes, extract_seg, build_scaffolds
 from libs.blasting import make_genome_DB, basic_batch_blastn
 from libs.parsing import glompX_blast_out
 from libs.annotation import annot_scaffolds
-from libs.reporting import prep_maps
+from libs.mapping import prep_maps
 from libs.aligning import align_cstrct2ref, align_ctg2ref
 from config import references, genomes
 
