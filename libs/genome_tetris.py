@@ -45,9 +45,9 @@ def unpack_genomes(genome):
     print " ", g_name, "...",
     # prep output destinations
     mfas_dir = dirs['mfas_contigs_dir']
-    gbk_dir = dirs['gbk_contigs_dir']+g_name+"/"
-    ensure_dir([mfas_dir, gbk_dir])
-    fas_file = mfas_dir+g_name+"_contigs.fas"
+    fas_dir = dirs['fas_contigs_dir']+g_name+"/"
+    ensure_dir([mfas_dir, fas_dir])
+    mfas_file = mfas_dir+g_name+"_contigs.fas"
     records = []
     # select unpacking method
     if genome['input'] is 'mfas':
@@ -64,9 +64,8 @@ def unpack_genomes(genome):
             new_seq.alphabet = generic_dna
             new_rec = SeqRecord(seq=new_seq, id=new_id)
             records.append(new_rec)  # for multifasta output
-            gbk_file = gbk_dir+new_id+".gbk"
-            write_genbank(gbk_file, new_rec)
-            annot_ctgs(genome, gbk_file, ctg_num)
+            fas_file = fas_dir+new_id+".fas"
+            write_fasta(fas_file, new_rec)
     elif genome['input'] is 'cgbk':
         # load in genome data
         genome_rec = load_genbank(inpath)
@@ -81,15 +80,14 @@ def unpack_genomes(genome):
             new_record = genome_rec[start:stop]
             new_record.id = g_name+"_"+ctg_num
             records.append(new_record)  # for multifasta output
-            gbk_file = gbk_dir+g_name+"_"+ctg_num+".gbk"
-            write_genbank(gbk_file, new_record)
-            annot_ctgs(genome, gbk_file, ctg_num)
+            fas_file = fas_dir+g_name+"_"+ctg_num+".fas"
+            write_fasta(fas_file, new_record)
     else:
         xmsg = "Input file format "+genome['input']+" unspecified/unsupported"
         raise Exception(xmsg)
     print counter, "contigs"
     # write master file
-    write_fasta(fas_file, records)
+    write_fasta(mfas_file, records)
 
 def extract_seg(contig, run_id):
     """Extract reference segments using coordinates."""

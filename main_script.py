@@ -4,7 +4,7 @@ from datetime import datetime
 from libs.genome_tetris import unpack_genomes, extract_seg, build_scaffolds
 from libs.blasting import make_genome_DB, basic_batch_blastn
 from libs.parsing import glompX_blast_out
-from libs.annotation import annot_scaffolds
+from libs.annotation import annot_contigs
 from libs.mapping import prep_maps
 from libs.aligning import align_cstrct2ref, align_ctg2ref
 from config import references, genomes
@@ -60,7 +60,7 @@ if step is 3:
     step +=1
 
 if step is 4:
-    print "\n###", step, ". Blast reference segments against genome DBs ###\n"
+    print "\n###", step, ". Blast reference segments against genomes ###\n"
     for ref in references:
         basic_batch_blastn(ref, run_id)
     step +=1
@@ -72,21 +72,21 @@ if step is 5:
     step +=1
 
 if step is 6:
+    print "\n###", step, ". Annotate matching contigs ###\n"
+    for ref in references:
+        annot_contigs(ref, run_id)
+    step +=1
+
+if step is 7:
     print "\n###", step, ". Align contigs pairwise to reference ###\n"
     for ref in references:
         align_ctg2ref(ref, run_id)
     step +=1
 
-if step is 7:
+if step is 8:
     print "\n###", step, ". Construct backbone-based scaffolds ###\n"
     for ref in references:
         build_scaffolds(ref, run_id)
-    step +=1
-
-if step is 8:
-    print "\n###", step, ". Annotate scaffold constructs ###\n"
-    for ref in references:
-        annot_scaffolds(ref, run_id)
     step +=1
 
 if step is 9:

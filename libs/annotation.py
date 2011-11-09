@@ -1,7 +1,7 @@
 from config import genomes, directories as dirs, p_root_dir, blast_prefs, \
     prot_db_name
 import re, subprocess
-from loaders import load_genbank, load_multifasta
+from loaders import load_genbank, load_multifasta, load_fasta
 from writers import write_genbank
 from common import ensure_dir
 from blasting import local_blastp_2file
@@ -27,7 +27,7 @@ def run_prodigal(in_file, an_gbk, an_aa, trn_file, mode):
     output, error = child.communicate()
     return output
 
-def annot_ctgs(genome, gbk_file, ctg_num):
+def annot_ctgs(genome, fas_file, ctg_num):
     """Predict ORFs on contigs (no functional annotation)."""
     # set inputs and outputs
     g_name = genome['name']
@@ -35,25 +35,24 @@ def annot_ctgs(genome, gbk_file, ctg_num):
     ctg_annot_root = dirs['annot_ctg_dir']+g_name+"/"
     ctg_predict_dir = ctg_annot_root+"gbk_feat/"
     ctg_aa_dir = ctg_annot_root+"aa/"
-    ctg_gbk_dir = ctg_annot_root+"gbk_full/"
+    ctg_gbk_dir = dirs['gbk_contigs_dir']+g_name+"/"
     trn_dir = dirs['annot_trn_dir']
     training_file = dirs['annot_trn_dir']+g_name+"_annot.trn"
     predict_gbk = ctg_predict_dir+g_name+"_"+ctg_num+"_feats.gbk"
     predict_aa = ctg_aa_dir+g_name+"_"+ctg_num+"_aa.fas"
-    full_gbk = ctg_gbk_dir+g_name+"_"+ctg_num+"_full.gbk"
+    full_gbk = ctg_gbk_dir+g_name+"_"+ctg_num+".gbk"
     ensure_dir([trn_dir, ctg_predict_dir, ctg_aa_dir, ctg_gbk_dir])
     # predictions
     if not path.exists(training_file):
         train_prodigal(g_file, training_file, "-q")
     if not path.exists(predict_aa):
-        run_prodigal(gbk_file, predict_gbk, predict_aa, training_file, "-q")
+        run_prodigal(fas_file, predict_gbk, predict_aa, training_file, "-q")
     # consolidate annotated genbank file
-    gbk_record = load_genbank(gbk_file)
-    gbk_record.features = []
+    record = load_fasta(fas_file)
+    record.features = []
     aa_record = load_multifasta(predict_aa)
     counter = 1
     for aa_rec in aa_record:
-        # TODO: improve this whole bit, e.g. add protein translation etc
         # get feature details from description line
         # necessary because prodigal output fails to load as gbk record
         defline = aa_rec.description
@@ -63,52 +62,63 @@ def annot_ctgs(genome, gbk_file, ctg_num):
         end_pos = int(match.group(2))
         strand_pos = int(match.group(3))
         feat_loc = FeatureLocation(start_pos, end_pos)
+        l_tag = g_name+"_"+ctg_num+"_"+str(counter)
         # consolidation feature annotations
-        quals = {'note': defline, 'fct': 'no match'}
+        quals = {'note': defline, 'locus_tag': l_tag, 'fct': 'no match',
+                 'translation': aa_rec.seq}
         feature = SeqFeature(location=feat_loc,
                              strand=strand_pos,
                              id='cds_'+str(counter),
                              type='CDS',
                              qualifiers=quals)
-        gbk_record.features.append(feature)
+        record.features.append(feature)
         counter +=1
-    gbk_record.description = g_name+"_"+ctg_num
-    gbk_record.name = g_name+"_"+ctg_num
-    gbk_record.seq.alphabet = generic_dna
-    write_genbank(full_gbk, gbk_record)
+    record.description = g_name+"_"+ctg_num
+    record.name = g_name+"_"+ctg_num
+    record.seq.alphabet = generic_dna
+    write_genbank(full_gbk, record)
 
-def annot_scaffolds(contig, run_id):
-    """Annotate scaffolds (predict ORFs, optionally assign function)."""
+def annot_contigs(ref_contig, run_id):
+    """Annotate contigs (predict ORFs and assign function)."""
     # locate the COG database
     prot_db = dirs['ref_dbs_dir']+prot_db_name
     # TODO: add other DB / pfams?
     # set inputs and outputs
-    ctg_name = contig['name'] # reference contig
+    ref_name = ref_contig['name'] # reference contig
     run_root = p_root_dir+run_id+"/"
-    scaff_root = run_root+dirs['scaffolds_dir']+ctg_name+"/"
-    scaff_annot_root = run_root+dirs['scaff_annot_dir']+ctg_name+"/"
-    scaff_cons_root = run_root+dirs['constructs_dir']+ctg_name+"/"
+    fas_ctgs_root = run_root+dirs['match_out_dir']+ref_name+"/"
+    ctg_cds_root = run_root+dirs['ctg_cds_dir']+ref_name+"/"
+    ctg_prot_root = run_root+dirs['ctg_prot_dir']+ref_name+"/"
+    gbk_ctgs_root = run_root+dirs['gbk_ctgs_dir']+ref_name+"/"
     annot_trn_root = dirs['annot_trn_dir']
-    ensure_dir([scaff_cons_root, annot_trn_root])
-    print " ", ctg_name
+    ensure_dir([ctg_cds_root, ctg_prot_root, gbk_ctgs_root, annot_trn_root])
+    print " ", ref_name
     # cycle through genomes
     for genome in genomes:
         # set inputs
         g_name = genome['name']
-        g_file = dirs['ori_g_dir']+genome['file']
-        scaff_gbk = scaff_root+g_name+"/"+g_name+"_"+ctg_name+"_scaffold.gbk"
-        print '\t', g_name, "...",
-        # set output dirs
-        gbk_out_dir = scaff_annot_root+"predict/"
-        aa_out_dir = scaff_annot_root+"aa/"
-        blast_out_dir = scaff_annot_root+"blastp/"
-        ensure_dir([gbk_out_dir, aa_out_dir, blast_out_dir])
+        fas_ctgs_dir = fas_ctgs_root+g_name+"/"
         # set output files
         training_file = annot_trn_root+g_name+"_annot.trn"
-        annot_gbk = gbk_out_dir+g_name+"_"+ctg_name+"_annot.gbk"
-        annot_aa = aa_out_dir+g_name+"_"+ctg_name+"_aa.fas"
-        blast_out = blast_out_dir+g_name+"_"+ctg_name+".xml"
-        fin_gbk_out = scaff_cons_root+g_name+"_"+ctg_name+"_cstrct.gbk"
+        g_file = dirs['ori_g_dir']+genome['file']
+
+        # set output dirs
+
+
+
+
+        ctg_gbk = scaff_root+g_name+"/"+g_name+"_"+ref_name+"_scaffold.gbk"
+        print '\t', g_name, "...",
+
+
+        blast_out_dir = ctg_annot_root+"blastp/"
+
+        ensure_dir([gbk_out_dir, aa_out_dir, blast_out_dir])
+
+        annot_gbk = gbk_out_dir+g_name+"_"+ref_name+"_annot.gbk"
+        annot_aa = aa_out_dir+g_name+"_"+ref_name+"_aa.fas"
+        blast_out = blast_out_dir+g_name+"_"+ref_name+".xml"
+        fin_gbk_out = scaff_cons_root+g_name+"_"+ref_name+"_cstrct.gbk"
         # abort if there is no scaffold construct
         try: open(scaff_gbk, 'r')
         except IOError:
