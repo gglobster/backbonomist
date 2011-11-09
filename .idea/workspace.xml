@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8a8c4471-b7cc-4e82-9f85-bbe4467ee0f6" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config.py" afterPath="$PROJECT_DIR$/config.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libs/array_tetris.py" afterPath="$PROJECT_DIR$/libs/array_tetris.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libs/genome_tetris.py" afterPath="$PROJECT_DIR$/libs/genome_tetris.py" />
     </list>
     <ignored path="backbonomist.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -40,7 +41,7 @@
           <file leaf-file-name="annotation.py" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/libs/annotation.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="73" column="19" selection-start="3231" selection-end="3231" vertical-scroll-proportion="0.015197569">
+                <state line="91" column="49" selection-start="4029" selection-end="4029" vertical-scroll-proportion="0.2887538">
                   <folding />
                 </state>
               </provider>
@@ -79,19 +80,19 @@
                   </provider>
                 </entry>
               </file>
-              <file leaf-file-name="array_tetris.py" pinned="false" current="true" current-in-tab="true">
+              <file leaf-file-name="array_tetris.py" pinned="false" current="false" current-in-tab="false">
                 <entry file="file://$PROJECT_DIR$/libs/array_tetris.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="84" column="21" selection-start="3180" selection-end="3180" vertical-scroll-proportion="0.8066184">
+                    <state line="84" column="21" selection-start="3180" selection-end="3180" vertical-scroll-proportion="0.0">
                       <folding />
                     </state>
                   </provider>
                 </entry>
               </file>
-              <file leaf-file-name="genome_tetris.py" pinned="false" current="false" current-in-tab="false">
+              <file leaf-file-name="genome_tetris.py" pinned="false" current="true" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/libs/genome_tetris.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="174" column="42" selection-start="7595" selection-end="7595" vertical-scroll-proportion="0.0">
+                    <state line="222" column="12" selection-start="10144" selection-end="10144" vertical-scroll-proportion="0.8899371">
                       <folding />
                     </state>
                   </provider>
@@ -122,7 +123,7 @@
               <file leaf-file-name="config.py" pinned="false" current="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/config.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="180" column="29" selection-start="9978" selection-end="9978" vertical-scroll-proportion="0.18377824">
+                    <state line="178" column="34" selection-start="9692" selection-end="9692" vertical-scroll-proportion="2.7412732">
                       <folding />
                     </state>
                   </provider>
@@ -169,9 +170,9 @@
         <option value="$PROJECT_DIR$/libs/parsing.py" />
         <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/libs/annotation.py" />
-        <option value="$PROJECT_DIR$/libs/genome_tetris.py" />
         <option value="$PROJECT_DIR$/libs/reporting.py" />
         <option value="$PROJECT_DIR$/libs/drawing.py" />
+        <option value="$PROJECT_DIR$/libs/genome_tetris.py" />
       </list>
     </option>
   </component>
@@ -379,13 +380,6 @@
         <state line="76" column="19" selection-start="3371" selection-end="3371" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/libs/annotation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="73" column="19" selection-start="3231" selection-end="3231" vertical-scroll-proportion="0.015197569">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/libs/loaders.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="25" column="19" selection-start="801" selection-end="816" vertical-scroll-proportion="0.0" />
@@ -411,13 +405,6 @@
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/libs/genome_tetris.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="174" column="42" selection-start="7595" selection-end="7595" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main_script.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="7" column="29" selection-start="321" selection-end="321" vertical-scroll-proportion="0.0">
@@ -432,16 +419,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config.py">
+    <entry file="file://$PROJECT_DIR$/libs/array_tetris.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="180" column="29" selection-start="9978" selection-end="9978" vertical-scroll-proportion="0.18377824">
+        <state line="84" column="21" selection-start="3180" selection-end="3180" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/libs/array_tetris.py">
+    <entry file="file://$PROJECT_DIR$/config.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="84" column="21" selection-start="3180" selection-end="3180" vertical-scroll-proportion="0.8066184">
+        <state line="178" column="34" selection-start="9692" selection-end="9692" vertical-scroll-proportion="2.7412732">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/annotation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="91" column="49" selection-start="4029" selection-end="4029" vertical-scroll-proportion="0.2887538">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/genome_tetris.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="222" column="12" selection-start="10144" selection-end="10144" vertical-scroll-proportion="0.8899371">
           <folding />
         </state>
       </provider>

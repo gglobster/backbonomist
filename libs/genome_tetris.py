@@ -184,34 +184,40 @@ def build_scaffolds(contig, run_id):
                     except IOError:
                         print "ERROR: Mauve alignment file unavailable"
                         print "\t\t",
-        # order contigs by anchor location
-        anchors_array = np.sort(anchors_array, order='start')
-        # load contig records from the genbank files in the matches directory
-        ctg_list = []
-        for ctg_anchor in anchors_array:
-            ctg_num = ctg_anchor['ctg']
-            if ctg_num > 0:
-                contig_gbk = ctgs_dir+g_name+"_"+str(ctg_num)+".gbk"
-                record = load_genbank(contig_gbk)
-                if ctg_anchor['orient'] == -1: # flip record
-                    record.seq = record.seq.reverse_complement()
-                ctg_list.append(record)
-            else: # workaround for having a 0 value leftover from stub
-                pass # having it might come in handy in later dev, so it stays
-        # output scaffold files (for genbank, need to concatenate records)
-        write_fasta(scaff_fas, ctg_list)
-        scaff_record = SeqRecord('', id='temp')
-        scaff_bumper = SeqRecord(separator, id='join')
-        for record in ctg_list:
-            feat_start = len(scaff_record.seq)
-            scaff_record += record
-            feat_stop = len(scaff_record.seq)
-            scaff_record += scaff_bumper
-            feat_loc = FeatureLocation(feat_start, feat_stop)
-            feature = SeqFeature(location=feat_loc,
-                                 type='contig',
-                                 qualifiers={'id': record.id})
-            scaff_record.features.append(feature)
-        scaff_record.id = g_name+"_"+ctg_name
-        write_genbank(scaff_gbk, scaff_record[:-100]) # leave out last bumper
-        print ""
+        # abort if there is no valid contig to proceed with
+        try:
+            assert len(anchors_array) > 1 # always 1 from stub
+        except AssertionError:
+            print "WARNING: Contig list empty"
+        else:
+            # order contigs by anchor location
+            anchors_array = np.sort(anchors_array, order='start')
+            # load contig records from the genbank files in the matches directory
+            ctg_list = []
+            for ctg_anchor in anchors_array:
+                ctg_num = ctg_anchor['ctg']
+                if ctg_num > 0:
+                    contig_gbk = ctgs_dir+g_name+"_"+str(ctg_num)+".gbk"
+                    record = load_genbank(contig_gbk)
+                    if ctg_anchor['orient'] == -1: # flip record
+                        record.seq = record.seq.reverse_complement()
+                    ctg_list.append(record)
+                else: # workaround for having 0 value leftover from stub
+                    pass # having it might come in handy in later dev
+            # output scaffold files
+            write_fasta(scaff_fas, ctg_list)
+            scaff_record = SeqRecord('', id='temp')
+            scaff_bumper = SeqRecord(separator, id='join')
+            for record in ctg_list:
+                feat_start = len(scaff_record.seq)
+                scaff_record += record
+                feat_stop = len(scaff_record.seq)
+                scaff_record += scaff_bumper
+                feat_loc = FeatureLocation(feat_start, feat_stop)
+                feature = SeqFeature(location=feat_loc,
+                                     type='contig',
+                                     qualifiers={'id': record.id})
+                scaff_record.features.append(feature)
+            scaff_record.id = g_name+"_"+ctg_name
+            write_genbank(scaff_gbk, scaff_record[:-100]) # rm last bumper
+            print ""
