@@ -69,24 +69,25 @@ def chop_rows(uncut_array, max_size, chop_mode):
             # edge case, cancel chopping for this segment
             row = xa, xb, xc, xd
             all_rows_list.append(row)
-        # denormalize coordinates
-        dn_pairs1 = []
-        for a, b in pair_list1:
-            if xa < 0: pair = (xa-a, xa-b)
-            else: pair = (xa+a, xa+b)
-            dn_pairs1.append(pair)
-        dn_pairs2 = []
-        for c, d in pair_list2:
-            if xc < 0: pair = (xc-c, xc-d)
-            else: pair = (xc+c, xc+d)
-            dn_pairs2.append(pair)
-        # consolidate to row format
-        count = 0
-        while count < len(dn_pairs1):
-            row = (dn_pairs1[count][0], dn_pairs1[count][1],
-                   dn_pairs2[count][0], dn_pairs2[count][1])
-            all_rows_list.append(row)
-            count +=1
+        else:
+            # denormalize coordinates
+            dn_pairs1 = []
+            for a, b in pair_list1:
+                if xa < 0: pair = (xa-a, xa-b)
+                else: pair = (xa+a, xa+b)
+                dn_pairs1.append(pair)
+            dn_pairs2 = []
+            for c, d in pair_list2:
+                if xc < 0: pair = (xc-c, xc-d)
+                else: pair = (xc+c, xc+d)
+                dn_pairs2.append(pair)
+            # consolidate to row format
+            count = 0
+            while count < len(dn_pairs1):
+                row = (dn_pairs1[count][0], dn_pairs1[count][1],
+                       dn_pairs2[count][0], dn_pairs2[count][1])
+                all_rows_list.append(row)
+                count +=1
     # make a new array from the list of rows
     chop_array = np.array(all_rows_list, dtype=mtype)
     chop_array = np.sort(chop_array, order=mtype[0][0])
