@@ -77,7 +77,11 @@ def map_cst_annot(ref_ctg, genome, cstrct_gbk, maps_root):
     g_name = genome['name']
     ref_ctg_n = ref_ctg['name']
     map_file = maps_root+g_name+"_<"+ref_ctg_n+".pdf"
-    ContigDraw(g_name, cstrct_gbk, map_file)
+    try: open(cstrct_gbk, 'r')
+    except IOError:
+        print "WARNING: No scaffold construct to map"
+    else:
+        ContigDraw(g_name, cstrct_gbk, map_file)
 
 def map_cst_aln(ref_ctg, genome, cstrct_gbk, segs_root, maps_root):
     """Generate map of construct aligned to reference."""
@@ -87,22 +91,26 @@ def map_cst_aln(ref_ctg, genome, cstrct_gbk, segs_root, maps_root):
     ref_ctg_file = dirs['ori_g_dir']+ref_ctg['file']
     seg_file = segs_root+g_name+"/"+g_name+"_"+ref_ctg_n+"_segs.txt"
     map_file = maps_root+g_name+"_vs_"+ref_ctg_n+".pdf"
-    try:
-        # load segments TODO: add idp-based clumping
-        segdata = np.loadtxt(seg_file, skiprows=1, dtype=segtype)
-        # offset coordinates where desired
-        g_offset = genome['offset']
-        if g_offset[0] != 0 or g_offset[1] != 0:
-            q_len = len(load_genbank(cstrct_gbk).seq)
-            segdata = offset_q2r_coords(segdata, q_len, g_offset)
-        # determine whether to flip the query sequence (negative offset)
-        if g_offset[1] < 0:
-            q_invert = True
-        else:
-            q_invert = False
-        # generate graphical map
-        PairwiseDraw(ref_ctg_n, g_name, cstrct_gbk, ref_ctg_file, segdata,
-                     map_file, q_invert, g_offset, 'dual', 'dual')
+    try: open(cstrct_gbk)
     except IOError:
-        print "\nERROR: could not load segments data for", g_name
-        print "\t\t\t",
+        print "WARNING: No scaffold construct to map"
+    else:
+        try:
+            # load segments TODO: add idp-based clumping
+            segdata = np.loadtxt(seg_file, skiprows=1, dtype=segtype)
+        except IOError:
+            print "\nERROR: could not load segments data for", g_name
+        else:
+            # offset coordinates where desired
+            g_offset = genome['offset']
+            if g_offset[0] != 0 or g_offset[1] != 0:
+                q_len = len(load_genbank(cstrct_gbk).seq)
+                segdata = offset_q2r_coords(segdata, q_len, g_offset)
+            # determine whether to flip the query sequence (negative offset)
+            if g_offset[1] < 0:
+                q_invert = True
+            else:
+                q_invert = False
+            # generate graphical map
+            PairwiseDraw(ref_ctg_n, g_name, cstrct_gbk, ref_ctg_file, segdata,
+                         map_file, q_invert, g_offset, 'du al', 'dual')

@@ -37,9 +37,9 @@ def glompX_blast_out(contig, run_id):
                 for item in listdir(genome_ctg_dir):
                     match = re.match(pattern, item)
                     if match:
-                        contig = load_genbank(genome_ctg_dir+item)
+                        match_contig = load_genbank(genome_ctg_dir+item)
                         gbk_file = matches_dir+match.group(1)+".gbk"
-                        write_genbank(gbk_file, contig)
+                        write_genbank(gbk_file, match_contig)
         print ""
 
 def mauver_load2_k0(file, threshold):
