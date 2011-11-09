@@ -116,29 +116,34 @@ def align_cstrct2ref(contig, run_id):
         ensure_dir([mauve_dir, aln_segs_dir])
         mauve_outfile = mauve_dir+g_name+"_"+ctg_name+".mauve"
         segfile = aln_segs_dir+g_name+"_"+ctg_name+"_segs.txt"
-        open(segfile, 'w').write('')
-        # purge any pre-existing sslist file
-        sslist_file = cstrct_gbk+".sslist"
-        if os.path.isfile(sslist_file):
-            try: os.remove(sslist_file)
-            except Exception: raise
-        # do Mauve alignment
-        align_mauve(file_list, mauve_outfile)
-        try:
-            # parse Mauve output (without initial clumping)
-            coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
-            print len(coords), '->',
-            # chop segments that are too long
-            chop_array = chop_rows(coords, max_size, chop_mode)
-            print len(chop_array), 'segments <', max_size, 'bp',
-            # make detailed pairwise alignments of the segments
-            ref_rec = load_genbank(ref_ctg_file)
-            query_rec = load_genbank(cstrct_gbk)
-            id = iter_align(chop_array, ref_rec, query_rec, aln_segs_dir, segfile)
-            print "@", id, "% id. overall"
+        # abort if there is no scaffold construct
+        try: open(cstrct_gbk, 'r')
         except IOError:
-            print "\nERROR: Mauve alignment failed"
-            print "\t\t\t",
+            print "WARNING: No scaffold construct to align"
+        else:
+            # prep segments file
+            open(segfile, 'w').write('')
+            # purge any pre-existing sslist file
+            sslist_file = cstrct_gbk+".sslist"
+            if os.path.isfile(sslist_file):
+                try: os.remove(sslist_file)
+                except Exception: raise
+            # do Mauve alignment
+            align_mauve(file_list, mauve_outfile)
+            try:
+                # parse Mauve output (without initial clumping)
+                coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
+                print len(coords), '->',
+                # chop segments that are too long
+                chop_array = chop_rows(coords, max_size, chop_mode)
+                print len(chop_array), 'segments <', max_size, 'bp',
+                # make detailed pairwise alignments of the segments
+                ref_rec = load_genbank(ref_ctg_file)
+                query_rec = load_genbank(cstrct_gbk)
+                id = iter_align(chop_array, ref_rec, query_rec, aln_segs_dir, segfile)
+                print "@", id, "% id. overall"
+            except IOError:
+                print "\nERROR: Mauve alignment failed"
 
 def iter_align(coord_array, ref_rec, query_rec, aln_dir, segs_file):
     """Iterate through array of coordinates to make pairwise alignments."""

@@ -109,10 +109,10 @@ def annot_scaffolds(contig, run_id):
         annot_aa = aa_out_dir+g_name+"_"+ctg_name+"_aa.fas"
         blast_out = blast_out_dir+g_name+"_"+ctg_name+".xml"
         fin_gbk_out = scaff_cons_root+g_name+"_"+ctg_name+"_cstrct.gbk"
-        # abort if there is no scaffold
+        # abort if there is no scaffold construct
         try: open(scaff_gbk, 'r')
         except IOError:
-            print "WARNING: No scaffold"
+            print "WARNING: No scaffold construct to annotate"
         else:
             # gene prediction
             print "predict",
