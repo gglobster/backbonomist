@@ -109,51 +109,59 @@ def annot_scaffolds(contig, run_id):
         annot_aa = aa_out_dir+g_name+"_"+ctg_name+"_aa.fas"
         blast_out = blast_out_dir+g_name+"_"+ctg_name+".xml"
         fin_gbk_out = scaff_cons_root+g_name+"_"+ctg_name+"_cstrct.gbk"
-        # gene prediction
-        print "predict",
-        if not path.exists(training_file):
-            train_prodigal(g_file, training_file, "-q")
-        run_prodigal(scaff_gbk, annot_gbk, annot_aa, training_file, "-q")
-        # blast the amino acids against COG
-        print "blastp",
-        local_blastp_2file(annot_aa, prot_db, blast_out, blast_prefs)
-        # collect best hits
-        rec_cogs = collect_cogs(blast_out)
-        # consolidate annotated genbank file
-        record = load_genbank(scaff_gbk)
-        ctg_feats = [feature for feature in record.features
-                     if feature.type == 'contig'] # backup contig features
-        record.features = [] # wipe previous features
-        for contig in ctg_feats:
-            record.features.append(contig) # restore contig features
-        counter = 1
-        gene_count = 0
-        while counter < len(rec_cogs)/2:
-            # TODO: improve this whole bit, e.g. add protein translation etc
-            gene_count +=1
-            # get feature details from description line
-            # necessary because prodigal output fails to load as gbk record
-            this_prot = 'Query_'+str(counter)
-            annotation = rec_cogs[this_prot]
-            defline = rec_cogs[this_prot+"_def"]
-            pattern = re.compile('.+#\s(\d+)\s#\s(\d+)\s#\s(\S*1)\s#\sID.+')
-            match = pattern.match(defline)
-            start_pos = int(match.group(1))
-            end_pos = int(match.group(2))
-            strand_pos = int(match.group(3))
-            feat_loc = FeatureLocation(start_pos, end_pos)
-            # consolidation feature annotations
-            quals = {'note': defline, 'fct': annotation}
-            feature = SeqFeature(location=feat_loc,
-                                 strand=strand_pos,
-                                 id='cds_'+str(counter),
-                                 type='CDS',
-                                 qualifiers=quals)
-            record.features.append(feature)
-            counter +=1
-        print "annot"
-        record.description = g_name+"_"+ctg_name+"_scaffold"
-        record.name = g_name+"_"+ctg_name
-        record.dbxrefs = ["Project: "+ctg_name+"-like backbones"]
-        record.seq.alphabet = generic_dna
-        write_genbank(fin_gbk_out, record)
+        # abort if there is no scaffold
+        try: open(scaff_gbk, 'r')
+        except IOError:
+            print "WARNING: No scaffold"
+        else:
+            # gene prediction
+            print "predict",
+            if not path.exists(training_file):
+                train_prodigal(g_file, training_file, "-q")
+            if not path.exists(annot_aa):
+                run_prodigal(scaff_gbk, annot_gbk, annot_aa, training_file,
+                             "-q")
+            # blast the amino acids against COG
+            print "blastp",
+            if not path.exists(blast_out):
+                local_blastp_2file(annot_aa, prot_db, blast_out, blast_prefs)
+            # collect best hits
+            rec_cogs = collect_cogs(blast_out)
+            # consolidate annotated genbank file
+            record = load_genbank(scaff_gbk)
+            ctg_feats = [feature for feature in record.features
+                         if feature.type == 'contig'] # backup contig features
+            record.features = [] # wipe previous features
+            for contig in ctg_feats:
+                record.features.append(contig) # restore contig features
+            counter = 1
+            gene_count = 0
+            while counter < len(rec_cogs)/2:
+                # TODO: improve this whole bit, e.g. add protein translation etc
+                gene_count +=1
+                # get feature details from description line
+                # necessary because prodigal output fails to load as gbk record
+                this_prot = 'Query_'+str(counter)
+                annotation = rec_cogs[this_prot]
+                defline = rec_cogs[this_prot+"_def"]
+                pattern = re.compile('.+#\s(\d+)\s#\s(\d+)\s#\s(\S*1)\s#\sID.+')
+                match = pattern.match(defline)
+                start_pos = int(match.group(1))
+                end_pos = int(match.group(2))
+                strand_pos = int(match.group(3))
+                feat_loc = FeatureLocation(start_pos, end_pos)
+                # consolidation feature annotations
+                quals = {'note': defline, 'fct': annotation}
+                feature = SeqFeature(location=feat_loc,
+                                     strand=strand_pos,
+                                     id='cds_'+str(counter),
+                                     type='CDS',
+                                     qualifiers=quals)
+                record.features.append(feature)
+                counter +=1
+            print "annot"
+            record.description = g_name+"_"+ctg_name+"_scaffold"
+            record.name = g_name+"_"+ctg_name
+            record.dbxrefs = ["Project: "+ctg_name+"-like backbones"]
+            record.seq.alphabet = generic_dna
+            write_genbank(fin_gbk_out, record)
