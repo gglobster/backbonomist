@@ -1,45 +1,44 @@
-import re
-import numpy as np
-from os import listdir
-from loaders import read_array, load_genbank, td_txt_file_load
-from writers import write_genbank
+import re, numpy as np
+from os import listdir, path
+from shutil import copyfile
+from loaders import read_array, td_txt_file_load
 from config import directories as dirs, p_root_dir, blast_dtypes, genomes, \
     mtype
 from common import ensure_dir
 from array_tetris import extract_nonzero, clump_rows
 from Bio.Blast import NCBIXML
 
-def glompX_blast_out(contig, run_id):
+def glompX_blast_out(ref_ctg, run_id):
     """Collect Blast results and extract match contigs."""
     # load inputs
-    nick = contig['name']
+    nick = ref_ctg['name']
     run_root = p_root_dir+run_id+"/"
     match_root = run_root+dirs['match_out_dir']+nick+"/"
     print " ", nick
     # collect
-    for ref in contig['refs']:
-        print "\t", ref['type'], "...",
-        blast_dir = run_root+dirs['blast_out_dir']+nick+"/"+ref['type']+"/"
+    for ref in ref_ctg['refs']:
+        print "\t", ref['name'], "...",
+        blast_dir = run_root+dirs['blast_out_dir']+nick+"/"+ref['name']+"/"
         ensure_dir([blast_dir])
         for genome in genomes:
             g_name = genome['name']
             matches_dir = match_root+g_name+"/"
             ensure_dir([matches_dir])
             blast_infile = blast_dir+g_name+"_out.txt"
-            genome_ctg_dir = dirs['gbk_contigs_dir']+g_name+"/"
+            genome_ctg_dir = dirs['fas_contigs_dir']+g_name+"/"
             rec_array = read_array(blast_infile, blast_dtypes)
             if len(rec_array) > 0:  # if there are hits, take the best one
                 contig_id = rec_array[0][1]
                 #q_coords = rec_array[0][6], rec_array[0][7]
                 #t_coords = rec_array[0][8], rec_array[0][9]
                 print contig_id,
-                pattern = re.compile(r'('+contig_id+')\.gbk')
+                pattern = re.compile(r'('+contig_id+')\.fas')
                 for item in listdir(genome_ctg_dir):
                     match = re.match(pattern, item)
                     if match:
-                        match_contig = load_genbank(genome_ctg_dir+item)
-                        gbk_file = matches_dir+match.group(1)+".gbk"
-                        write_genbank(gbk_file, match_contig)
+                        fas_file = matches_dir+match.group(1)+".fas"
+                        if not path.exists(fas_file):
+                            copyfile(genome_ctg_dir+item, fas_file)
         print ""
 
 def mauver_load2_k0(file, threshold):

@@ -7,7 +7,7 @@ from config import mauve_exec, directories as dirs, p_root_dir, genomes, \
 from common import ensure_dir
 from parsing import mauver_load2_k0, parse_clustal_idstars
 from array_tetris import chop_rows
-from loaders import load_genbank
+from loaders import load_genbank, load_fasta
 from writers import write_fasta
 
 def align_clustal(file_name):
@@ -55,20 +55,20 @@ def align_ctg2ref(contig, run_id):
         # set inputs and outputs
         g_name = genome['name']
         print "\t", g_name, "...",
-        ctgs_gbk_dir = q_ctgs_root+g_name+"/"
+        ctgs_fas_dir = q_ctgs_root+g_name+"/"
         mauve_dir = mauve_root+g_name+"/"
         aln_segs_root = segments_root+g_name+"/"
         ensure_dir([mauve_dir])
         # list genbank files in matches directory
-        dir_contents = listdir(ctgs_gbk_dir)
+        dir_contents = listdir(ctgs_fas_dir)
         for item in dir_contents:
-            pattern = re.compile(r'.*_(\d*)\.gbk$')
+            pattern = re.compile(r'.*_(\d*)\.fas$')
             match = pattern.match(item)
             if match:
                 ctg_num = match.group(1)
                 print ctg_num,
                 # set inputs and outputs
-                q_contig = ctgs_gbk_dir+item
+                q_contig = ctgs_fas_dir+item
                 file_list = (ref_ctg_file, q_contig)
                 mauve_outfile = mauve_dir+ctg_num+".mauve"
                 aln_segs_dir = aln_segs_root+ctg_num+"/"
@@ -84,7 +84,7 @@ def align_ctg2ref(contig, run_id):
                     chop_array = chop_rows(coords, max_size, chop_mode)
                     # make detailed pairwise alignments of the segments
                     ref_rec = load_genbank(ref_ctg_file)
-                    query_rec = load_genbank(q_contig)
+                    query_rec = load_fasta(q_contig)
                     iter_align(chop_array, ref_rec, query_rec, aln_segs_dir,
                                segfile)
                 except IOError:
@@ -100,15 +100,15 @@ def align_cstrct2ref(contig, run_id):
     ref_ctg_file = dirs['ori_g_dir']+contig['file']
     mauve_root = run_root+dirs['mauve_out_dir']+ctg_name+"/constructs/"
     segments_root = run_root+dirs['aln_seg_dir']+ctg_name+"/constructs/"
-    constructs_root = run_root+dirs['constructs_dir']+ctg_name+"/"
+    scaff_root = run_root+dirs['scaffolds_dir']+ctg_name+"/"
     ensure_dir([segments_root])
     print " ", ctg_name
     # cycle through genomes
     for genome in genomes:
         # set inputs
         g_name = genome['name']
-        cstrct_gbk = constructs_root+g_name+"_"+ctg_name+"_cstrct.gbk"
-        file_list = (ref_ctg_file, cstrct_gbk)
+        scaff_fas = scaff_root+g_name+"_"+ctg_name+"_scaffold.fas"
+        file_list = (ref_ctg_file, scaff_fas)
         print "\t", g_name, "...",
         # set outputs
         mauve_dir = mauve_root+g_name+"/"
@@ -117,14 +117,14 @@ def align_cstrct2ref(contig, run_id):
         mauve_outfile = mauve_dir+g_name+"_"+ctg_name+".mauve"
         segfile = aln_segs_dir+g_name+"_"+ctg_name+"_segs.txt"
         # abort if there is no scaffold construct
-        try: open(cstrct_gbk, 'r')
+        try: open(scaff_fas, 'r')
         except IOError:
             print "WARNING: No scaffold construct to align"
         else:
             # prep segments file
             open(segfile, 'w').write('')
             # purge any pre-existing sslist file
-            sslist_file = cstrct_gbk+".sslist"
+            sslist_file = scaff_fas+".sslist"
             if os.path.isfile(sslist_file):
                 try: os.remove(sslist_file)
                 except Exception: raise
@@ -139,7 +139,7 @@ def align_cstrct2ref(contig, run_id):
                 print len(chop_array), 'segments <', max_size, 'bp',
                 # make detailed pairwise alignments of the segments
                 ref_rec = load_genbank(ref_ctg_file)
-                query_rec = load_genbank(cstrct_gbk)
+                query_rec = load_fasta(scaff_fas)
                 id = iter_align(chop_array, ref_rec, query_rec, aln_segs_dir, segfile)
                 print "@", id, "% id. overall"
             except IOError:

@@ -11,7 +11,6 @@ from Bio.SeqFeature import SeqFeature, FeatureLocation
 from Bio.Alphabet import generic_dna
 from parsing import mauver_load2_k0
 from array_tetris import get_anchor_loc
-from annotation import annot_ctgs
 
 def unpack_genomes(genome):
     """Unpack genome files.
@@ -59,7 +58,7 @@ def unpack_genomes(genome):
         for rec in genome_recs:
             counter +=1
             ctg_num = str(counter)
-            new_id = g_name+"_"+str(counter)  # workaround for long ids
+            new_id = g_name+"_"+ctg_num  # workaround for long ids
             new_seq = rec.seq
             new_seq.alphabet = generic_dna
             new_rec = SeqRecord(seq=new_seq, id=new_id)
@@ -104,9 +103,9 @@ def extract_seg(contig, run_id):
     for ref in contig['refs']:
         # extract segment
         segment = record[ref['coords'][0]:ref['coords'][1]]
-        segment.id = ctg_name+"_"+ref['type']
+        segment.id = ctg_name+"_"+ref['name']
         # write to file
-        out_file = out_root+ctg_name+"_"+ref['type']+".fas"
+        out_file = out_root+ctg_name+"_"+ref['name']+".fas"
         write_fasta(out_file, segment)
         count +=1
     print count, "segments"
@@ -135,24 +134,23 @@ def build_scaffolds(contig, run_id):
 
     """
     # set inputs and outputs
-    ctg_name = contig['name'] # reference contig
+    ref_ctg_name = contig['name'] # reference contig
     run_root = p_root_dir+run_id+"/"
-    ctgs_root = run_root+dirs['match_out_dir']+ctg_name+"/"
-    mauve_root = run_root+dirs['mauve_out_dir']+ctg_name+"/contigs/"
-    scaffolds_root = run_root+dirs['scaffolds_dir']+ctg_name+"/"
-    print " ", ctg_name
+    ctgs_root = run_root+dirs['run_gbk_ctgs_dir']+ref_ctg_name+"/"
+    mauve_root = run_root+dirs['mauve_out_dir']+ref_ctg_name+"/contigs/"
+    scaffolds_dir = run_root+dirs['scaffolds_dir']+ref_ctg_name+"/"
+    print " ", ref_ctg_name
     # cycle through genomes
     for genome in genomes:
         # set inputs
         g_name = genome['name']
-        ctgs_dir = ctgs_root+"/"+g_name+"/"
+        ctgs_dir = ctgs_root+g_name+"/"
         print "\t", g_name, "...",
         # set outputs
         mauve_dir = mauve_root+g_name+"/"
-        scaffolds_dir = scaffolds_root+g_name+"/"
         ensure_dir([mauve_dir, scaffolds_dir])
-        scaff_fas = scaffolds_dir+g_name+"_"+ctg_name+"_scaffold.fas"
-        scaff_gbk = scaffolds_dir+g_name+"_"+ctg_name+"_scaffold.gbk"
+        scaff_fas = scaffolds_dir+g_name+"_"+ref_ctg_name+"_scaffold.fas"
+        scaff_gbk = scaffolds_dir+g_name+"_"+ref_ctg_name+"_scaffold.gbk"
         # list genbank files in matches directory
         dir_contents = listdir(ctgs_dir)
         anchors_array = np.zeros(1, dtype=[('ctg', 'i4'),
@@ -216,6 +214,6 @@ def build_scaffolds(contig, run_id):
                                      type='contig',
                                      qualifiers={'id': record.id})
                 scaff_record.features.append(feature)
-            scaff_record.id = g_name+"_"+ctg_name
+            scaff_record.id = g_name+"_"+ref_ctg_name
             write_genbank(scaff_gbk, scaff_record[:-100]) # rm last bumper
             print ""

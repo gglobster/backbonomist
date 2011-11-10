@@ -77,10 +77,10 @@ def basic_batch_blastn(contig, run_id):
     print " ", nick
     # do blastn
     for ref in contig['refs']:
-        input_file = in_root+nick+"_"+ref['type']+".fas"
-        out_dir = run_root+dirs['blast_out_dir']+nick+"/"+ref['type']+"/"
+        input_file = in_root+nick+"_"+ref['name']+".fas"
+        out_dir = run_root+dirs['blast_out_dir']+nick+"/"+ref['name']+"/"
         ensure_dir([out_dir])
-        print "\t", ref['type'], "...",
+        print "\t", ref['name'], "...",
         for genome in genomes:
             g_name = genome['name']
             db_path = dirs['blast_db_dir']+g_name
