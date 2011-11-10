@@ -5,6 +5,7 @@ import numpy
 # Input data
 
 project_id = 'BCSL'
+project_date = '2011'
 prot_db_name = 'Bacteria_prot'
 
 genomes = [{'name': 'pXO1', 'input': 'cgbk', 'file': 'pXO1.gbk',
@@ -277,7 +278,8 @@ directories = {
 'run_gbk_ctgs_dir': 'gbk_contigs/',
 'mauve_out_dir': 'alignments/mauve_out/',
 'aln_seg_dir': 'alignments/aln_segments/',
-'maps_dir': 'maps/'
+'maps_dir': 'maps/',
+'reports': 'reports/'
 }
 
 # Blast parameters

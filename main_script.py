@@ -7,6 +7,7 @@ from libs.parsing import glompX_blast_out
 from libs.annotation import annot_contigs
 from libs.mapping import prep_maps
 from libs.aligning import align_cstrct2ref, align_ctg2ref
+from libs.reporting import save_datasumm, log_start_run, log_end_run
 from config import references, genomes
 
 print "\n", \
@@ -35,10 +36,8 @@ start_timestamp = str(datetime.now())
 
 if step is 0:
     print "\n###", step, ". Set up logging & reporting ###\n"
-    print "to do"
-#    for dataset in datasets:
-#        save_parameters(dataset, max_pairs, run_id, start_timestamp)
-#        log_start_run(dataset, run_id, start_timestamp)
+    log_start_run(run_id, start_timestamp)
+    save_datasumm(run_id, start_timestamp)
     step +=1
 
 if step is 1:
@@ -102,5 +101,7 @@ if step is 10:
     step +=1
 
 if step > 10:
+    stop_timestamp = str(datetime.now())
+    log_end_run(run_id, stop_timestamp)
     print "\n### Nothing more to do! ###\n"
 
