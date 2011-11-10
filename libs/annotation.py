@@ -62,7 +62,7 @@ def annot_contigs(ref_contig, run_id):
         annot_trn_dir = annot_trn_root+g_name+"/"
         ensure_dir([ctg_cds_dir, ctg_prot_dir, ctg_blast_dir,
                     g_gbk_ctgs_dir, r_gbk_ctgs_dir, annot_trn_dir])
-        # list genbank files in matches directory
+        # list fasta files in matches directory
         dir_contents = listdir(fas_ctgs_dir)
         for item in dir_contents:
             pattern = re.compile(r'.*_(\d*)\.fas$')
@@ -125,6 +125,7 @@ def annot_contigs(ref_contig, run_id):
                                           +"-like backbones"]
                         record.seq.alphabet = generic_dna
                         write_genbank(g_ctg_gbk, record)
+                        copyfile(g_ctg_gbk, r_ctg_gbk)
                     else:
                         copyfile(g_ctg_gbk, r_ctg_gbk)
         print ""

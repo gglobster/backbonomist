@@ -12,7 +12,7 @@ from writers import write_fasta
 
 def align_clustal(file_name):
     """Make external call to ClustalW aligner."""
-    cline = ClustalwCommandline("clustalw", infile=file_name)
+    cline = ClustalwCommandline(infile=file_name)
     child = subprocess.Popen(str(cline), stdout=subprocess.PIPE, shell=True)
     output, error = child.communicate()
     report = {'output': output, 'error': error}
@@ -48,7 +48,7 @@ def align_ctg2ref(contig, run_id):
     mauve_root = run_root+dirs['mauve_out_dir']+ref_ctg_name+"/contigs/"
     segments_root = run_root+dirs['aln_seg_dir']+ref_ctg_name+"/contigs/"
     q_ctgs_root = run_root+dirs['match_out_dir']+ref_ctg_name+"/"
-    ensure_dir([segments_root]) 
+    ensure_dir([segments_root])
     print " ", ref_ctg_name
     # cycle through genomes
     for genome in genomes:
@@ -107,8 +107,8 @@ def align_cstrct2ref(contig, run_id):
     for genome in genomes:
         # set inputs
         g_name = genome['name']
-        scaff_fas = scaff_root+g_name+"_"+ctg_name+"_scaffold.fas"
-        file_list = (ref_ctg_file, scaff_fas)
+        scaff_gbk = scaff_root+g_name+"_"+ctg_name+"_scaffold.gbk"
+        file_list = (ref_ctg_file, scaff_gbk)
         print "\t", g_name, "...",
         # set outputs
         mauve_dir = mauve_root+g_name+"/"
@@ -117,14 +117,14 @@ def align_cstrct2ref(contig, run_id):
         mauve_outfile = mauve_dir+g_name+"_"+ctg_name+".mauve"
         segfile = aln_segs_dir+g_name+"_"+ctg_name+"_segs.txt"
         # abort if there is no scaffold construct
-        try: open(scaff_fas, 'r')
+        try: open(scaff_gbk, 'r')
         except IOError:
             print "WARNING: No scaffold construct to align"
         else:
             # prep segments file
             open(segfile, 'w').write('')
             # purge any pre-existing sslist file
-            sslist_file = scaff_fas+".sslist"
+            sslist_file = scaff_gbk+".sslist"
             if os.path.isfile(sslist_file):
                 try: os.remove(sslist_file)
                 except Exception: raise
@@ -139,7 +139,7 @@ def align_cstrct2ref(contig, run_id):
                 print len(chop_array), 'segments <', max_size, 'bp',
                 # make detailed pairwise alignments of the segments
                 ref_rec = load_genbank(ref_ctg_file)
-                query_rec = load_fasta(scaff_fas)
+                query_rec = load_genbank(scaff_gbk)
                 id = iter_align(chop_array, ref_rec, query_rec, aln_segs_dir, segfile)
                 print "@", id, "% id. overall"
             except IOError:
