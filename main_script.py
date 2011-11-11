@@ -7,7 +7,8 @@ from libs.parsing import glompX_blast_out
 from libs.annotation import annot_contigs
 from libs.mapping import prep_maps
 from libs.aligning import align_cstrct2ref, align_ctg2ref
-from libs.reporting import save_datasumm, log_start_run, log_end_run
+from libs.reporting import save_datasumm, log_start_run, log_end_run, \
+    init_reports
 from config import references, genomes
 
 print "\n", \
@@ -38,6 +39,7 @@ if step is 0:
     print "\n###", step, ". Set up logging & reporting ###\n"
     log_start_run(run_id, start_timestamp)
     save_datasumm(run_id, start_timestamp)
+    init_reports(run_id, start_timestamp)
     step +=1
 
 if step is 1:
@@ -45,6 +47,8 @@ if step is 1:
     for genome in genomes:
         unpack_genomes(genome)
     step +=1
+
+exit()
 
 if step is 2:
     print "\n###", step, ". Make Blast databases ###\n"

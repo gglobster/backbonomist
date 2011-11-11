@@ -11,6 +11,7 @@ from Bio.SeqFeature import SeqFeature, FeatureLocation
 from Bio.Alphabet import generic_dna
 from parsing import mauver_load2_k0
 from array_tetris import get_anchor_loc
+from reporting import ctg_stats
 
 def unpack_genomes(genome):
     """Unpack genome files.
@@ -87,6 +88,8 @@ def unpack_genomes(genome):
     print counter, "contigs"
     # write master file
     write_fasta(mfas_file, records)
+    # pass records to stats logger
+    ctg_stats(g_name, records)
 
 def extract_seg(contig, run_id):
     """Extract reference segments using coordinates."""

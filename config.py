@@ -270,6 +270,7 @@ directories = {
 'ctg_cds_dir': p_root_dir+'genomes/annotation/genes/',
 'ctg_prot_dir': p_root_dir+'genomes/annotation/proteins/',
 'ctg_blast_dir': p_root_dir+'genomes/annotation/blastp/',
+'ctg_stats': p_root_dir+'genomes/contig_stats/',
 # the following are run-dependent
 'ref_seg_dir': 'ref_segments/',
 'blast_out_dir': 'matching/blastn/',
@@ -321,3 +322,5 @@ idpt = {95: '#444444',     # top similarity class (HexColor('#444444'))
         50: '#DDDDDD',     # low similarity class (HexColor('#DDDDDD'))
          0: '#FFFFFF'}     # lower than cutoff (HexColor('#FFFFFF'))
 
+# Thresholds for binning contig sizes
+ctg_thresholds = [100, 500, 1000]
