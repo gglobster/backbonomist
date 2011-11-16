@@ -28,8 +28,8 @@ def run_prodigal(in_file, an_gbk, an_aa, trn_file, mode):
     output, error = child.communicate()
     return output
 
-def annot_contigs(ref_contig, run_id):
-    """Annotate contigs (predict ORFs and assign function)."""
+def annot_genome_contigs(ref_contig, run_id):
+    """Annotate genome contigs (predict ORFs and assign function)."""
     # locate the COG database
     prot_db = dirs['ref_dbs_dir']+prot_db_name
     # TODO: add other DB / pfams?
@@ -59,9 +59,8 @@ def annot_contigs(ref_contig, run_id):
         ctg_blast_dir = ctg_blast_root+g_name+"/"
         g_gbk_ctgs_dir = g_gbk_ctgs_root+g_name+"/"
         r_gbk_ctgs_dir = r_gbk_ctgs_root+g_name+"/"
-        annot_trn_dir = annot_trn_root+g_name+"/"
         ensure_dir([ctg_cds_dir, ctg_prot_dir, ctg_blast_dir,
-                    g_gbk_ctgs_dir, r_gbk_ctgs_dir, annot_trn_dir])
+                    g_gbk_ctgs_dir, r_gbk_ctgs_dir])
         # list fasta files in matches directory
         dir_contents = listdir(fas_ctgs_dir)
         for item in dir_contents:
@@ -74,58 +73,93 @@ def annot_contigs(ref_contig, run_id):
                 ctg_fas = fas_ctgs_dir+item
                 g_ctg_gbk = g_gbk_ctgs_dir+g_name+"_"+ctg_num+".gbk"
                 r_ctg_gbk = r_gbk_ctgs_dir+g_name+"_"+ctg_num+".gbk"
-                annot_gbk = ctg_cds_root+g_name+"_"+ctg_num+"_cds.gbk"
-                annot_aa = ctg_prot_root+g_name+"_"+ctg_num+"_aa.fas"
+                annot_gbk = ctg_cds_dir+g_name+"_"+ctg_num+"_cds.gbk"
+                annot_aa = ctg_prot_dir+g_name+"_"+ctg_num+"_aa.fas"
                 blast_out = ctg_blast_dir+g_name+"_"+ctg_num+".xml"
                 if not path.exists(r_ctg_gbk):
                     if not path.exists(g_ctg_gbk):
-                        # gene prediction
-                        if not path.exists(training_file):
-                            train_prodigal(g_file, training_file, "-q")
-                        if not path.exists(annot_aa):
-                            run_prodigal(ctg_fas, annot_gbk, annot_aa, training_file,
-                                         "-q")
-                        # blast the amino acids against COG
-                        if not path.exists(blast_out):
-                            local_blastp_2file(annot_aa, prot_db, blast_out,
-                                               blast_prefs)
-                        # collect best hits
-                        rec_cogs = collect_cogs(blast_out)
-                         # consolidate annotated genbank file
-                        record = load_fasta(ctg_fas)
-                        record.features = []
-                        aa_record = load_multifasta(annot_aa)
-                        counter = 1
-                        for aa_rec in aa_record:
-                            this_prot = 'Query_'+str(counter)
-                            annotation = rec_cogs[this_prot]
-                            # get feature details from description line
-                            # because prodigal output fails to load as valid genbank
-                            defline = aa_rec.description
-                            pattern = re.compile('.+#\s(\d+)\s#\s(\d+)\s#\s(\S*1)\s#\sID.+')
-                            match = pattern.match(defline)
-                            start_pos = int(match.group(1))
-                            end_pos = int(match.group(2))
-                            strand_pos = int(match.group(3))
-                            feat_loc = FeatureLocation(start_pos, end_pos)
-                            l_tag = g_name+"_"+ctg_num+"_"+str(counter)
-                            # consolidation feature annotations
-                            quals = {'note': defline, 'locus_tag': l_tag,
-                                     'fct': annotation, 'translation': aa_rec.seq}
-                            feature = SeqFeature(location=feat_loc,
-                                                 strand=strand_pos,
-                                                 id='cds_'+str(counter),
-                                                 type='CDS',
-                                                 qualifiers=quals)
-                            record.features.append(feature)
-                            counter +=1
+                        l_tag_base = g_name+"_"+ctg_num
+                        record = annot_ctg(g_file, ctg_fas, annot_gbk,
+                                           annot_aa, training_file, prot_db,
+                                           blast_out, l_tag_base)
                         record.description = g_name+"_"+ctg_num
                         record.name = g_name+"_"+ctg_num
                         record.dbxrefs = ["Project: "+project_id+"/"+ref_name
                                           +"-like backbones"]
                         record.seq.alphabet = generic_dna
                         write_genbank(g_ctg_gbk, record)
-                        copyfile(g_ctg_gbk, r_ctg_gbk)
-                    else:
-                        copyfile(g_ctg_gbk, r_ctg_gbk)
+                    copyfile(g_ctg_gbk, r_ctg_gbk)
         print ""
+
+def annot_ref(ref_name, ctg_fas):
+    """Annotate reference contig (predict ORFs and assign function)."""
+    # locate the COG database
+    prot_db = dirs['ref_dbs_dir']+prot_db_name
+    # set inputs and outputs
+    g_gbk_ctgs_root = dirs['gbk_contigs_dir']+ref_name+"/"
+    ctg_cds_root = dirs['ctg_cds_dir']+ref_name+"/"
+    ctg_prot_root = dirs['ctg_prot_dir']+ref_name+"/"
+    ctg_blast_root = dirs['ctg_blast_dir']+ref_name+"/"
+    annot_trn_root = dirs['annot_trn_dir']
+    ensure_dir([g_gbk_ctgs_root, ctg_cds_root, ctg_prot_root,
+                ctg_blast_root, annot_trn_root])
+    trn_file = annot_trn_root+ref_name+"_annot.trn"
+    g_ctg_gbk = g_gbk_ctgs_root+ref_name+"_1.gbk"
+    annot_gbk = ctg_cds_root+ref_name+"_1_cds.gbk"
+    annot_aa = ctg_prot_root+ref_name+"_1_aa.fas"
+    blast_out = ctg_blast_root+ref_name+"_1.xml"
+    if not path.exists(g_ctg_gbk):
+        l_tag_base = ref_name+"_1"
+        record = annot_ctg(ctg_fas, ctg_fas, annot_gbk,
+                           annot_aa, trn_file, prot_db,
+                           blast_out, l_tag_base)
+        record.description = ref_name+"_re-annotated"
+        record.name = ref_name+"_1"
+        record.dbxrefs = ["Project: "+project_id+"/"+ref_name
+                          +"-like backbones"]
+        record.seq.alphabet = generic_dna
+        write_genbank(g_ctg_gbk, record)
+    return g_ctg_gbk
+
+def annot_ctg(g_file, ctg_fas, annot_gbk, annot_aa, trn_file, prot_db,
+              blast_out, l_tag_base):
+    """Do functional annotation of contig from Fasta file, return record."""
+    # gene prediction
+    if not path.exists(trn_file):
+        train_prodigal(g_file, trn_file, "-q")
+    if not path.exists(annot_aa):
+        run_prodigal(ctg_fas, annot_gbk, annot_aa, trn_file, "-q")
+    # blast the amino acids against COG
+    if not path.exists(blast_out):
+        local_blastp_2file(annot_aa, prot_db, blast_out, blast_prefs)
+    # collect best hits
+    rec_cogs = collect_cogs(blast_out)
+     # consolidate annotated genbank file
+    record = load_fasta(ctg_fas)
+    record.features = []
+    aa_record = load_multifasta(annot_aa)
+    counter = 1
+    for aa_rec in aa_record:
+        this_prot = 'Query_'+str(counter)
+        annotation = rec_cogs[this_prot]
+        # get feature details from description line
+        # because prodigal output fails to load as valid genbank
+        defline = aa_rec.description
+        pattern = re.compile('.+#\s(\d+)\s#\s(\d+)\s#\s(\S*1)\s#\sID.+')
+        match = pattern.match(defline)
+        start_pos = int(match.group(1))
+        end_pos = int(match.group(2))
+        strand_pos = int(match.group(3))
+        feat_loc = FeatureLocation(start_pos, end_pos)
+        l_tag = l_tag_base+"_"+str(counter)
+        # consolidation feature annotations
+        quals = {'note': defline, 'locus_tag': l_tag,
+                 'fct': annotation, 'translation': aa_rec.seq}
+        feature = SeqFeature(location=feat_loc,
+                             strand=strand_pos,
+                             id='cds_'+str(counter),
+                             type='CDS',
+                             qualifiers=quals)
+        record.features.append(feature)
+        counter +=1
+    return record

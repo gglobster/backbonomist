@@ -71,7 +71,7 @@ def Canvasser(hCan,vCan,transX,transY,outfile) :
     return canvasN
 
 def BaseDraw(canvas, cName, cLen, feats, key, dop_Y, Y0, X_shift,
-             map_mode, annot_cnt, offset, offset_mode, seq_len) :
+             map_mode, annot_cnt, offset, offset_mode, seq_len, annot_mode) :
     """Draw contig baseline and features."""
     # draw plasmid baseline
     BaseL(cLen, canvas, Y0, offset, offset_mode)
@@ -93,7 +93,10 @@ def BaseDraw(canvas, cName, cLen, feats, key, dop_Y, Y0, X_shift,
         if feature.type == 'CDS' or feature.type == 'cds':
             ORFcnt += 1
             # determine functional category color
-            annot = feature.qualifiers.get(key)[0]
+            try:
+                annot = feature.qualifiers.get(key)[0]
+            except TypeError:
+                annot = 'none'
             fct_key = annot_color(fct_flags, annot)
             color_hex = HexColor(fct_colors[fct_key][0])
             # calculate coordinates for canvas
@@ -118,7 +121,8 @@ def BaseDraw(canvas, cName, cLen, feats, key, dop_Y, Y0, X_shift,
                         Y_annot -= annot_cnt/2
                         shift_flag = True
                 Y_annot = ORFannot(canvas, cLen, annot, Y_annot, ORFcnt,
-                                   Y0+dop_Y, midLZ, X_shift, split_flag)
+                                   Y0+dop_Y, midLZ, X_shift, split_flag,
+                                   annot_mode)
 
 def BaseL(cLen, canvas, Y_map, offset, offset_mode):
     """Draw sequence baseline."""
@@ -155,13 +159,13 @@ def LabeL(cName, cLen, canvas, Y_map) :
     canvas.drawString(x0,y2,pLenStr+' kb')
 
 def ORFannot(canvas, cLen, annot, Y_annot, ORFcnt, cnt_Y, midLZ, X_shift,
-             split_flag):
+             split_flag, annot_mode):
     """Write annotation to feature list."""
-    if annot == 'no match' or \
-       annot == 'hypothetical protein' or \
-       annot[:5] == 'pXO1-': # quick fix
-        pass
-    else:
+    flag = False
+    if not annot_mode == 'all':
+        if annot == 'no match' or annot == 'hypothetical protein' :
+            flag = True
+    if not flag:
         # write CDS numbers
         if split_flag:
             canvas.drawCentredString(1*u, cnt_Y, "]"+str(ORFcnt))
@@ -333,7 +337,7 @@ def annot_color(fct_flags, annotation):
             i +=1
     return fct_key
 
-def ContigDraw(cName, in_file, out_file):
+def ContigDraw(cName, in_file, out_file, annot_mode, key):
     """Draw sequence map of a single contig to file."""
     # load contig record
     seq_record = load_genbank(in_file)
@@ -341,8 +345,14 @@ def ContigDraw(cName, in_file, out_file):
     feats = seq_record.features
     cds = [feature for feature in feats
            if feature.type == 'CDS' or feature.type == 'cds']
-    annot_cds = [1 for feature in cds
-                 if feature.qualifiers.get('fct')[0] != 'no match']
+    if annot_mode == 'all':
+        annot_cds = [len(cds)]
+    else:
+        try:
+            annot_cds = [1 for feature in cds
+                         if feature.qualifiers.get(key)[0] != 'no match']
+        except TypeError:
+            annot_cds = []
     annot_cnt = sum(annot_cds)
     # calculate main canvas dimensions
     if ctg_len*u < 2000:
@@ -357,16 +367,16 @@ def ContigDraw(cName, in_file, out_file):
     # set up main canvas
     canvas = Canvasser(hCan, vCan, transX, transY, out_file)
     # draw contig baseline and features
-    BaseDraw(canvas, cName, ctg_len, feats, 'fct', -doL, ctg_Y, 0, 'single',
-             annot_cnt, None, None, seq_len)
+    BaseDraw(canvas, cName, ctg_len, feats, key, -doL, ctg_Y, 0, 'single',
+             annot_cnt, None, None, seq_len, annot_mode)
     # draw scale
     SeqScale(canvas, (ctg_len*u)-pNsize, incrT, incrN, dip, dop)
     # write to file and finalize the figure
     canvas.showPage()
     canvas.save()
 
-def PairwiseDraw(ref_name, q_name, q_file, ref_file, segs, map_file, q_inv,
-                 g_offset, mode1, mode2):
+def PairwiseDraw(ref_name, q_name, ref_file, q_file, segs, map_file, q_inv,
+                 g_offset, mode1, mode2, annot_mode, key1, key2):
     """Draw pairwise alignment map with similarity shading."""
     # load ref and query records
     # ref first
@@ -375,12 +385,18 @@ def PairwiseDraw(ref_name, q_name, q_file, ref_file, segs, map_file, q_inv,
     ref_feat = ref_record.features
     ref_cds = [feature for feature in ref_feat
                if feature.type == 'CDS' or feature.type == 'cds']
-    ref_annot_cds = [1 for feature in ref_cds
-                     if feature.qualifiers.get('product')[0] !=
-                        'hypothetical protein' and \
-                        feature.qualifiers.get('product')[0][:5] !=
-                        'pXO1-']
-    ref_annot_cnt = sum(ref_annot_cds)
+    if annot_mode != 'all':
+        try:
+            ref_annot_cds = [1 for cds in ref_cds
+                             if cds.qualifiers.get(key1)[0] !=
+                                'hypothetical protein' and \
+                                cds.qualifiers.get(key1)[0] !=
+                                'no match']
+        except TypeError:
+            ref_annot_cds = []
+        ref_annot_cnt = sum(ref_annot_cds)
+    else:
+        ref_annot_cnt = len(ref_cds)
     # now query
     query_record = load_genbank(q_file)
     if q_inv:
@@ -389,9 +405,18 @@ def PairwiseDraw(ref_name, q_name, q_file, ref_file, segs, map_file, q_inv,
     q_feat = query_record.features
     query_cds = [feature for feature in q_feat
                  if feature.type == 'CDS' or feature.type == 'cds']
-    query_annot_cds = [1 for feature in query_cds
-                       if feature.qualifiers.get('fct')[0] != 'no match']
-    query_annot_cnt = sum(query_annot_cds)
+    if annot_mode != 'all':
+        try:
+            query_annot_cds = [1 for cds in query_cds
+                               if cds.qualifiers.get(key2)[0] !=
+                                'hypothetical protein' and \
+                                cds.qualifiers.get(key2)[0] !=
+                                'no match']
+        except TypeError:
+            query_annot_cds = []
+        query_annot_cnt = sum(query_annot_cds)
+    else:
+        query_annot_cnt = len(query_cds)
     # calculate main canvas dimensions - horizontal
     if ref_len+g_offset[0] > q_len:
         ctg_len = ref_len+g_offset[0]
@@ -421,26 +446,29 @@ def PairwiseDraw(ref_name, q_name, q_file, ref_file, segs, map_file, q_inv,
     # draw shading legend
     HeaKey(m_canvas, -pNsize, -pNsize/2)
     # draw ref baseline and features
-    BaseDraw(m_canvas, ref_name, ref_len, ref_feat, 'product', doL, ref_Y,
-             0, mode1, annot_cnt, g_offset[0], 'nudge', seq_len)
+    BaseDraw(m_canvas, ref_name, ref_len, ref_feat, key1, doL, ref_Y,
+             0, mode1, annot_cnt, g_offset[0], 'nudge', seq_len, annot_mode)
     # draw query baseline and features
-    BaseDraw(m_canvas, q_name, q_len, q_feat, 'fct', -doL, query_Y,
-             seq_len/2, mode2, annot_cnt, g_offset[1], 'loop', seq_len)
+    BaseDraw(m_canvas, q_name, q_len, q_feat, key2, -doL, query_Y, seq_len/2,
+             mode2, annot_cnt, g_offset[1], 'loop', seq_len, annot_mode)
     # draw pairwise similarity shading
-    for xa, xb, xc, xd, idp in segs:
-        # evaluate color shading category
-        sh_color = HexColor(SimColor(idp))
-        # check for split
-        if abs(xa) > abs(xb) or abs(xc) > abs(xd):
-            coords1, coords2 = shade_split(xa, xb, xc, xd, q_len)
-            xa1, xb1, xc1, xd1 = coords1
-            xa2, xb2, xc2, xd2 = coords2
-            # draw shading
-            Shadowfax(m_canvas, xa1, xb1, xc1, xd1, ref_Y, query_Y, sh_color)
-            Shadowfax(m_canvas, xa2, xb2, xc2, xd2, ref_Y, query_Y, sh_color)
-        else:
-            # draw shading
-            Shadowfax(m_canvas, xa, xb, xc, xd, ref_Y, query_Y, sh_color)
+    try:
+        for xa, xb, xc, xd, idp in segs:
+            # evaluate color shading category
+            sh_color = HexColor(SimColor(idp))
+            # check for split
+            if abs(xa) > abs(xb) or abs(xc) > abs(xd):
+                coords1, coords2 = shade_split(xa, xb, xc, xd, q_len)
+                xa1, xb1, xc1, xd1 = coords1
+                xa2, xb2, xc2, xd2 = coords2
+                # draw shading
+                Shadowfax(m_canvas, xa1, xb1, xc1, xd1, ref_Y, query_Y, sh_color)
+                Shadowfax(m_canvas, xa2, xb2, xc2, xd2, ref_Y, query_Y, sh_color)
+            else:
+                # draw shading
+                Shadowfax(m_canvas, xa, xb, xc, xd, ref_Y, query_Y, sh_color)
+    except TypeError:
+        pass
     # write to file and finalize the figure
     m_canvas.showPage()
     m_canvas.save()
@@ -512,8 +540,6 @@ def HeaKey(canvas, hkX, hkY):
         canvas.drawCentredString(hkX+hk_boxX+incrN*3, hkY,
                                  str(hk_list[hk_i+1]))
         hk_i += 1
-
-
 
 
 

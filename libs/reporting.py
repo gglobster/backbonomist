@@ -28,6 +28,15 @@ def log_end_run(run_id, timestamp):
     linkline = "".join(set_log_htm)
     open(set_log, 'a').write(linkline)
 
+def log_resume_run(run_id, timestamp, step):
+    """Record run resumed in the dataset log."""
+    set_log = p_root_dir+"/"+project_id+"_log.html"
+    run_report = run_id+"/"+run_id+"_report.html"
+    set_log_htm = ["<li><b>", run_id, "</b>", "&nbsp;- resumed ", timestamp,
+                   " (from step "+str(step)+"</li>"]
+    linkline = "".join(set_log_htm)
+    open(set_log, 'a').write(linkline)
+
 def save_datasumm(run_id, timestamp):
     """Save a summary of the dataset composition to file."""
     print " ", run_id,

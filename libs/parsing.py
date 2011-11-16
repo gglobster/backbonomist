@@ -3,7 +3,7 @@ from os import listdir, path
 from shutil import copyfile
 from loaders import read_array, td_txt_file_load
 from config import directories as dirs, p_root_dir, blast_dtypes, genomes, \
-    mtype
+    mtype, min_match
 from common import ensure_dir
 from array_tetris import extract_nonzero, clump_rows
 from Bio.Blast import NCBIXML
@@ -22,23 +22,27 @@ def glompX_blast_out(ref_ctg, run_id):
         ensure_dir([blast_dir])
         for genome in genomes:
             g_name = genome['name']
+            print g_name,
             matches_dir = match_root+g_name+"/"
             ensure_dir([matches_dir])
             blast_infile = blast_dir+g_name+"_out.txt"
             genome_ctg_dir = dirs['fas_contigs_dir']+g_name+"/"
             rec_array = read_array(blast_infile, blast_dtypes)
-            if len(rec_array) > 0:  # if there are hits, take the best one
-                contig_id = rec_array[0][1]
-                #q_coords = rec_array[0][6], rec_array[0][7]
-                #t_coords = rec_array[0][8], rec_array[0][9]
-                print contig_id,
-                pattern = re.compile(r'('+contig_id+')\.fas')
-                for item in listdir(genome_ctg_dir):
-                    match = re.match(pattern, item)
-                    if match:
-                        fas_file = matches_dir+match.group(1)+".fas"
-                        if not path.exists(fas_file):
-                            copyfile(genome_ctg_dir+item, fas_file)
+            if len(rec_array) > 0:  # take all hits above min_match length
+                print "+",
+                for line in rec_array:
+                    q_start, q_stop = line[6], line[7]
+                    if abs(q_stop-q_start) > min_match:
+                        contig_id = line[1]
+                        pattern = re.compile(r'('+contig_id+')\.fas')
+                        for item in listdir(genome_ctg_dir):
+                            match = re.match(pattern, item)
+                            if match:
+                                fas_file = matches_dir+match.group(1)+".fas"
+                                if not path.exists(fas_file):
+                                    copyfile(genome_ctg_dir+item, fas_file)
+            else:
+                print "-",
         print ""
 
 def mauver_load2_k0(file, threshold):

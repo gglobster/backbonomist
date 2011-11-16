@@ -1,7 +1,8 @@
 import re
 import numpy as np
 from os import path, listdir
-from loaders import load_genbank, load_multifasta
+from shutil import copyfile
+from loaders import load_genbank, load_multifasta, load_fasta
 from writers import write_genbank, write_fasta
 from string_ops import multisplit_finder
 from common import ensure_dir
@@ -12,6 +13,7 @@ from Bio.Alphabet import generic_dna
 from parsing import mauver_load2_k0
 from array_tetris import get_anchor_loc
 from reporting import ctg_stats
+from annotation import annot_ref
 
 def unpack_genomes(genome):
     """Unpack genome files.
@@ -91,26 +93,51 @@ def unpack_genomes(genome):
     # pass records to stats logger
     ctg_stats(g_name, records)
 
-def extract_seg(contig, run_id):
-    """Extract reference segments using coordinates."""
-    # file info
-    ctg_name = contig['name']
+def process_ref(ref_ctg, run_id):
+    """Re-annotate contig and extract reference segments using coordinates."""
+    # set inputs and outputs
+    ref_name = ref_ctg['name']
     run_root = p_root_dir+run_id+"/"
-    in_file = dirs['ori_g_dir']+contig['file']
-    out_root = run_root+dirs['ref_seg_dir']+ctg_name+"/"
-    ensure_dir([out_root])
-    print " ", ctg_name, "...",
-    # open record
-    record = load_genbank(in_file)
+    in_file = dirs['ori_g_dir']+ref_ctg['file']
+    seg_out_root = run_root+dirs['ref_seg_dir']+ref_name+"/"
+    ref_gbk_root = run_root+dirs['ref_gbk_dir']
+    ref_fas_root = run_root+dirs['ref_fas_dir']
+    ref_gbk = ref_gbk_root+ref_name+"_re-annot.gbk"
+    ref_fas = ref_fas_root+ref_name+".fas"
+    ensure_dir([seg_out_root, ref_gbk_root, ref_fas_root])
+    print " ", ref_name, "...", 
+    # open record and ensure we have a fasta in the right place
+    if not path.exists(ref_fas):
+        if ref_ctg['input'] == 'fas':
+            copyfile(in_file, ref_fas)
+        elif ref_ctg['input'] == 'gbk':
+            record = load_genbank(in_file)
+            write_fasta(ref_fas, record)
+        else:
+            raise Exception("ERROR: Input not recognized for "+ref_name)
+    # re-annotate ref contig
+    g_ref_gbk = annot_ref(ref_name, ref_fas)
+    # extract segments
+    record = load_genbank(g_ref_gbk)
     count = 0
-    for ref in contig['refs']:
-        # extract segment
-        segment = record[ref['coords'][0]:ref['coords'][1]]
-        segment.id = ctg_name+"_"+ref['name']
-        # write to file
-        out_file = out_root+ctg_name+"_"+ref['name']+".fas"
+    for seg in ref_ctg['refs']:
+        # unpack segment coords
+        seg_start, seg_stop = seg['coords'][0], seg['coords'][1]
+        # extract segment sequence
+        segment = record[seg_start:seg_stop]
+        segment.id = ref_name+"_"+seg['name']
+        # write to individual file
+        out_file = seg_out_root+ref_name+"_"+seg['name']+".fas"
         write_fasta(out_file, segment)
+        # record segment feature
+        feat_loc = FeatureLocation(seg_start, seg_stop)
+        feature = SeqFeature(location=feat_loc,
+                             type='ref_seg',
+                             qualifiers={'id': seg['name']})
+        record.features.append(feature)
         count +=1
+    # write re-annotated reference sequence to file
+    write_genbank(ref_gbk, record)
     print count, "segments"
 
 def build_scaffolds(contig, run_id):
@@ -213,9 +240,13 @@ def build_scaffolds(contig, run_id):
                 feat_stop = len(scaff_record.seq)
                 scaff_record += scaff_bumper
                 feat_loc = FeatureLocation(feat_start, feat_stop)
+                pattern = re.compile(r'.*_(\d*)$')
+                match = pattern.match(record.id)
+                try: ctg_num = match.group(1)
+                except Exception: ctg_num = 'N'
                 feature = SeqFeature(location=feat_loc,
                                      type='contig',
-                                     qualifiers={'id': record.id})
+                                     qualifiers={'id': ctg_num})
                 scaff_record.features.append(feature)
             scaff_record.id = g_name+"_"+ref_ctg_name
             write_genbank(scaff_gbk, scaff_record[:-100]) # rm last bumper

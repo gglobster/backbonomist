@@ -200,28 +200,34 @@ genomes = [{'name': 'pXO1', 'input': 'cgbk', 'file': 'pXO1.gbk',
 #             'offset': (0,0), 'ignore': (0, 0)}
 ]
 
-references = [{'name': 'pXO1', 'file': 'pXO1.gbk',
-               'refs': ({'coords': (1127,6561),'name': '3_10'},
-                        {'coords': (8991,13756),'name': '12_17'},
-                        {'coords': (19200,20894),'name': '20_20'},
-                        {'coords': (21714,25117),'name': '23_25'},
-                        {'coords': (28490,30979),'name': '30_34'},
-                        {'coords': (38284,40203),'name': '45_46'},
-                        {'coords': (52063,55796),'name': '64_65'},
-                        {'coords': (55987,60586),'name': '66_69'},
-                        {'coords': (61404,63518),'name': '71_74'},
-                        {'coords': (64090,68866),'name': '75_79'},
-                        {'coords': (69021,74102),'name': '80_84'},
-                        {'coords': (74119,77871),'name': '85_90'},
-                        {'coords': (79735,82867),'name': '93_97'},
-                        {'coords': (83606,86696),'name': '98_101'},
-                        {'coords': (87297,91464),'name': '103_107'},
-                        {'coords': (91495,95163),'name': '108_108'},
-                        {'coords': (95212,98847),'name': '109_114'},
-                        {'coords': (100828,102495),'name': '117_118'},
-                        {'coords': (155257,157413),'name': '182_184'},
-                        {'coords': (174223,176584),'name': '207_212'})}]
-                        # TODO: make coords loader
+references = [{'name': 'pXO1', 'file': 'pXO1.gbk', 'input': 'gbk',
+               'refs': ({'coords': (1127,6561),'name': '3_10', 'note': ''},
+                        {'coords': (8991,13756),'name': '12_17', 'note': ''},
+                        {'coords': (19200,20894),'name': '20_20', 'note': ''},
+                        {'coords': (21714,25117),'name': '23_25', 'note': ''},
+                        {'coords': (28490,30979),'name': '30_34', 'note': ''},
+                        {'coords': (38284,40203),'name': '45_46', 'note': ''},
+                        {'coords': (52063,55796),'name': '64_65', 'note': ''},
+                        {'coords': (55987,60586),'name': '66_69', 'note': ''},
+                        {'coords': (61404,63518),'name': '71_74', 'note': ''},
+                        {'coords': (64090,68866),'name': '75_79', 'note': ''},
+                        {'coords': (69021,74102),'name': '80_84', 'note': ''},
+                        {'coords': (74119,77871),'name': '85_90', 'note': ''},
+                        {'coords': (79735,82867),'name': '93_97', 'note': ''},
+                        {'coords': (83606,86696),'name': '98_101',
+                         'note': ''},
+                        {'coords': (87297,91464),'name': '103_107',
+                         'note': ''},
+                        {'coords': (91495,95163),'name': '108_108',
+                         'note': ''},
+                        {'coords': (95212,98847),'name': '109_114',
+                         'note': ''},
+                        {'coords': (100828,102495),'name': '117_118',
+                         'note': ''},
+                        {'coords': (155257,157413),'name': '182_184',
+                         'note': ''},
+                        {'coords': (174223,176584),'name': '207_212',
+                         'note': ''})}]
 
 # Function categories and legend (keys MUST be lowercase)
 
@@ -272,7 +278,10 @@ directories = {
 'ctg_blast_dir': p_root_dir+'genomes/annotation/blastp/',
 'ctg_stats': p_root_dir+'genomes/contig_stats/',
 # the following are run-dependent
-'ref_seg_dir': 'ref_segments/',
+'ref_seg_dir': 'references/segments/',
+'ref_gbk_dir': 'references/genbank/',
+'ref_fas_dir': 'references/fasta/',
+'ref_map_dir': 'maps/references/',
 'blast_out_dir': 'matching/blastn/',
 'match_out_dir': 'matching/matches/',
 'scaffolds_dir': 'scaffolds/',
@@ -286,6 +295,8 @@ directories = {
 # Blast parameters
 blast_prefs = {'evalue': 0.01,
                'outfmt_pref': 6}
+min_match = 500     # min size for a blast hit to be considered relevant
+
 # Blast results arrays datatypes
 blast_dtypes = numpy.dtype([('query', 'S16'),
                            ('dbhit', 'S32'),

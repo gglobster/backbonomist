@@ -1,14 +1,14 @@
 from sys import argv, exit
 import time
 from datetime import datetime
-from libs.genome_tetris import unpack_genomes, extract_seg, build_scaffolds
+from libs.genome_tetris import unpack_genomes, process_ref, build_scaffolds
 from libs.blasting import make_genome_DB, basic_batch_blastn
 from libs.parsing import glompX_blast_out
-from libs.annotation import annot_contigs
+from libs.annotation import annot_genome_contigs
 from libs.mapping import prep_maps
 from libs.aligning import align_cstrct2ref, align_ctg2ref
 from libs.reporting import save_datasumm, log_start_run, log_end_run, \
-    init_reports
+    init_reports, log_resume_run
 from config import references, genomes
 
 print "\n", \
@@ -35,7 +35,10 @@ else:
 
 start_timestamp = str(datetime.now())
 
-if step is 0:
+if step is not 0:
+    log_resume_run(run_id, start_timestamp, step)
+
+elif step is 0:
     print "\n###", step, ". Set up logging & reporting ###\n"
     log_start_run(run_id, start_timestamp)
     save_datasumm(run_id, start_timestamp)
@@ -48,8 +51,6 @@ if step is 1:
         unpack_genomes(genome)
     step +=1
 
-exit()
-
 if step is 2:
     print "\n###", step, ". Make Blast databases ###\n"
     for genome in genomes:
@@ -57,9 +58,9 @@ if step is 2:
     step +=1
 
 if step is 3:
-    print "\n###", step, ". Extract reference segments ###\n"
+    print "\n###", step, ". Re-annotate reference and extract segments ###\n"
     for ref in references:
-        extract_seg(ref, run_id)
+        process_ref(ref, run_id)
     step +=1
 
 if step is 4:
@@ -77,7 +78,7 @@ if step is 5:
 if step is 6:
     print "\n###", step, ". Annotate matching contigs ###\n"
     for ref in references:
-        annot_contigs(ref, run_id)
+        annot_genome_contigs(ref, run_id)
     step +=1
 
 if step is 7:
