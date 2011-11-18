@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 
 def log_start_run(run_id, timestamp):
     """Record run initiated in the dataset log."""
@@ -31,9 +32,8 @@ def log_end_run(run_id, timestamp):
 def log_resume_run(run_id, timestamp, step):
     """Record run resumed in the dataset log."""
     set_log = p_root_dir+"/"+project_id+"_log.html"
-    run_report = run_id+"/"+run_id+"_report.html"
     set_log_htm = ["<li><b>", run_id, "</b>", "&nbsp;- resumed ", timestamp,
-                   " (from step "+str(step)+"</li>"]
+                   " (from step "+str(step)+")</li>"]
     linkline = "".join(set_log_htm)
     open(set_log, 'a').write(linkline)
 
@@ -141,5 +141,50 @@ def plot_ctg_stats(ctg_cats, fname):
     plt.savefig(fname)
     plt.clf()
 
-def matches_table(run_id):
-    """Compile table of contig matches."""
+def matches_table(ref_ctg, run_id, ref_hits):
+    """Compile tables and graphs of contig matches."""
+    # set imputs and outputs
+    ref_n = ref_ctg['name']
+    run_root = p_root_dir+run_id+"/"
+    report_root = run_root+dirs['reports']+ref_n+"/"
+    hits_table_txt = report_root+ref_n+"_hits_table.txt"
+    ensure_dir([report_root])
+    rep_fhandle = open(hits_table_txt, 'w')
+    rep_fhandle.write("# Matches to the reference segments of "+ref_n)
+    segs = [seg['name'] for seg in ref_ctg['refs']]
+    # traverse dict of results
+    for g_name in ref_hits:
+        genome_root = report_root+g_name+"/"
+        ensure_dir([genome_root])
+        g_table_fig = genome_root+g_name+"_hits_"+ref_n+".png"
+        # collect scores
+        g_list = []
+        g_header = ["\n\n"+g_name] + segs
+        g_lines = ["\t".join(g_header)]
+        for contig in ref_hits[g_name]:
+            ctg_hits = [ref_hits[g_name][contig][seg]
+                        if seg in ref_hits[g_name][contig]
+                        else 0 for seg in segs]
+            g_list.append(ctg_hits)
+            ctg_line = "\t".join([contig]+[str(score) for score in ctg_hits])
+            g_lines.append(ctg_line)
+        rep_fhandle.write("\n".join(g_lines))
+        g_array = np.array(g_list)
+        # graph scores
+        hits_heatmap(segs, ref_hits[g_name].keys(), g_array, g_table_fig)
+    rep_fhandle.close()
+
+def hits_heatmap(segs, contigs, g_array, imgfile):
+    """Graph matches as a heatmap."""
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.pcolor(g_array)
+    ax.xaxis.set_major_locator(MaxNLocator(len(segs)))
+    ax.yaxis.set_major_locator(MaxNLocator(len(contigs)-1))
+    ax.set_xticklabels(segs, size='small')
+    ax.set_yticklabels(contigs, size='small')
+    labels = ax.get_xticklabels()
+    for label in labels:
+        label.set_rotation(30)
+    plt.savefig(imgfile)
+    plt.clf()

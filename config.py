@@ -296,6 +296,7 @@ directories = {
 blast_prefs = {'evalue': 0.01,
                'outfmt_pref': 6}
 min_match = 500     # min size for a blast hit to be considered relevant
+min_score = 1500    # min score for a blast hit to be considered relevant
 
 # Blast results arrays datatypes
 blast_dtypes = numpy.dtype([('query', 'S16'),

@@ -3,7 +3,7 @@ from os import listdir, path
 from shutil import copyfile
 from loaders import read_array, td_txt_file_load
 from config import directories as dirs, p_root_dir, blast_dtypes, genomes, \
-    mtype, min_match
+    mtype, min_match, min_score
 from common import ensure_dir
 from array_tetris import extract_nonzero, clump_rows
 from Bio.Blast import NCBIXML
@@ -11,29 +11,39 @@ from Bio.Blast import NCBIXML
 def glompX_blast_out(ref_ctg, run_id):
     """Collect Blast results and extract match contigs."""
     # load inputs
-    nick = ref_ctg['name']
+    ref_n = ref_ctg['name']
     run_root = p_root_dir+run_id+"/"
-    match_root = run_root+dirs['match_out_dir']+nick+"/"
-    print " ", nick
-    # collect
-    for ref in ref_ctg['refs']:
-        print "\t", ref['name'], "...",
-        blast_dir = run_root+dirs['blast_out_dir']+nick+"/"+ref['name']+"/"
+    match_root = run_root+dirs['match_out_dir']+ref_n+"/"
+    print " ", ref_n 
+    # collect results
+    ref_hits = {}
+    for seg in ref_ctg['refs']:
+        seg_n = seg['name']
+        print "\t", seg_n, "...",
+        blast_dir = run_root+dirs['blast_out_dir']+ref_n+"/"+seg_n+"/"
         ensure_dir([blast_dir])
         for genome in genomes:
             g_name = genome['name']
             print g_name,
+            if g_name not in ref_hits.keys():
+                ref_hits[g_name] = {}
             matches_dir = match_root+g_name+"/"
             ensure_dir([matches_dir])
             blast_infile = blast_dir+g_name+"_out.txt"
             genome_ctg_dir = dirs['fas_contigs_dir']+g_name+"/"
             rec_array = read_array(blast_infile, blast_dtypes)
-            if len(rec_array) > 0:  # take all hits above min_match length
-                print "+",
+            if len(rec_array) > 0:  # take qualified hits
                 for line in rec_array:
                     q_start, q_stop = line[6], line[7]
-                    if abs(q_stop-q_start) > min_match:
+                    score = line[11]
+                    length = abs(q_stop-q_start)
+                    if length > min_match and score > min_score :
+                        print "+",
                         contig_id = line[1]
+                        if contig_id not in ref_hits[g_name].keys():
+                            ref_hits[g_name][contig_id] = {seg_n: score}
+                        else:
+                            ref_hits[g_name][contig_id][seg_n] = score
                         pattern = re.compile(r'('+contig_id+')\.fas')
                         for item in listdir(genome_ctg_dir):
                             match = re.match(pattern, item)
@@ -41,9 +51,12 @@ def glompX_blast_out(ref_ctg, run_id):
                                 fas_file = matches_dir+match.group(1)+".fas"
                                 if not path.exists(fas_file):
                                     copyfile(genome_ctg_dir+item, fas_file)
+                    else:
+                        print "-",
             else:
                 print "-",
         print ""
+    return ref_hits
 
 def mauver_load2_k0(file, threshold):
     """Parse Mauve coordinates file to extract segment coordinates.

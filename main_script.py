@@ -8,7 +8,7 @@ from libs.annotation import annot_genome_contigs
 from libs.mapping import prep_maps
 from libs.aligning import align_cstrct2ref, align_ctg2ref
 from libs.reporting import save_datasumm, log_start_run, log_end_run, \
-    init_reports, log_resume_run
+    init_reports, log_resume_run, matches_table
 from config import references, genomes
 
 print "\n", \
@@ -72,7 +72,8 @@ if step is 4:
 if step is 5:
     print "\n###", step, ". Collect Blast results ###\n"
     for ref in references:
-        glompX_blast_out(ref, run_id)
+        ref_hits = glompX_blast_out(ref, run_id)
+        matches_table(ref, run_id, ref_hits)
     step +=1
 
 if step is 6:
