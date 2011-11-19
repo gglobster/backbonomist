@@ -17,6 +17,7 @@ def glompX_blast_out(ref_ctg, run_id):
     print " ", ref_n 
     # collect results
     ref_hits = {}
+    control_scores = []
     for seg in ref_ctg['refs']:
         seg_n = seg['name']
         print "\t", seg_n, "...",
@@ -33,6 +34,8 @@ def glompX_blast_out(ref_ctg, run_id):
             genome_ctg_dir = dirs['fas_contigs_dir']+g_name+"/"
             rec_array = read_array(blast_infile, blast_dtypes)
             if len(rec_array) > 0:  # take qualified hits
+                if g_name == ref_n: # positive control
+                    control_scores.append(rec_array[0][11])
                 for line in rec_array:
                     q_start, q_stop = line[6], line[7]
                     score = line[11]
@@ -56,7 +59,7 @@ def glompX_blast_out(ref_ctg, run_id):
             else:
                 print "-",
         print ""
-    return ref_hits
+    return ref_hits, control_scores
 
 def mauver_load2_k0(file, threshold):
     """Parse Mauve coordinates file to extract segment coordinates.

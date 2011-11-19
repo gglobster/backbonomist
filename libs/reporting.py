@@ -1,12 +1,15 @@
 from os import path
 from config import directories as dirs, p_root_dir, project_id, \
-    project_date, genomes, references, blast_prefs, max_size, ctg_thresholds
+    project_date, genomes, references, ctg_thresholds
 from common import ensure_dir
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
+from mpl_toolkits.axes_grid1 import make_axes_locatable, Divider, \
+    LocatableAxes, Size, ImageGrid, AxesGrid
+
 
 def log_start_run(run_id, timestamp):
     """Record run initiated in the dataset log."""
@@ -141,17 +144,23 @@ def plot_ctg_stats(ctg_cats, fname):
     plt.savefig(fname)
     plt.clf()
 
-def matches_table(ref_ctg, run_id, ref_hits):
+def matches_table(ref_ctg, run_id, ref_hits, ctl_scores):
     """Compile tables and graphs of contig matches."""
     # set imputs and outputs
     ref_n = ref_ctg['name']
     run_root = p_root_dir+run_id+"/"
     report_root = run_root+dirs['reports']+ref_n+"/"
     hits_table_txt = report_root+ref_n+"_hits_table.txt"
+    red_hits_fig = report_root+ref_n+"_sum_hits.png"
+    mf_hits_fig = report_root+ref_n+"_all_hits.png"
     ensure_dir([report_root])
     rep_fhandle = open(hits_table_txt, 'w')
     rep_fhandle.write("# Matches to the reference segments of "+ref_n)
     segs = [seg['name'] for seg in ref_ctg['refs']]
+    red_g_list = []
+    mf_g_list = []
+    mf_ctgs = []
+    g_names = []
     # traverse dict of results
     for g_name in ref_hits:
         genome_root = report_root+g_name+"/"
@@ -169,22 +178,96 @@ def matches_table(ref_ctg, run_id, ref_hits):
             ctg_line = "\t".join([contig]+[str(score) for score in ctg_hits])
             g_lines.append(ctg_line)
         rep_fhandle.write("\n".join(g_lines))
+        # normalize scores
         g_array = np.array(g_list)
-        # graph scores
-        hits_heatmap(segs, ref_hits[g_name].keys(), g_array, g_table_fig)
+        g_norm = np.divide(g_array, ctl_scores)
+        # graph detailed scores per genome
+        contigs = ref_hits[g_name].keys()
+
+        hits_heatmap_multi(ref_n, segs, [g_name], [contigs], [g_norm],
+                           g_table_fig)
+        # prep for global graphs
+        g_reduce = np.amax(g_array, 0)
+        red_g_list.append(g_reduce)
+        mf_g_list.append(g_norm)
+        mf_ctgs.append(contigs)
+        g_names.append(g_name)
+    # graph detailed scores for all genomes in individual images
+    hits_heatmap_multi(ref_n, segs, g_names, mf_ctgs, mf_g_list, mf_hits_fig)
+    # graph summarized scores for all genomes
+    red_g_array = np.array(red_g_list)
+    red_g_norm = np.divide(red_g_array, ctl_scores)
+    title = "Summarized genomes vs. "+ref_n
+    g_names.reverse()
+    hits_heatmap_multi(ref_n, segs, [1], [g_names], [red_g_norm],
+                       red_hits_fig)
+    # done
     rep_fhandle.close()
 
-def hits_heatmap(segs, contigs, g_array, imgfile):
-    """Graph matches as a heatmap."""
+def hits_heatmap_multi(ref_n, segs, g_names, contigs, scores, imgfile):
+    """Combine matches heatmaps in subplots."""
+    g_names.reverse()
+    contigs.reverse()
+    scores.reverse()
+    ctg_count = 0
+    for item in contigs:
+        ctg_count += len(item)
+    fig = plt.figure(figsize=(len(segs)/2+1,ctg_count/2+3))
+    grid = AxesGrid(fig, 111, nrows_ncols=(len(g_names), 1), axes_pad=0.4,
+                    cbar_location="top", cbar_mode="single", cbar_size=0.1)
+    for i in range(len(g_names)):
+        hmap = grid[i].pcolor(scores[i], cmap='hot', vmin=0, vmax=1)
+        grid[i].xaxis.set_major_locator(MaxNLocator(len(segs)))
+        grid[i].yaxis.set_major_locator(MaxNLocator(len(scores[i])))
+        grid.cbar_axes[i].colorbar(hmap)
+        grid.cbar_axes[i].set_xticks([0, 0.5, 1])
+        grid.cbar_axes[i].set_xticklabels(['Low', 'Medium', 'High'])
+        grid[i].set_xticklabels(segs, size='small')
+        grid[i].set_xlabel(ref_n+" reference segments", size='small')
+        grid[i].set_title(g_names[i], size='small')
+        grid[i].set_yticklabels("")
+        labels = grid[i].get_xticklabels()
+        for label in labels:
+            label.set_rotation(30)
+        y_index = 0.5
+        for contig in contigs[i]:
+            grid[i].text(-0.2, y_index, contig, size='small',
+                         horizontalalignment='right',
+                         verticalalignment='center',)
+            y_index +=1
+    plt.savefig(imgfile)
+    plt.clf()
+
+def hits_heatmap(title, segs, contigs, scores, imgfile):
+    """Graph matches as a heatmap.
+
+    Deprecated in favor of the multi-plot version.
+
+    """
     fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.pcolor(g_array)
+    h = [Size.Fixed(1.5), Size.Fixed(15)]
+    v = [Size.Fixed(2.5), Size.Fixed(5.)]
+    ax = plt.subplot(111)
+    hmap = ax.pcolor(scores, cmap='hot', vmin=0, vmax=1)
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("bottom", size="5%", pad=1)
+    cbar = plt.colorbar(hmap, cax=cax, ticks=[0, 0.5, 1],
+                    orientation='horizontal')
+    cbar.ax.set_xticklabels(['Low', 'Medium', 'High'])
     ax.xaxis.set_major_locator(MaxNLocator(len(segs)))
-    ax.yaxis.set_major_locator(MaxNLocator(len(contigs)-1))
+    ax.yaxis.set_major_locator(MaxNLocator(len(contigs)))
     ax.set_xticklabels(segs, size='small')
-    ax.set_yticklabels(contigs, size='small')
+    ax.set_yticklabels("")
     labels = ax.get_xticklabels()
     for label in labels:
         label.set_rotation(30)
+    y_index = 0.5
+    for contig in contigs:
+        ax.text(-0.2, y_index, contig, size='small',
+                horizontalalignment='right',
+                verticalalignment='center',)
+        y_index +=1
+    ax.set_xlabel("Reference segments", size='small')
+    ax.set_title(title)
     plt.savefig(imgfile)
     plt.clf()

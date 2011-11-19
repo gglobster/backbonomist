@@ -72,42 +72,42 @@ if step is 4:
 if step is 5:
     print "\n###", step, ". Collect Blast results ###\n"
     for ref in references:
-        ref_hits = glompX_blast_out(ref, run_id)
-        matches_table(ref, run_id, ref_hits)
+        ref_hits, ctl_scores = glompX_blast_out(ref, run_id)
+        matches_table(ref, run_id, ref_hits, ctl_scores)
     step +=1
-
-if step is 6:
-    print "\n###", step, ". Annotate matching contigs ###\n"
-    for ref in references:
-        annot_genome_contigs(ref, run_id)
-    step +=1
-
-if step is 7:
-    print "\n###", step, ". Align contigs pairwise to reference ###\n"
-    for ref in references:
-        align_ctg2ref(ref, run_id)
-    step +=1
-
-if step is 8:
-    print "\n###", step, ". Construct backbone-based scaffolds ###\n"
-    for ref in references:
-        build_scaffolds(ref, run_id)
-    step +=1
-
-if step is 9:
-    print "\n###", step, ". Align constructs pairwise to reference ###\n"
-    for ref in references:
-        align_cstrct2ref(ref, run_id)
-    step +=1
-
-if step is 10:
-    print "\n###", step, ". Generate maps ###\n"
-    for ref in references:
-        prep_maps(ref, run_id)
-    step +=1
-
-if step > 10:
-    stop_timestamp = str(datetime.now())
-    log_end_run(run_id, stop_timestamp)
-    print "\n### Nothing more to do! ###\n"
-
+#
+#if step is 6:
+#    print "\n###", step, ". Annotate matching contigs ###\n"
+#    for ref in references:
+#        annot_genome_contigs(ref, run_id)
+#    step +=1
+#
+#if step is 7:
+#    print "\n###", step, ". Align contigs pairwise to reference ###\n"
+#    for ref in references:
+#        align_ctg2ref(ref, run_id)
+#    step +=1
+#
+#if step is 8:
+#    print "\n###", step, ". Construct backbone-based scaffolds ###\n"
+#    for ref in references:
+#        build_scaffolds(ref, run_id)
+#    step +=1
+#
+#if step is 9:
+#    print "\n###", step, ". Align constructs pairwise to reference ###\n"
+#    for ref in references:
+#        align_cstrct2ref(ref, run_id)
+#    step +=1
+#
+#if step is 10:
+#    print "\n###", step, ". Generate maps ###\n"
+#    for ref in references:
+#        prep_maps(ref, run_id)
+#    step +=1
+#
+#if step > 10:
+#    stop_timestamp = str(datetime.now())
+#    log_end_run(run_id, stop_timestamp)
+#    print "\n### Nothing more to do! ###\n"
+#
