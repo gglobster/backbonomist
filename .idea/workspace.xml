@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d21c3716-ec9e-48fb-9180-b0950c4e0f24" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libs/parsing.py" afterPath="$PROJECT_DIR$/libs/parsing.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libs/reporting.py" afterPath="$PROJECT_DIR$/libs/reporting.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config.py" afterPath="$PROJECT_DIR$/config.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libs/drawing.py" afterPath="$PROJECT_DIR$/libs/drawing.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libs/mapping.py" afterPath="$PROJECT_DIR$/libs/mapping.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main_script.py" afterPath="$PROJECT_DIR$/main_script.py" />
     </list>
     <ignored path="backbonomist.iws" />
@@ -61,7 +62,7 @@
               <file leaf-file-name="drawing.py" pinned="false" current="false" current-in-tab="false">
                 <entry file="file://$PROJECT_DIR$/libs/drawing.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="410" column="55" selection-start="15689" selection-end="15689" vertical-scroll-proportion="0.0">
+                    <state line="449" column="55" selection-start="16986" selection-end="16986" vertical-scroll-proportion="0.0">
                       <folding />
                     </state>
                   </provider>
@@ -71,10 +72,10 @@
           </split-first>
           <split-second>
             <leaf>
-              <file leaf-file-name="reporting.py" pinned="false" current="true" current-in-tab="true">
+              <file leaf-file-name="reporting.py" pinned="false" current="false" current-in-tab="false">
                 <entry file="file://$PROJECT_DIR$/libs/reporting.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="197" column="38" selection-start="8439" selection-end="8439" vertical-scroll-proportion="0.43768996">
+                    <state line="204" column="23" selection-start="8695" selection-end="8695" vertical-scroll-proportion="0.0">
                       <folding />
                     </state>
                   </provider>
@@ -101,16 +102,16 @@
               <file leaf-file-name="mapping.py" pinned="false" current="false" current-in-tab="false">
                 <entry file="file://$PROJECT_DIR$/libs/mapping.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="143" column="19" selection-start="5949" selection-end="5949" vertical-scroll-proportion="0.0">
+                    <state line="25" column="32" selection-start="1151" selection-end="1151" vertical-scroll-proportion="0.0">
                       <folding />
                     </state>
                   </provider>
                 </entry>
               </file>
-              <file leaf-file-name="drawing.py" pinned="false" current="false" current-in-tab="false">
+              <file leaf-file-name="drawing.py" pinned="false" current="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/libs/drawing.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="398" column="18" selection-start="15209" selection-end="15209" vertical-scroll-proportion="0.0">
+                    <state line="501" column="31" selection-start="19021" selection-end="19021" vertical-scroll-proportion="0.9683544">
                       <folding />
                     </state>
                   </provider>
@@ -122,19 +123,19 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="config.py" pinned="false" current="false" current-in-tab="false">
+          <file leaf-file-name="config.py" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/config.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="201" column="0" selection-start="11143" selection-end="11143" vertical-scroll-proportion="0.0">
+                <state line="46" column="31" selection-start="2213" selection-end="2213" vertical-scroll-proportion="0.4301848">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="main_script.py" pinned="false" current="false" current-in-tab="true">
+          <file leaf-file-name="main_script.py" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/main_script.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="86" column="24" selection-start="2683" selection-end="2683" vertical-scroll-proportion="0.72644377">
+                <state line="38" column="19" selection-start="1282" selection-end="1282" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -301,6 +302,7 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297244" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -310,7 +312,6 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297244" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -349,30 +350,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/libs/aligning.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="91" column="31" selection-start="4134" selection-end="4134" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libs/mapping.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="143" column="19" selection-start="5949" selection-end="5949" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libs/drawing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="398" column="18" selection-start="15209" selection-end="15209" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="201" column="0" selection-start="11143" selection-end="11143" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/libs/blasting.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="70" column="4" selection-start="3114" selection-end="3114" vertical-scroll-proportion="0.0" />
@@ -402,13 +379,6 @@
     <entry file="file://$USER_HOME$/Library/Caches/PyCharm10/python_stubs/159910970/numpy/core/umath.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1166" column="21" selection-start="30810" selection-end="30814" vertical-scroll-proportion="0.33297414">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main_script.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="24" selection-start="2683" selection-end="2683" vertical-scroll-proportion="0.72644377">
           <folding />
         </state>
       </provider>
@@ -450,7 +420,42 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/libs/reporting.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="197" column="38" selection-start="8439" selection-end="8439" vertical-scroll-proportion="0.43768996">
+        <state line="204" column="23" selection-start="8695" selection-end="8695" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/mapping.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="32" selection-start="1151" selection-end="1151" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/7.1/lib/python2.7/site-packages/reportlab/pdfgen/canvas.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1452" column="16" selection-start="58872" selection-end="58876" vertical-scroll-proportion="0.8060345">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/drawing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="449" column="55" selection-start="16986" selection-end="16986" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_script.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="19" selection-start="1282" selection-end="1282" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="46" column="31" selection-start="2213" selection-end="2213" vertical-scroll-proportion="0.4301848">
           <folding />
         </state>
       </provider>

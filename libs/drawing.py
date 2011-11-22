@@ -9,11 +9,12 @@ from array_tetris import offset_coord, nudge_coord, shade_split, \
 ### Hardcoded presets ###
 ## General proportions ##
 u 		= 0.0125		# conversion factor for sequence length-related values (0.0125, increase for short sequences)
-hmar 	= 1*cm			# horizontal margin to canvas (1*cm)
-vmar 	= 2*cm			# vertical margin to canvas (2*cm)
+hmar 	= 2*cm			# horizontal margin to canvas (1*cm)
+vmar 	= 2.5*cm		# vertical margin to canvas (2*cm)  
 pNsize 	= 5*cm			# width to set aside for plasmid names (2.5*cm)
 di 		= 0.18*cm		# half-length of interruption/frameshift tick marks (0.18*cm)
-doL 	= 0.7*cm		# distance of ORF labels from their ORF (0.7*cm)
+doLup 	= 0.6*cm		# distance of ORF labels from their ORF (0.6*cm) (above)
+doLdn   = 0.8*cm		# distance of ORF labels from their ORF (0.8*cm) (below)
 minL 	= 700			# minimum ORF size (in base pairs) for 'full arrows' (700, decrease for short seq)
 w 		= 0.3*cm     	# half-width of the tail (0.3*cm)
 h 		= 0.175*cm		# distance from the side tips of the head to the neck (0.175*cm)
@@ -59,8 +60,9 @@ hk_u		= 3		    # length conversion factor (1.5)
 hkY			= dip		# starting point on Y axis (dip)
 hk_boxX		= ck_boxX*2	# horizontal side size of box (ck_boxY)
 
-## Canvasser : Initialize canvas ##
-def Canvasser(hCan,vCan,transX,transY,outfile) :
+
+def canvasser(hCan,vCan,transX,transY,outfile) :
+    """Initialize canvas."""
     canvasN = canvas.Canvas(outfile, pagesize=(hCan,vCan))
     canvasN.translate(transX,transY)
     canvasN.setStrokeColor(black)
@@ -70,13 +72,13 @@ def Canvasser(hCan,vCan,transX,transY,outfile) :
     canvasN.setLineCap(0)
     return canvasN
 
-def BaseDraw(canvas, cName, cLen, feats, key, dop_Y, Y0, X_shift,
+def base_draw(canvas, cName, cLen, feats, key, dop_Y, Y0, X_shift,
              map_mode, annot_cnt, offset, offset_mode, seq_len, annot_mode) :
     """Draw contig baseline and features."""
     # draw plasmid baseline
-    BaseL(cLen, canvas, Y0, offset, offset_mode)
+    baseliner(cLen, canvas, Y0, offset, offset_mode)
     # label the baseline with plasmid name and size
-    LabeL(cName, cLen, canvas, Y0)
+    labeller(cName, cLen, canvas, Y0)
     # label the annotations list
     Y_annot = 0
     if map_mode != 'n':
@@ -89,8 +91,10 @@ def BaseDraw(canvas, cName, cLen, feats, key, dop_Y, Y0, X_shift,
     shift_flag = False
     for feature in feats :
         if feature.type == 'contig':
-            TigTicker(canvas, feature, cLen, offset, offset_mode)
-        if feature.type == 'CDS' or feature.type == 'cds':
+            contig_ticker(canvas, feature, cLen, Y0, offset, offset_mode)
+        elif feature.type == 'ref_seg':
+            ref_ticker(canvas, feature, cLen, Y0, offset, offset_mode)
+        elif feature.type == 'CDS' or feature.type == 'cds':
             ORFcnt += 1
             # determine functional category color
             try:
@@ -100,19 +104,19 @@ def BaseDraw(canvas, cName, cLen, feats, key, dop_Y, Y0, X_shift,
             fct_key = annot_color(fct_flags, annot)
             color_hex = HexColor(fct_colors[fct_key][0])
             # calculate coordinates for canvas
-            featL, midLZ, coords, split_flag = ORFcoords(feature, Y0, cLen,
+            featL, midLZ, coords, split_flag = orf_coords(feature, Y0, cLen,
                                                          offset, offset_mode)
             # check for CDS sitting across the origin
             if split_flag:
                 # split coords
-                coords1, featL1, coords2, featL2 = ORFsplit(coords, cLen)
+                coords1, featL1, coords2, featL2 = orf_split(coords, cLen)
                 # draw square feature
-                ORFeus(canvas, featL1, coords1, color_hex, shape='square')
+                orf_eus(canvas, featL1, coords1, color_hex, shape='square')
                 # draw arrow feature
-                ORFeus(canvas, featL2, coords2, color_hex, shape=None)
+                orf_eus(canvas, featL2, coords2, color_hex, shape=None)
             else:
                 # draw arrow feature
-                ORFeus(canvas, featL, coords, color_hex, shape=None)
+                orf_eus(canvas, featL, coords, color_hex, shape=None)
             # write annotation line and CDS number
             if map_mode != 'n':
                 if map_mode == 'single' and Y_annot-1 > annot_cnt/2:
@@ -120,11 +124,11 @@ def BaseDraw(canvas, cName, cLen, feats, key, dop_Y, Y0, X_shift,
                     if not shift_flag:
                         Y_annot -= annot_cnt/2
                         shift_flag = True
-                Y_annot = ORFannot(canvas, cLen, annot, Y_annot, ORFcnt,
+                Y_annot = orf_annot(canvas, cLen, annot, Y_annot, ORFcnt,
                                    Y0+dop_Y, midLZ, X_shift, split_flag,
                                    annot_mode)
 
-def BaseL(cLen, canvas, Y_map, offset, offset_mode):
+def baseliner(cLen, canvas, Y_map, offset, offset_mode):
     """Draw sequence baseline."""
     canvas.setLineWidth(3)
     y0 = Y_map
@@ -145,7 +149,7 @@ def BaseL(cLen, canvas, Y_map, offset, offset_mode):
     canvas.drawPath(pBL, stroke=1, fill=0)
     pBL.close()
 
-def LabeL(cName, cLen, canvas, Y_map) :
+def labeller(cName, cLen, canvas, Y_map) :
     """Label baselines with genome/contig name and size."""
     canvas.setFillColor(black)
     y0 = Y_map
@@ -158,7 +162,7 @@ def LabeL(cName, cLen, canvas, Y_map) :
     canvas.setFont(rFont,NfSize)
     canvas.drawString(x0,y2,pLenStr+' kb')
 
-def ORFannot(canvas, cLen, annot, Y_annot, ORFcnt, cnt_Y, midLZ, X_shift,
+def orf_annot(canvas, cLen, annot, Y_annot, ORFcnt, cnt_Y, midLZ, X_shift,
              split_flag, annot_mode):
     """Write annotation to feature list."""
     flag = False
@@ -180,7 +184,7 @@ def ORFannot(canvas, cLen, annot, Y_annot, ORFcnt, cnt_Y, midLZ, X_shift,
         Y_annot +=1
     return Y_annot
 
-def ORFsplit(coords, cLen):
+def orf_split(coords, cLen):
     """Split CDS that sit across the map origin."""
     xs, xe, xn, y0, yt, yb, ynt, ynb = coords
     if xs < xe:
@@ -195,7 +199,7 @@ def ORFsplit(coords, cLen):
         featL2 = xe/u
     return coords1, featL1, coords2, featL2
 
-def ORFcoords(feature, Y_map, cLen, offset, offset_mode):
+def orf_coords(feature, Y_map, cLen, offset, offset_mode):
     """Calculate CDS coordinates in drawing space."""
     # evaluate what strand the ORF is on (determines direction of arrow)
     cstrand = feature.strand
@@ -234,7 +238,7 @@ def ORFcoords(feature, Y_map, cLen, offset, offset_mode):
     coords = xs, xe, xn, y0, yt, yb, ynt, ynb
     return featL, midLZ, coords, split_flag
 
-def ORFeus(canvas, featL, coords, color_hex, shape):
+def orf_eus(canvas, featL, coords, color_hex, shape):
     """Draw CDS and write count."""
     xs, xe, xn, y0, yt, yb, ynt, ynb = coords
     canvas.setLineWidth(1)
@@ -269,7 +273,7 @@ def ORFeus(canvas, featL, coords, color_hex, shape):
     pORF.close()
     canvas.setFillColor(black)
 
-def TigTicker(canvas, feature, cLen, offset, offset_mode):
+def contig_ticker(canvas, feature, cLen, Y0, offset, offset_mode):
     """Draw contig separators."""
     # get contig name
     name = feature.qualifiers.get('id')[0]
@@ -289,22 +293,57 @@ def TigTicker(canvas, feature, cLen, offset, offset_mode):
         offZe = Ze
     xs, xe = offZs*u, offZe*u
     # set Y axis coordinates
-    y0 = (h+dop)*2
+    y0 = Y0-dop*3.5
     # draw
     canvas.setLineWidth(2)
     ttl = canvas.beginPath()
     ttl.moveTo(xs,y0)
-    ttl.lineTo(xs,y0-h*2.5)
-    ttl.lineTo(xs+dop,y0-h*2.5)
+    ttl.lineTo(xs,y0-h*4)
+    ttl.lineTo(xs+dop,y0-h*4)
     canvas.drawPath(ttl, stroke=1, fill=0)
-    canvas.setFont(rFont, NfSize)
-    canvas.drawString(xs+dop*2, y0-h*3, name)
+    canvas.setFont(bFont, NfSize)
+    canvas.drawString(xs+dop*2, y0-h*4.5, name)
     canvas.setFont(rFont, SfSize)
-    canvas.drawString(xs+dop*2,y0-h*6,"".join(["[",str(Zs),"-",str(Ze),"]"]))
+    canvas.drawString(xs+dop*2,y0-h*8,"".join(["[",str(Zs),"-",str(Ze),"]"]))
     canvas.setFont(rFont, NfSize)
     ttl.close()
 
-def SeqScale(canvas, scX, incrT, incrN, dip, dop) :
+def ref_ticker(canvas, feature, cLen, Y0, offset, offset_mode):
+    """Draw contig separators."""
+    # get contig name
+    name = feature.qualifiers.get('id')[0]
+    # take start and end points
+    location = feature.location
+    Zs = location.nofuzzy_start
+    Ze = location.nofuzzy_end
+    # calculate offset coordinates
+    if offset_mode == 'loop':
+        offZs = offset_coord(Zs, cLen, offset)
+        offZe = offset_coord(Ze, cLen, offset)
+    elif offset_mode == 'nudge':
+        offZs = nudge_coord(Zs, offset)
+        offZe = nudge_coord(Ze, offset)
+    else:
+        offZs = Zs
+        offZe = Ze
+    xs, xe = offZs*u, offZe*u
+    xmid = (xe+xs)/2
+    # set Y axis coordinates
+    y0 = Y0+dop*3
+    # draw
+    canvas.setLineWidth(2)
+    ttl = canvas.beginPath()
+    ttl.moveTo(xs,y0+w)
+    ttl.lineTo(xs,y0+w+h*2)
+    ttl.lineTo(xe,y0+w+h*2)
+    ttl.lineTo(xe,y0+w)
+    canvas.drawPath(ttl, stroke=1, fill=0)
+    canvas.setFont(bFont, NfSize)
+    canvas.drawCentredString(xmid, y0+h*5, name)
+    canvas.setFont(rFont, NfSize)
+    ttl.close()
+
+def seq_scale(canvas, scX, incrT, incrN, dip, dop) :
     """Draws the sequence scale bar."""
     canvas.setLineWidth(1.2)
     canvas.setFillColor(black)
@@ -337,7 +376,7 @@ def annot_color(fct_flags, annotation):
             i +=1
     return fct_key
 
-def ContigDraw(cName, in_file, out_file, annot_mode, key):
+def contig_draw(cName, in_file, out_file, annot_mode, key):
     """Draw sequence map of a single contig to file."""
     # load contig record
     seq_record = load_genbank(in_file)
@@ -365,17 +404,17 @@ def ContigDraw(cName, in_file, out_file, annot_mode, key):
     transY = dBL + vmar*2 + (annot_cnt/2)*ck_vsp
     ctg_Y = vmar
     # set up main canvas
-    canvas = Canvasser(hCan, vCan, transX, transY, out_file)
+    canvas = canvasser(hCan, vCan, transX, transY, out_file)
     # draw contig baseline and features
-    BaseDraw(canvas, cName, ctg_len, feats, key, -doL, ctg_Y, 0, 'single',
+    base_draw(canvas, cName, ctg_len, feats, key, -doLdn, ctg_Y, 0, 'single',
              annot_cnt, None, None, seq_len, annot_mode)
     # draw scale
-    SeqScale(canvas, (ctg_len*u)-pNsize, incrT, incrN, dip, dop)
+    seq_scale(canvas, (ctg_len*u)-pNsize, incrT, incrN, dip, dop)
     # write to file and finalize the figure
     canvas.showPage()
     canvas.save()
 
-def PairwiseDraw(ref_name, q_name, ref_file, q_file, segs, map_file, q_inv,
+def pairwise_draw(ref_name, q_name, ref_file, q_file, segs, map_file, q_inv,
                  g_offset, mode1, mode2, annot_mode, key1, key2):
     """Draw pairwise alignment map with similarity shading."""
     # load ref and query records
@@ -436,44 +475,45 @@ def PairwiseDraw(ref_name, q_name, ref_file, q_file, segs, map_file, q_inv,
         annot_len = annot_cnt
     vCan = dBL + vmar*6 + annot_len*ck_vsp
     transX = hmar + pNsize
-    transY = dBL + vmar*2 + annot_len*ck_vsp
-    ref_Y = vmar*3
+    transY = dBL + vmar*1.8 + annot_len*ck_vsp
+    ref_Y = vmar*2.8
     query_Y = vmar
     # set up main canvas
-    m_canvas = Canvasser(hCan, vCan, transX, transY, map_file)
+    m_canvas = canvasser(hCan, vCan, transX, transY, map_file)
     # draw scale
-    SeqScale(m_canvas, (ctg_len*u)-pNsize, incrT, incrN, dip, dop )
+    seq_scale(m_canvas, (ctg_len*u)-pNsize, incrT, incrN, dip, dop )
     # draw shading legend
-    HeaKey(m_canvas, -pNsize, -pNsize/2)
+    heatkey(m_canvas, -pNsize, -pNsize/2)
     # draw ref baseline and features
-    BaseDraw(m_canvas, ref_name, ref_len, ref_feat, key1, doL, ref_Y,
+    base_draw(m_canvas, ref_name, ref_len, ref_feat, key1, doLup, ref_Y,
              0, mode1, annot_cnt, g_offset[0], 'nudge', seq_len, annot_mode)
     # draw query baseline and features
-    BaseDraw(m_canvas, q_name, q_len, q_feat, key2, -doL, query_Y, seq_len/2,
-             mode2, annot_cnt, g_offset[1], 'loop', seq_len, annot_mode)
+    base_draw(m_canvas, q_name, q_len, q_feat, key2, -doLdn, query_Y,
+              seq_len/2, mode2, annot_cnt, g_offset[1], 'loop', seq_len,
+              annot_mode)
     # draw pairwise similarity shading
     try:
         for xa, xb, xc, xd, idp in segs:
             # evaluate color shading category
-            sh_color = HexColor(SimColor(idp))
+            sh_color = HexColor(simcolor(idp))
             # check for split
             if abs(xa) > abs(xb) or abs(xc) > abs(xd):
                 coords1, coords2 = shade_split(xa, xb, xc, xd, q_len)
                 xa1, xb1, xc1, xd1 = coords1
                 xa2, xb2, xc2, xd2 = coords2
                 # draw shading
-                Shadowfax(m_canvas, xa1, xb1, xc1, xd1, ref_Y, query_Y, sh_color)
-                Shadowfax(m_canvas, xa2, xb2, xc2, xd2, ref_Y, query_Y, sh_color)
+                shadowfax(m_canvas, xa1, xb1, xc1, xd1, ref_Y, query_Y, sh_color)
+                shadowfax(m_canvas, xa2, xb2, xc2, xd2, ref_Y, query_Y, sh_color)
             else:
                 # draw shading
-                Shadowfax(m_canvas, xa, xb, xc, xd, ref_Y, query_Y, sh_color)
+                shadowfax(m_canvas, xa, xb, xc, xd, ref_Y, query_Y, sh_color)
     except TypeError:
         pass
     # write to file and finalize the figure
     m_canvas.showPage()
     m_canvas.save()
 
-def Shadowfax(canvas_def, xa, xb, xc, xd, aby0, cdy0, sh_color):
+def shadowfax(canvas_def, xa, xb, xc, xd, aby0, cdy0, sh_color):
     """Draw shaded area between homologous segments."""
     canvas_def.setLineWidth(1)
     # convert sequence-scale values to canvas-space
@@ -511,13 +551,13 @@ def Shadowfax(canvas_def, xa, xb, xc, xd, aby0, cdy0, sh_color):
     canvas_def.drawPath(puck, stroke=1, fill=0)
     puck.close()
 
-def SimColor(idp):
+def simcolor(idp):
     """Evaluate class of similarity."""
     id_cats = [x for x in idpt if idp>=x]
     sh_hex = idpt[max(id_cats)]
     return sh_hex
 
-def HeaKey(canvas, hkX, hkY):
+def heatkey(canvas, hkX, hkY):
     """Draw color key for the heat map."""
     canvas.setLineWidth(1)
     canvas.setLineCap(0)

@@ -2,11 +2,11 @@ from os import listdir
 from config import directories as dirs, p_root_dir, genomes, segtype
 from common import ensure_dir
 from array_tetris import offset_q2r_coords
-from drawing import ContigDraw, PairwiseDraw
+from drawing import contig_draw, pairwise_draw
 from loaders import load_genbank
 import numpy as np
 
-def prep_maps(ref_ctg, run_id):
+def prep_maps(ref_ctg, run_id, g_select):
     """Set up generation of various maps."""
     # set inputs and outputs
     ref_ctg_n = ref_ctg['name']
@@ -31,21 +31,28 @@ def prep_maps(ref_ctg, run_id):
     for genome in genomes:
         # set inputs and outputs
         g_name = genome['name']
-        print "\t", g_name, "...",
-        scaff_gbk = cst_root+g_name+"_"+ref_ctg_n+"_scaffold.gbk"
-        ctg_aln_maps_dir = ctg_aln_maps_root+g_name+"/"
-        ensure_dir([ctg_aln_maps_dir])
-        # maps of contigs aligned to reference
-        print "ctg_aln",
-        map_ctg_alns(ref_ctg, ref_gbk, genome, ctg_segs_root,
-                     ctg_aln_maps_dir)
-        # map of scaffold construct
-        print "cst_annot",
-        map_cst_annot(ref_ctg, genome, scaff_gbk, cst_ann_maps_root)
-        # map of construct aligned to reference
-        print "cst_aln"
-        map_cst_aln(ref_ctg, ref_gbk, genome, scaff_gbk, cst_segs_root,
-                    cst_aln_maps_root)
+        while True:
+            try:
+                if g_name in g_select: pass
+                else: break
+            except TypeError:
+                pass
+            print "\t", g_name, "...",
+            scaff_gbk = cst_root+g_name+"_"+ref_ctg_n+"_scaffold.gbk"
+            ctg_aln_maps_dir = ctg_aln_maps_root+g_name+"/"
+            ensure_dir([ctg_aln_maps_dir])
+            # maps of contigs aligned to reference
+            print "ctg_aln",
+            map_ctg_alns(ref_ctg, ref_gbk, genome, ctg_segs_root,
+                         ctg_aln_maps_dir)
+            # map of scaffold construct
+            print "cst_annot",
+            map_cst_annot(ref_ctg, genome, scaff_gbk, cst_ann_maps_root)
+            # map of construct aligned to reference
+            print "cst_aln"
+            map_cst_aln(ref_ctg, ref_gbk, genome, scaff_gbk, cst_segs_root,
+                        cst_aln_maps_root)
+            break
 
 def map_ctg_alns(ref_ctg, ref_gbk, genome, ctg_segs_root, maps_root):
     """Generate maps of contigs aligned to reference."""
@@ -68,7 +75,7 @@ def map_ctg_alns(ref_ctg, ref_gbk, genome, ctg_segs_root, maps_root):
             g_offset = (0,0)
             q_invert = False
             # generate graphical map
-            PairwiseDraw(ref_ctg_n, g_name+"_"+ctg_num, ref_gbk, ctg_gbk,
+            pairwise_draw(ref_ctg_n, g_name+"_"+ctg_num, ref_gbk, ctg_gbk,
                          segdata, map_file, q_invert, g_offset, 'dual',
                          'dual', 'm', 'fct', 'fct')
         except IOError:
@@ -89,7 +96,7 @@ def map_cst_annot(ref_ctg, genome, scaff_gbk, maps_root):
     except IOError:
         print "WARNING: No scaffold construct to map"
     else:
-        ContigDraw(g_name, scaff_gbk, map_file, 'm', 'fct')
+        contig_draw(g_name, scaff_gbk, map_file, 'm', 'fct')
 
 def map_cst_aln(ref_ctg, ref_gbk, genome, scaff_gbk, segs_root, maps_root):
     """Generate map of construct aligned to reference."""
@@ -122,7 +129,7 @@ def map_cst_aln(ref_ctg, ref_gbk, genome, scaff_gbk, segs_root, maps_root):
             else:
                 q_invert = False
             # generate graphical map
-            PairwiseDraw(ref_ctg_n, g_name, ref_gbk, scaff_gbk, segdata,
+            pairwise_draw(ref_ctg_n, g_name, ref_gbk, scaff_gbk, segdata,
                          map_file, q_invert, g_offset, 'dual', 'dual', 'm',
                          'fct', 'fct')
 
@@ -151,7 +158,7 @@ def map_ref_segs(ref_ctg, run_id):
         g_offset = (0,0)
         q_invert = False
         # generate graphical map
-        PairwiseDraw(ref_ctg_n+"_ra", ref_ctg_n+"_ori", gbk_file, ori_file,
+        pairwise_draw(ref_ctg_n+"_ra", ref_ctg_n+"_ori", gbk_file, ori_file,
                      segdata, map_file, q_invert, g_offset, 'dual', 'dual',
                      'm', 'fct', 'product')
     except IOError:
