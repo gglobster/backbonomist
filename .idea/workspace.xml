@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d21c3716-ec9e-48fb-9180-b0950c4e0f24" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config.py" afterPath="$PROJECT_DIR$/config.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libs/mapping.py" afterPath="$PROJECT_DIR$/libs/mapping.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libs/reporting.py" afterPath="$PROJECT_DIR$/libs/reporting.py" />
     </list>
     <ignored path="backbonomist.iws" />
@@ -71,10 +69,10 @@
           </split-first>
           <split-second>
             <leaf>
-              <file leaf-file-name="reporting.py" pinned="false" current="false" current-in-tab="false">
+              <file leaf-file-name="reporting.py" pinned="false" current="true" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/libs/reporting.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="176" column="58" selection-start="7590" selection-end="7590" vertical-scroll-proportion="0.0">
+                    <state line="203" column="32" selection-start="8709" selection-end="8709" vertical-scroll-proportion="0.78542095">
                       <folding />
                     </state>
                   </provider>
@@ -92,16 +90,16 @@
               <file leaf-file-name="parsing.py" pinned="false" current="false" current-in-tab="false">
                 <entry file="file://$PROJECT_DIR$/libs/parsing.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="47" column="29" selection-start="1988" selection-end="1988" vertical-scroll-proportion="0.0">
+                    <state line="42" column="61" selection-start="1733" selection-end="1733" vertical-scroll-proportion="0.0">
                       <folding />
                     </state>
                   </provider>
                 </entry>
               </file>
-              <file leaf-file-name="mapping.py" pinned="false" current="true" current-in-tab="true">
+              <file leaf-file-name="mapping.py" pinned="false" current="false" current-in-tab="false">
                 <entry file="file://$PROJECT_DIR$/libs/mapping.py">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="69" column="36" selection-start="2823" selection-end="2823" vertical-scroll-proportion="0.523614">
+                    <state line="49" column="34" selection-start="2036" selection-end="2036" vertical-scroll-proportion="0.0">
                       <folding />
                     </state>
                   </provider>
@@ -122,19 +120,19 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="config.py" pinned="false" current="false" current-in-tab="false">
+          <file leaf-file-name="config.py" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/config.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="91" column="40" selection-start="4398" selection-end="4398" vertical-scroll-proportion="0.0">
+                <state line="41" column="46" selection-start="1978" selection-end="1978" vertical-scroll-proportion="0.38398358">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="main_script.py" pinned="false" current="false" current-in-tab="true">
+          <file leaf-file-name="main_script.py" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/main_script.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="77" column="56" selection-start="2316" selection-end="2316" vertical-scroll-proportion="0.65045595">
+                <state line="67" column="32" selection-start="2060" selection-end="2060" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -170,10 +168,10 @@
         <option value="$PROJECT_DIR$/libs/aligning.py" />
         <option value="$PROJECT_DIR$/libs/mapping.py" />
         <option value="$PROJECT_DIR$/libs/parsing.py" />
-        <option value="$PROJECT_DIR$/libs/reporting.py" />
         <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/libs/genome_tetris.py" />
         <option value="$PROJECT_DIR$/main_script.py" />
+        <option value="$PROJECT_DIR$/libs/reporting.py" />
       </list>
     </option>
   </component>
@@ -349,20 +347,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/libs/genome_tetris.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="123" column="31" selection-start="5100" selection-end="5100" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/7.1/lib/python2.7/site-packages/matplotlib/axis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1372" column="8" selection-start="47435" selection-end="47435" vertical-scroll-proportion="0.33333334">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Library/Caches/PyCharm10/python_stubs/159910970/numpy/core/umath.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1166" column="21" selection-start="30810" selection-end="30814" vertical-scroll-proportion="0.33297414">
@@ -412,13 +396,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="91" column="40" selection-start="4398" selection-end="4398" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/libs/drawing.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="469" column="42" selection-start="17696" selection-end="17696" vertical-scroll-proportion="-24.923077">
@@ -426,16 +403,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/libs/parsing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="29" selection-start="1988" selection-end="1988" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main_script.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="77" column="56" selection-start="2316" selection-end="2316" vertical-scroll-proportion="0.65045595">
+        <state line="67" column="32" selection-start="2060" selection-end="2060" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -447,16 +417,44 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/libs/reporting.py">
+    <entry file="file://$PROJECT_DIR$/libs/mapping.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="176" column="58" selection-start="7590" selection-end="7590" vertical-scroll-proportion="0.0">
+        <state line="49" column="34" selection-start="2036" selection-end="2036" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/libs/mapping.py">
+    <entry file="file://$PROJECT_DIR$/libs/blasting.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="36" selection-start="2823" selection-end="2823" vertical-scroll-proportion="0.523614">
+        <state line="70" column="4" selection-start="3114" selection-end="3114" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/parsing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="61" selection-start="1733" selection-end="1733" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="41" column="46" selection-start="1978" selection-end="1978" vertical-scroll-proportion="0.38398358">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/7.1/lib/python2.7/site-packages/numpy/core/fromnumeric.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="106" column="4" selection-start="3121" selection-end="3121" vertical-scroll-proportion="0.33333334">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/reporting.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="203" column="32" selection-start="8709" selection-end="8709" vertical-scroll-proportion="0.78542095">
           <folding />
         </state>
       </provider>

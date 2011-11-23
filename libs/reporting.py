@@ -179,20 +179,27 @@ def matches_table(ref_ctg, run_id, ref_hits, ctl_scores):
         rep_fhandle.write("\n".join(g_lines))
         # normalize scores
         g_array = np.array(g_list)
-        if g_list is []:
+        if not len(g_list):
             g_norm = np.zeros(len(ctl_scores))
+            g_norm = np.reshape(g_norm, (1, len(ctl_scores)))
         else:
             try:
                 g_norm = np.divide(g_array, ctl_scores)
             except ValueError:
                 print "ERROR: problem processing hits for", g_name
-                break
+                g_norm = np.zeros(len(ctl_scores))
+                g_norm = np.reshape(g_norm, (1, len(ctl_scores)))
         # graph detailed scores per genome
         contigs = ref_hits[g_name].keys()
         hits_heatmap_multi(ref_n, segs, [g_name], [contigs], [g_norm],
                            g_table_fig)
         # prep for global graphs
-        g_reduce = np.amax(g_array, 0)
+        if len(g_array) > 1:
+            g_reduce = np.amax(g_array, 0)
+            print g_name, g_reduce
+        else:
+            g_reduce = np.reshape(g_norm, (len(ctl_scores),))
+            print g_name, g_reduce
         red_g_list.append(g_reduce)
         mf_g_list.append(g_norm)
         mf_ctgs.append(contigs)
@@ -200,6 +207,7 @@ def matches_table(ref_ctg, run_id, ref_hits, ctl_scores):
     # graph detailed scores for all genomes in individual images
     hits_heatmap_multi(ref_n, segs, g_names, mf_ctgs, mf_g_list, mf_hits_fig)
     # graph summarized scores for all genomes
+    #print red_g_list
     red_g_array = np.array(red_g_list)
     red_g_norm = np.divide(red_g_array, ctl_scores)
     g_names.reverse()
