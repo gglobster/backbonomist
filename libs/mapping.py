@@ -62,28 +62,32 @@ def map_ctg_alns(ref_ctg, ref_gbk, genome, ctg_segs_root, maps_root):
     segs_root = ctg_segs_root+g_name+"/"
     ctgs_dir = dirs['gbk_contigs_dir']+g_name+"/"
     # list genbank files in matches directory
-    dir_contents = listdir(segs_root)
-    for ctg_num in dir_contents:
-        ctg_gbk = ctgs_dir+g_name+"_"+ctg_num+".gbk"
-        seg_file = segs_root+ctg_num+"/"+ctg_num+"_"+ref_ctg_n+"_segs.txt"
-        map_file = maps_root+g_name+"_"+ctg_num+"_vs_"+ref_ctg_n+".pdf"
-        # start mapping
-        try:
-            # load segments TODO: add idp-based clumping
-            segdata = np.loadtxt(seg_file, skiprows=1, dtype=segtype)
-            # deactivate offsetting
-            g_offset = (0,0)
-            q_invert = False
-            # generate graphical map
-            pairwise_draw(ref_ctg_n, g_name+"_"+ctg_num, ref_gbk, ctg_gbk,
-                         segdata, map_file, q_invert, g_offset, 'dual',
-                         'dual', 'm', 'fct', 'fct')
-        except IOError:
-            print "\nERROR: could not load segments data for", g_name, ctg_num
-            print "\t\t\t",
-        except StopIteration:
-            print "\nERROR: could not make map for", g_name, ctg_num
-            print "\t\t\t",
+    try:
+        dir_contents = listdir(segs_root)
+    except OSError:
+        print "\nWARNING: no matching segments for", g_name
+    else:
+        for ctg_num in dir_contents:
+            ctg_gbk = ctgs_dir+g_name+"_"+ctg_num+".gbk"
+            seg_file = segs_root+ctg_num+"/"+ctg_num+"_"+ref_ctg_n+"_segs.txt"
+            map_file = maps_root+g_name+"_"+ctg_num+"_vs_"+ref_ctg_n+".pdf"
+            # start mapping
+            try:
+                # load segments TODO: add idp-based clumping
+                segdata = np.loadtxt(seg_file, skiprows=1, dtype=segtype)
+                # deactivate offsetting
+                g_offset = (0,0)
+                q_invert = False
+                # generate graphical map
+                pairwise_draw(ref_ctg_n, g_name+"_"+ctg_num, ref_gbk, ctg_gbk,
+                             segdata, map_file, q_invert, g_offset, 'dual',
+                             'dual', 'm', 'fct', 'fct')
+            except IOError:
+                print "\nERROR: could not load segments data for", g_name, ctg_num
+                print "\t\t\t",
+            except StopIteration:
+                print "\nERROR: could not make map for", g_name, ctg_num
+                print "\t\t\t",
 
 def map_cst_annot(ref_ctg, genome, scaff_gbk, maps_root):
     """Generate map of annotated scaffold construct."""

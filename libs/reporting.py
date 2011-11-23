@@ -7,8 +7,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
-from mpl_toolkits.axes_grid1 import make_axes_locatable, Divider, \
-    LocatableAxes, Size, ImageGrid, AxesGrid
+from mpl_toolkits.axes_grid1 import make_axes_locatable, Size, AxesGrid
 
 
 def log_start_run(run_id, timestamp):
@@ -150,9 +149,9 @@ def matches_table(ref_ctg, run_id, ref_hits, ctl_scores):
     ref_n = ref_ctg['name']
     run_root = p_root_dir+run_id+"/"
     report_root = run_root+dirs['reports']+ref_n+"/"
-    hits_table_txt = report_root+ref_n+"_hits_table.txt"
-    red_hits_fig = report_root+ref_n+"_sum_hits.png"
-    mf_hits_fig = report_root+ref_n+"_all_hits.png"
+    hits_table_txt = report_root+run_id+"_"+ref_n+"_hits_table.txt"
+    red_hits_fig = report_root+run_id+"_"+ref_n+"_sum_hits.png"
+    mf_hits_fig = report_root+run_id+"_"+ref_n+"_all_hits.png"
     ensure_dir([report_root])
     rep_fhandle = open(hits_table_txt, 'w')
     rep_fhandle.write("# Matches to the reference segments of "+ref_n)
@@ -180,10 +179,16 @@ def matches_table(ref_ctg, run_id, ref_hits, ctl_scores):
         rep_fhandle.write("\n".join(g_lines))
         # normalize scores
         g_array = np.array(g_list)
-        g_norm = np.divide(g_array, ctl_scores)
+        if g_list is []:
+            g_norm = np.zeros(len(ctl_scores))
+        else:
+            try:
+                g_norm = np.divide(g_array, ctl_scores)
+            except ValueError:
+                print "ERROR: problem processing hits for", g_name
+                break
         # graph detailed scores per genome
         contigs = ref_hits[g_name].keys()
-
         hits_heatmap_multi(ref_n, segs, [g_name], [contigs], [g_norm],
                            g_table_fig)
         # prep for global graphs
@@ -197,7 +202,6 @@ def matches_table(ref_ctg, run_id, ref_hits, ctl_scores):
     # graph summarized scores for all genomes
     red_g_array = np.array(red_g_list)
     red_g_norm = np.divide(red_g_array, ctl_scores)
-    title = "Summarized genomes vs. "+ref_n
     g_names.reverse()
     hits_heatmap_multi(ref_n, segs, [1], [g_names], [red_g_norm],
                        red_hits_fig)
