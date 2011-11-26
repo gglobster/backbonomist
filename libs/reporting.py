@@ -1,5 +1,5 @@
 from os import path
-from config import directories as dirs, p_root_dir, project_id, \
+from config import fixed_dirs, run_dirs, p_root_dir, project_id, \
     project_date, genomes, references, ctg_thresholds
 from common import ensure_dir
 import numpy as np
@@ -13,7 +13,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable, Size, AxesGrid
 def log_start_run(run_id, timestamp):
     """Record run initiated in the dataset log."""
     set_log = p_root_dir+"/"+project_id+"_log.html"
-    param_file = run_id+"/"+dirs['reports']+run_id+"_dataset.txt"
+    param_file = run_id+"/"+run_dirs['reports']+run_id+"_dataset.txt"
     header = "<p><b>Log of processing runs for "+project_id+"</b></p><p><ul>"
     set_log_htm = ["<li><b>", run_id, "</b>&nbsp;- initiated ", timestamp,
                    " (<a href='", param_file, "'>dataset</a>)</li>"]
@@ -42,9 +42,8 @@ def log_resume_run(run_id, timestamp, step):
 def save_datasumm(run_id, timestamp):
     """Save a summary of the dataset composition to file."""
     print " ", run_id,
-    report_root = p_root_dir+run_id+"/"+dirs['reports']
+    report_root = p_root_dir+run_id+"/"+run_dirs['reports']
     param_file = report_root+run_id+"_dataset.txt"
-    ensure_dir([report_root])
     # genome data
     g_title = "\t".join(["## Genomes"])
     g_header = "\t".join(["## Name", "Offset", "Format", "File"])
@@ -58,14 +57,19 @@ def save_datasumm(run_id, timestamp):
     r_header = "\t".join(["## Name", "Segments", "File"])
     r_data = [r_title, r_header]
     for ref in references:
-        r_data.append("\t".join([ref['name'], str(len(ref['segs'])),
-                                 ref['file']]))
-        r_data.append("\t".join(["###", "Segments"]))
-        r_data.append("\t".join(["###", "Name", "Start", "Stop"]))
-        for seg in ref['segs']:
-            r_data.append("\t".join(["", seg['name'],
-                                     str(seg['coords'][0]),
-                                     str(seg['coords'][1])]))
+        try:
+            r_data.append("\t".join([ref['name'], str(len(ref['segs'])),
+                                     ref['file']]))
+            r_data.append("\t".join(["###", "Segments"]))
+            r_data.append("\t".join(["###", "Name", "Start", "Stop"]))
+            for seg in ref['segs']:
+                r_data.append("\t".join(["", seg['name'],
+                                         str(seg['coords'][0]),
+                                         str(seg['coords'][1])]))
+        except KeyError:
+            r_data.append("\t".join([ref['name'], ref['file']]))
+            r_data.append("\t".join(["###", "Segments generated from size",
+                                     str(ref['chop_size'])]))
     r_block = "\n".join(r_data)
     # text block
     txt = ["# Project", project_id,
@@ -80,9 +84,7 @@ def save_datasumm(run_id, timestamp):
 def init_reports(run_id, timestamp):
     """Record run initiated in the dataset log."""
     # set inputs and outputs
-    ctg_stats_file = dirs['ctg_stats']+"contig_stats.txt"
-    param_file = run_id+"/"+dirs['reports']+run_id+"_dataset.txt"
-    ensure_dir([dirs['ctg_stats']])
+    ctg_stats_file = fixed_dirs['ctg_stats']+"contig_stats.txt"
     # initialize contig stats report
     kb1, kb2, kb3 = ctg_thresholds
     cs_header = "# Contig size distribution statistics\n"
@@ -105,12 +107,12 @@ def ctg_stats(g_name, records):
     big_ctgs = [len(rec)/i for rec in records if kb2*i <= len(rec) <= kb3*i]
     oversized = [len(rec)/i for rec in records if len(rec) >=kb3*i]
     # write to report file
-    ctg_stats_file = dirs['ctg_stats']+"contig_stats.txt"
+    ctg_stats_file = fixed_dirs['ctg_stats']+"contig_stats.txt"
     txt = ["\n"+g_name, str(len(small_ctgs)), str(len(mid_ctgs)),
            str(len(big_ctgs)), str(len(oversized))]
     open(ctg_stats_file, 'a').write("\t".join(txt))
     # make figure
-    fname = dirs['ctg_stats']+g_name+"_ctg_stats.png"
+    fname = fixed_dirs['ctg_stats']+g_name+"_ctg_stats.png"
     ctg_cats = small_ctgs, mid_ctgs, big_ctgs
     plot_ctg_stats(ctg_cats, fname)
 
@@ -143,19 +145,19 @@ def plot_ctg_stats(ctg_cats, fname):
     plt.savefig(fname)
     plt.clf()
 
-def matches_table(ref_ctg, run_id, ref_hits, ctl_scores):
+def matches_table(run_ref, run_id, ref_hits, ctl_scores):
     """Compile tables and graphs of contig matches."""
     # set imputs and outputs
-    ref_n = ref_ctg['name']
+    ref_n = run_ref.name
     run_root = p_root_dir+run_id+"/"
-    report_root = run_root+dirs['reports']+ref_n+"/"
+    report_root = run_root+run_dirs['reports']+ref_n+"/"
     hits_table_txt = report_root+run_id+"_"+ref_n+"_hits_table.txt"
     red_hits_fig = report_root+run_id+"_"+ref_n+"_sum_hits.png"
     mf_hits_fig = report_root+run_id+"_"+ref_n+"_all_hits.png"
     ensure_dir([report_root])
     rep_fhandle = open(hits_table_txt, 'w')
     rep_fhandle.write("# Matches to the reference segments of "+ref_n)
-    segs = [seg['name'] for seg in ref_ctg['segs']]
+    segs = [seg['name'] for seg in run_ref.segs]
     red_g_list = []
     mf_g_list = []
     mf_ctgs = []

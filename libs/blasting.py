@@ -1,5 +1,5 @@
 import os, subprocess, re
-from config import blast_prefs, directories as dirs, p_root_dir, genomes
+from config import blast_prefs, fixed_dirs, run_dirs, p_root_dir, genomes
 from loaders import load_multifasta
 from common import ensure_dir
 from datetime import datetime
@@ -59,31 +59,29 @@ def remote_blastp_2file(query_string, database, outfile, evalue):
 def make_genome_DB(genome):
     """Make a Blast DB from a genome FastA file."""
     # load inputs
-    fas_dir = dirs['mfas_contigs_dir']
-    db_dir = dirs['blast_db_dir']
+    fas_dir = fixed_dirs['mfas_contigs_dir']
+    db_dir = fixed_dirs['blast_db_dir']
     ensure_dir([fas_dir, db_dir])
     g_name = genome['name']
-    print " ", g_name, "...",
     # make DB
     make_blastDB(db_dir+g_name, fas_dir+g_name+'_contigs.fas', 'nucl')
-    print "DB ready"
 
-def basic_batch_blastn(contig, run_id):
+def basic_batch_blastn(run_ref, run_id):
     """Send batch jobs to Blast. Muxes to multiple reference DBs."""
     # load inputs
-    nick = contig['name']
+    ref_n = run_ref.name
     run_root = p_root_dir+run_id+"/"
-    in_root = run_root+dirs['ref_seg_dir']+nick+"/"
-    print " ", nick
+    in_root = run_root+run_dirs['ref_seg_dir']+ref_n+"/"
+    print " ", ref_n
     # do blastn
-    for ref in contig['segs']:
-        input_file = in_root+nick+"_"+ref['name']+".fas"
-        out_dir = run_root+dirs['blast_out_dir']+nick+"/"+ref['name']+"/"
+    for seg in run_ref.segs:
+        input_file = in_root+ref_n+"_"+seg['name']+".fas"
+        out_dir = run_root+run_dirs['blast_out_dir']+ref_n+"/"+seg['name']+"/"
         ensure_dir([out_dir])
-        print "\t", ref['name'], "...",
+        print "\t", seg['name'], "...",
         for genome in genomes:
             g_name = genome['name']
-            db_path = dirs['blast_db_dir']+g_name
+            db_path = fixed_dirs['blast_db_dir']+g_name
             outfile = out_dir+g_name+"_out.txt"
             print g_name,
             local_blastn_2file(input_file, db_path, outfile, blast_prefs)

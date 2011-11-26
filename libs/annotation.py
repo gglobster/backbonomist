@@ -1,8 +1,8 @@
 import os
-from config import genomes, directories as dirs, blast_prefs, \
+from config import genomes, fixed_dirs, run_dirs, blast_prefs, \
     prot_db_name, project_id, p_root_dir
 import re, subprocess
-from loaders import load_multifasta, load_fasta
+from loaders import load_multifasta, load_fasta, load_genbank
 from writers import write_genbank
 from common import ensure_dir
 from blasting import local_blastp_2file
@@ -29,28 +29,28 @@ def run_prodigal(in_file, an_gbk, an_aa, trn_file, mode):
     output, error = child.communicate()
     return output
 
-def annot_genome_contigs(ref_contig, run_id):
+def annot_genome_contigs(run_ref, run_id):
     """Annotate genome contigs (predict ORFs and assign function)."""
     # locate the COG database
-    prot_db = dirs['ref_dbs_dir']+prot_db_name
+    prot_db = fixed_dirs['ref_dbs_dir']+prot_db_name
     # TODO: add other DB / pfams?
     # set inputs and outputs
-    ref_name = ref_contig['name'] # reference contig
+    ref_name = run_ref.name
     run_root = p_root_dir+run_id+"/"
-    fas_ctgs_root = run_root+dirs['match_out_dir']+ref_name+"/"
-    ctg_cds_root = dirs['ctg_cds_dir']
-    ctg_prot_root = dirs['ctg_prot_dir']
-    ctg_blast_root = dirs['ctg_blast_dir']
-    g_gbk_ctgs_root = dirs['gbk_contigs_dir']
-    r_gbk_ctgs_root = run_root+dirs['run_gbk_ctgs_dir']+ref_name+"/"
-    annot_trn_root = dirs['annot_trn_dir']
+    fas_ctgs_root = run_root+run_dirs['match_out_dir']+ref_name+"/"
+    ctg_cds_root = fixed_dirs['ctg_cds_dir']
+    ctg_prot_root = fixed_dirs['ctg_prot_dir']
+    ctg_blast_root = fixed_dirs['ctg_blast_dir']
+    g_gbk_ctgs_root = fixed_dirs['gbk_contigs_dir']
+    r_gbk_ctgs_root = run_root+run_dirs['run_gbk_ctgs_dir']+ref_name+"/"
+    annot_trn_root = fixed_dirs['annot_trn_dir']
     print " ", ref_name
     # cycle through genomes
     for genome in genomes:
         # set inputs
         g_name = genome['name']
         fas_ctgs_dir = fas_ctgs_root+g_name+"/"
-        g_file = dirs['ori_g_dir']+genome['file']
+        g_file = fixed_dirs['ori_g_dir']+genome['file']
         print '\t', g_name, "...",
         # set output files
         training_file = annot_trn_root+g_name+"_annot.trn"
@@ -97,13 +97,13 @@ def annot_genome_contigs(ref_contig, run_id):
 def annot_ref(ref_name, ctg_fas):
     """Annotate reference contig (predict ORFs and assign function)."""
     # locate the COG database
-    prot_db = dirs['ref_dbs_dir']+prot_db_name
+    prot_db = fixed_dirs['ref_dbs_dir']+prot_db_name
     # set inputs and outputs
-    g_gbk_ctgs_root = dirs['gbk_contigs_dir']+ref_name+"/"
-    ctg_cds_root = dirs['ctg_cds_dir']+ref_name+"/"
-    ctg_prot_root = dirs['ctg_prot_dir']+ref_name+"/"
-    ctg_blast_root = dirs['ctg_blast_dir']+ref_name+"/"
-    annot_trn_root = dirs['annot_trn_dir']
+    g_gbk_ctgs_root = fixed_dirs['gbk_contigs_dir']+ref_name+"/"
+    ctg_cds_root = fixed_dirs['ctg_cds_dir']+ref_name+"/"
+    ctg_prot_root = fixed_dirs['ctg_prot_dir']+ref_name+"/"
+    ctg_blast_root = fixed_dirs['ctg_blast_dir']+ref_name+"/"
+    annot_trn_root = fixed_dirs['annot_trn_dir']
     ensure_dir([g_gbk_ctgs_root, ctg_cds_root, ctg_prot_root,
                 ctg_blast_root, annot_trn_root])
     trn_file = annot_trn_root+ref_name+"_annot.trn"
@@ -111,6 +111,8 @@ def annot_ref(ref_name, ctg_fas):
     annot_gbk = ctg_cds_root+ref_name+"_1_cds.gbk"
     annot_aa = ctg_prot_root+ref_name+"_1_aa.fas"
     blast_out = ctg_blast_root+ref_name+"_1.xml"
+    if path.exists(blast_out) and os.stat(blast_out)[6]==0:
+        os.remove(blast_out)
     if not path.exists(g_ctg_gbk):
         l_tag_base = ref_name+"_1"
         record = annot_ctg(ctg_fas, ctg_fas, annot_gbk,
@@ -122,7 +124,9 @@ def annot_ref(ref_name, ctg_fas):
                           +"-like backbones"]
         record.seq.alphabet = generic_dna
         write_genbank(g_ctg_gbk, record)
-    return g_ctg_gbk
+    else:
+        record = load_genbank(g_ctg_gbk)
+    return record
 
 def annot_ctg(g_file, ctg_fas, annot_gbk, annot_aa, trn_file, prot_db,
               blast_out, l_tag_base):

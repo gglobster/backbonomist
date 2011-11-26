@@ -2,7 +2,7 @@ import os, subprocess, re
 from os import listdir
 from Bio.Align.Applications import ClustalwCommandline
 from Bio.Align.Applications import MuscleCommandline
-from config import mauve_exec, directories as dirs, p_root_dir, genomes, \
+from config import mauve_exec, fixed_dirs, run_dirs, p_root_dir, genomes, \
     max_size, chop_mode
 from common import ensure_dir
 from parsing import mauver_load2_k0, parse_clustal_idstars
@@ -39,17 +39,17 @@ def align_mauve(file_list, output):
     # TODO: should set up something to parse Mauve errors
     return report
 
-def align_ctg2ref(contig, run_id):
+def align_ctg2ref(run_ref, run_id):
     """Align contigs pairwise to the reference contig."""
     # set inputs and outputs
-    ref_ctg_name = contig['name'] # reference contig
+    ref_n = run_ref.name
     run_root = p_root_dir+run_id+"/"
-    ref_ctg_file = dirs['ori_g_dir']+contig['file']
-    mauve_root = run_root+dirs['mauve_out_dir']+ref_ctg_name+"/contigs/"
-    segments_root = run_root+dirs['aln_seg_dir']+ref_ctg_name+"/contigs/"
-    q_ctgs_root = run_root+dirs['match_out_dir']+ref_ctg_name+"/"
+    ref_ctg_file = run_ref.file
+    mauve_root = run_root+run_dirs['mauve_out_dir']+ref_n+"/contigs/"
+    segments_root = run_root+run_dirs['aln_seg_dir']+ref_n+"/contigs/"
+    q_ctgs_root = run_root+run_dirs['match_out_dir']+ref_n+"/"
     ensure_dir([segments_root])
-    print " ", ref_ctg_name
+    print " ", ref_n
     # cycle through genomes
     for genome in genomes:
         # set inputs and outputs
@@ -73,34 +73,41 @@ def align_ctg2ref(contig, run_id):
                 mauve_outfile = mauve_dir+ctg_num+".mauve"
                 aln_segs_dir = aln_segs_root+ctg_num+"/"
                 ensure_dir([aln_segs_dir])
-                segfile = aln_segs_dir+ctg_num+"_"+ref_ctg_name+"_segs.txt"
+                segfile = aln_segs_dir+ctg_num+"_"+ref_n+"_segs.txt"
                 open(segfile, 'w').write('')
                 # do Mauve alignment
-                align_mauve(file_list, mauve_outfile)
                 try:
-                    # parse Mauve output (without initial clumping)
-                    coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
-                    # chop segments that are too long
-                    chop_array = chop_rows(coords, max_size, chop_mode)
-                    # make detailed pairwise alignments of the segments
-                    ref_rec = load_genbank(ref_ctg_file)
-                    query_rec = load_fasta(q_contig)
-                    iter_align(chop_array, ref_rec, query_rec, aln_segs_dir,
-                               segfile)
+                    open(ref_ctg_file, 'r')
+                    open(q_contig, 'r')
                 except IOError:
-                    print "\nERROR: Mauve alignment failed"
+                    print "\nERROR: File missing, cannot align"
                     print "\t\t\t",
+                else:
+                    align_mauve(file_list, mauve_outfile)
+                    try:
+                        # parse Mauve output (without initial clumping)
+                        coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
+                        # chop segments that are too long
+                        chop_array = chop_rows(coords, max_size, chop_mode)
+                        # make detailed pairwise alignments of the segments
+                        ref_rec = load_genbank(ref_ctg_file)
+                        query_rec = load_fasta(q_contig)
+                        iter_align(chop_array, ref_rec, query_rec, aln_segs_dir,
+                                   segfile)
+                    except IOError:
+                        print "\nERROR: Mauve alignment failed"
+                        print "\t\t\t",
         print ""
 
-def align_cstrct2ref(contig, run_id):
+def align_cstrct2ref(run_ref, run_id):
     """Align constructs pairwise to the reference contig."""
     # set inputs and outputs
-    ctg_name = contig['name'] # reference contig
+    ctg_name = run_ref.name
     run_root = p_root_dir+run_id+"/"
-    ref_ctg_file = dirs['ori_g_dir']+contig['file']
-    mauve_root = run_root+dirs['mauve_out_dir']+ctg_name+"/constructs/"
-    segments_root = run_root+dirs['aln_seg_dir']+ctg_name+"/constructs/"
-    scaff_root = run_root+dirs['scaffolds_dir']+ctg_name+"/"
+    ref_ctg_file = fixed_dirs['ori_g_dir']+run_ref.file
+    mauve_root = run_root+run_dirs['mauve_out_dir']+ctg_name+"/constructs/"
+    segments_root = run_root+run_dirs['aln_seg_dir']+ctg_name+"/constructs/"
+    scaff_root = run_root+run_dirs['scaffolds_dir']+ctg_name+"/"
     ensure_dir([segments_root])
     print " ", ctg_name
     # cycle through genomes

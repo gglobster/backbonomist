@@ -10,6 +10,8 @@ prot_db_name = 'Bacteria_prot'
 
 genomes = [{'name': 'pXO1', 'input': 'cgbk', 'file': 'pXO1.gbk',
             'offset': (0,0), 'ignore': (0, 0)},
+           {'name': 'pXO1-X', 'input': 'cgbk', 'file': 'pXO1.gbk',
+            'offset': (0,0), 'ignore': (0, 0)},
            # known plasmids
 #           {'name': 'pBCXO1', 'input': 'mfas', 'file': 'pBCXO1.fas',
 #            'offset': (0,0), 'ignore': (0, 0)},
@@ -223,8 +225,7 @@ references = [{'name': 'pXO1', 'file': 'pXO1.gbk', 'input': 'gbk',
                 {'coords': (155257,157413),'name': 'S', 'note': '182_184'},
                 {'coords': (174223,176584),'name': 'T', 'note': '207_212'})},
               {'name': 'pXO1-X', 'file': 'pXO1.gbk', 'input': 'gbk',
-               'seg_mode': 'chop', 'size': 1000}]
-# TODO: generate a persistent reference object
+               'seg_mode': 'chop', 'chop_size': 1000}]
 
 # Function categories and legend (keys MUST be lowercase)
 
@@ -262,7 +263,8 @@ separator = "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 # Project root directory
 p_root_dir = 'data/'+project_id+'/'
 
-directories = {
+# run-independent directories
+fixed_dirs = {
 'ref_dbs_dir': 'data/ref_dbs/',
 'ori_g_dir': p_root_dir+'genomes/original/',
 'gbk_contigs_dir': p_root_dir+'genomes/genbank_ctgs/',
@@ -273,8 +275,12 @@ directories = {
 'ctg_cds_dir': p_root_dir+'genomes/annotation/genes/',
 'ctg_prot_dir': p_root_dir+'genomes/annotation/proteins/',
 'ctg_blast_dir': p_root_dir+'genomes/annotation/blastp/',
-'ctg_stats': p_root_dir+'genomes/contig_stats/',
-# the following are run-dependent
+'ctg_stats': p_root_dir+'genomes/contig_stats/'
+}
+
+# run-dependent directories
+run_dirs = {
+'ref_pickles': 'references/pickles/',
 'ref_seg_dir': 'references/segments/',
 'ref_gbk_dir': 'references/genbank/',
 'ref_fas_dir': 'references/fasta/',
@@ -293,7 +299,7 @@ directories = {
 blast_prefs = {'evalue': 0.01,
                'outfmt_pref': 6}
 min_match = 500     # min size for a blast hit to be considered relevant
-min_score = 1500    # min score for a blast hit to be considered relevant
+min_score = 1000    # min score for a blast hit to be considered relevant
 
 # Blast results arrays datatypes
 blast_dtypes = numpy.dtype([('query', 'S16'),

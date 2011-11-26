@@ -6,14 +6,15 @@ from loaders import load_genbank, load_multifasta
 from writers import write_genbank, write_fasta
 from string_ops import multisplit_finder
 from common import ensure_dir
-from config import separator, directories as dirs, p_root_dir, genomes, prox_D
+from config import separator, fixed_dirs, run_dirs, p_root_dir, genomes, prox_D
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from Bio.Alphabet import generic_dna
-from parsing import mauver_load2_k0
-from array_tetris import get_anchor_loc, coord_chop
-from reporting import ctg_stats
 from annotation import annot_ref
+from parsing import mauver_load2_k0
+from array_tetris import get_anchor_loc
+from reporting import ctg_stats
+from classes import Reference
 
 def unpack_genomes(genome):
     """Unpack genome files.
@@ -42,12 +43,12 @@ def unpack_genomes(genome):
     """
     # set up inputs
     infile = genome['file'] #TODO: make GUI input loader (upstream)
-    inpath = dirs['ori_g_dir']+infile
+    inpath = fixed_dirs['ori_g_dir']+infile
     g_name = genome['name']
     print " ", g_name, "...",
     # prep output destinations
-    mfas_dir = dirs['mfas_contigs_dir']
-    fas_dir = dirs['fas_contigs_dir']+g_name+"/"
+    mfas_dir = fixed_dirs['mfas_contigs_dir']
+    fas_dir = fixed_dirs['fas_contigs_dir']+g_name+"/"
     ensure_dir([mfas_dir, fas_dir])
     mfas_file = mfas_dir+g_name+"_contigs.fas"
     records = []
@@ -93,63 +94,44 @@ def unpack_genomes(genome):
     # pass records to stats logger
     ctg_stats(g_name, records)
 
-def process_ref(ref_ctg, run_id):
+def process_ref(ref, run_id):
     """Re-annotate contig and extract reference segments using coordinates."""
     # set inputs and outputs
-    ref_name = ref_ctg['name']
     run_root = p_root_dir+run_id+"/"
-    in_file = dirs['ori_g_dir']+ref_ctg['file']
-    seg_out_root = run_root+dirs['ref_seg_dir']+ref_name+"/"
-    ref_gbk_root = run_root+dirs['ref_gbk_dir']
-    ref_fas_root = run_root+dirs['ref_fas_dir']
-    ref_gbk = ref_gbk_root+ref_name+"_re-annot.gbk"
-    ref_fas = ref_fas_root+ref_name+".fas"
-    ensure_dir([seg_out_root, ref_gbk_root, ref_fas_root])
+    ref_name = ref['name']
+    in_file = fixed_dirs['ori_g_dir']+ref['file']
+    seg_out_root = run_root+run_dirs['ref_seg_dir']+ref_name+"/"
+    ref_gbk = run_root+run_dirs['ref_gbk_dir']+ref_name+"_re-annot.gbk"
+    ref_fas = run_root+run_dirs['ref_fas_dir']+ref_name+".fas"
+    ensure_dir([seg_out_root])
     print " ", ref_name, "...",
+    # initialize run_ref object
+    run_ref = Reference(ref_name, in_file, ref['input'], ref['seg_mode'],
+                        ref_fas, ref_gbk, seg_out_root)
     # open record and ensure we have a fasta in the right place
     if not path.exists(ref_fas):
-        if ref_ctg['input'] == 'fas':
+        if run_ref.input == 'fas':
             copyfile(in_file, ref_fas)
-        elif ref_ctg['input'] == 'gbk':
+        elif run_ref.input == 'gbk':
             record = load_genbank(in_file)
             write_fasta(ref_fas, record)
         else:
             raise Exception("ERROR: Input not recognized for "+ref_name)
     # re-annotate ref contig
-    g_ref_gbk = annot_ref(ref_name, ref_fas)
-    # extract segments
-    record = load_genbank(g_ref_gbk)
-    count = 0
-    if ref_ctg['seg_mode'] == 'chop':
-        # generate dict of segment coordinate pairs
-        pair_list = coord_chop(len(record.seq), ref_ctg['size'], 'exact_size')
-        segs_list = [{'coords': (a, b), 'name': str(a),
-                      'note': str(a)+'_'+str(b)} for (a, b) in pair_list]
-    elif ref_ctg['seg_mode'] == 'list':
-        segs_list = ref_ctg['segs']
-    else: # shouldn't happen, handle it as a test
-        segs_list = ({'coords': (1, 1000), 'name': 'A', 'note': 'test seg'})
-    for seg in segs_list:
-        # unpack segment coords
-        seg_start, seg_stop = seg['coords'][0], seg['coords'][1]
-        # extract segment sequence
-        segment = record[seg_start:seg_stop]
-        segment.id = ref_name+"_"+seg['name']
-        # write to individual file
-        out_file = seg_out_root+ref_name+"_"+seg['name']+".fas"
-        write_fasta(out_file, segment)
-        # record segment feature
-        feat_loc = FeatureLocation(seg_start, seg_stop)
-        feature = SeqFeature(location=feat_loc,
-                             type='ref_seg',
-                             qualifiers={'id': seg['name']})
-        record.features.append(feature)
-        count +=1
+    record = annot_ref(ref_name, ref_fas)
+    # load or generate segment definitions
+    if run_ref.seg_mode == 'chop':
+        run_ref.get_segs_from_chop(len(record.seq), ref['chop_size'])
+    elif run_ref.seg_mode == 'list':
+        run_ref.get_segs_from_list(ref['segs'])
+    # extract segment sequences
+    rec_annot = run_ref.extract_segs_seqs(record, seg_out_root)
     # write re-annotated reference sequence to file
-    write_genbank(ref_gbk, record)
-    print count, "segments"
+    write_genbank(ref_gbk, rec_annot)
+    print len(run_ref.segs), "segments"
+    return run_ref
 
-def build_scaffolds(contig, run_id):
+def build_scaffolds(run_ref, run_id):
     """Build a scaffold of contigs based on the reference.
 
     This takes contigs that gave positive hits when blasted with reference
@@ -173,11 +155,11 @@ def build_scaffolds(contig, run_id):
 
     """
     # set inputs and outputs
-    ref_ctg_name = contig['name'] # reference contig
+    ref_ctg_name = run_ref.name
     run_root = p_root_dir+run_id+"/"
-    ctgs_root = run_root+dirs['run_gbk_ctgs_dir']+ref_ctg_name+"/"
-    mauve_root = run_root+dirs['mauve_out_dir']+ref_ctg_name+"/contigs/"
-    scaffolds_dir = run_root+dirs['scaffolds_dir']+ref_ctg_name+"/"
+    ctgs_root = run_root+run_dirs['run_gbk_ctgs_dir']+ref_ctg_name+"/"
+    mauve_root = run_root+run_dirs['mauve_out_dir']+ref_ctg_name+"/contigs/"
+    scaffolds_dir = run_root+run_dirs['scaffolds_dir']+ref_ctg_name+"/"
     print " ", ref_ctg_name
     # cycle through genomes
     for genome in genomes:

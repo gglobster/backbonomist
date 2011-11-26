@@ -1,6 +1,7 @@
 from Bio import SeqIO, GenBank
-from config import directories as dirs
+from config import fixed_dirs, p_root_dir, run_dirs
 from os import listdir
+import cPickle as pickle
 import numpy, re
 
 def load_agnostic(seqfile):
@@ -97,7 +98,7 @@ def read_array(filename, dtype, separator='\t'):
 def from_dir(): # TODO: make poly-use
     """Load filenames in a directory."""
     # get directory contents
-    ori_dir = dirs['ori_g_dir']
+    ori_dir = fixed_dirs['ori_g_dir']
     contents = listdir(ori_dir)
     it_names = []
     for item in contents:
