@@ -161,7 +161,7 @@ def matches_table(ref_ctg, run_id, ref_hits, ctl_scores):
     mf_ctgs = []
     g_names = []
     # traverse dict of results
-    for g_name in ref_hits:
+    for g_name in sorted(ref_hits, reverse=True):
         genome_root = report_root+g_name+"/"
         ensure_dir([genome_root])
         g_table_fig = genome_root+g_name+"_hits_"+ref_n+".png"
@@ -196,22 +196,19 @@ def matches_table(ref_ctg, run_id, ref_hits, ctl_scores):
         # prep for global graphs
         if len(g_array) > 1:
             g_reduce = np.amax(g_array, 0)
-            print g_name, g_reduce
+            g_reduce = np.divide(g_reduce, ctl_scores)
         else:
             g_reduce = np.reshape(g_norm, (len(ctl_scores),))
-            print g_name, g_reduce
         red_g_list.append(g_reduce)
         mf_g_list.append(g_norm)
         mf_ctgs.append(contigs)
         g_names.append(g_name)
-    # graph detailed scores for all genomes in individual images
+    # graph detailed scores for all genomes
     hits_heatmap_multi(ref_n, segs, g_names, mf_ctgs, mf_g_list, mf_hits_fig)
     # graph summarized scores for all genomes
-    #print red_g_list
     red_g_array = np.array(red_g_list)
-    red_g_norm = np.divide(red_g_array, ctl_scores)
     g_names.reverse()
-    hits_heatmap_multi(ref_n, segs, [1], [g_names], [red_g_norm],
+    hits_heatmap_multi(ref_n, segs, [1], [g_names], [red_g_array],
                        red_hits_fig)
     # done
     rep_fhandle.close()

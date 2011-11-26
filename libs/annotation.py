@@ -1,3 +1,4 @@
+import os
 from config import genomes, directories as dirs, blast_prefs, \
     prot_db_name, project_id, p_root_dir
 import re, subprocess
@@ -76,6 +77,8 @@ def annot_genome_contigs(ref_contig, run_id):
                 annot_gbk = ctg_cds_dir+g_name+"_"+ctg_num+"_cds.gbk"
                 annot_aa = ctg_prot_dir+g_name+"_"+ctg_num+"_aa.fas"
                 blast_out = ctg_blast_dir+g_name+"_"+ctg_num+".xml"
+                if path.exists(blast_out) and os.stat(blast_out)[6]==0:
+                    os.remove(blast_out)
                 if not path.exists(r_ctg_gbk):
                     if not path.exists(g_ctg_gbk):
                         l_tag_base = g_name+"_"+ctg_num
