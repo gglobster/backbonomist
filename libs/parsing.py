@@ -14,11 +14,11 @@ def glompX_blast_out(ref_ctg, run_id):
     ref_n = ref_ctg['name']
     run_root = p_root_dir+run_id+"/"
     match_root = run_root+dirs['match_out_dir']+ref_n+"/"
-    print " ", ref_n 
+    print " ", ref_n
     # collect results
     ref_hits = {}
     control_scores = []
-    for seg in ref_ctg['refs']:
+    for seg in ref_ctg['segs']:
         seg_n = seg['name']
         print "\t", seg_n, "...",
         blast_dir = run_root+dirs['blast_out_dir']+ref_n+"/"+seg_n+"/"

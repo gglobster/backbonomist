@@ -2,7 +2,7 @@ import re
 import numpy as np
 from os import path, listdir
 from shutil import copyfile
-from loaders import load_genbank, load_multifasta, load_fasta
+from loaders import load_genbank, load_multifasta
 from writers import write_genbank, write_fasta
 from string_ops import multisplit_finder
 from common import ensure_dir
@@ -11,7 +11,7 @@ from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from Bio.Alphabet import generic_dna
 from parsing import mauver_load2_k0
-from array_tetris import get_anchor_loc
+from array_tetris import get_anchor_loc, coord_chop
 from reporting import ctg_stats
 from annotation import annot_ref
 
@@ -105,7 +105,7 @@ def process_ref(ref_ctg, run_id):
     ref_gbk = ref_gbk_root+ref_name+"_re-annot.gbk"
     ref_fas = ref_fas_root+ref_name+".fas"
     ensure_dir([seg_out_root, ref_gbk_root, ref_fas_root])
-    print " ", ref_name, "...", 
+    print " ", ref_name, "...",
     # open record and ensure we have a fasta in the right place
     if not path.exists(ref_fas):
         if ref_ctg['input'] == 'fas':
@@ -120,7 +120,16 @@ def process_ref(ref_ctg, run_id):
     # extract segments
     record = load_genbank(g_ref_gbk)
     count = 0
-    for seg in ref_ctg['refs']:
+    if ref_ctg['seg_mode'] == 'chop':
+        # generate dict of segment coordinate pairs
+        pair_list = coord_chop(len(record.seq), ref_ctg['size'], 'exact_size')
+        segs_list = [{'coords': (a, b), 'name': str(a),
+                      'note': str(a)+'_'+str(b)} for (a, b) in pair_list]
+    elif ref_ctg['seg_mode'] == 'list':
+        segs_list = ref_ctg['segs']
+    else: # shouldn't happen, handle it as a test
+        segs_list = ({'coords': (1, 1000), 'name': 'A', 'note': 'test seg'})
+    for seg in segs_list:
         # unpack segment coords
         seg_start, seg_stop = seg['coords'][0], seg['coords'][1]
         # extract segment sequence

@@ -76,7 +76,7 @@ def basic_batch_blastn(contig, run_id):
     in_root = run_root+dirs['ref_seg_dir']+nick+"/"
     print " ", nick
     # do blastn
-    for ref in contig['refs']:
+    for ref in contig['segs']:
         input_file = in_root+nick+"_"+ref['name']+".fas"
         out_dir = run_root+dirs['blast_out_dir']+nick+"/"+ref['name']+"/"
         ensure_dir([out_dir])

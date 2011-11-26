@@ -58,11 +58,11 @@ def save_datasumm(run_id, timestamp):
     r_header = "\t".join(["## Name", "Segments", "File"])
     r_data = [r_title, r_header]
     for ref in references:
-        r_data.append("\t".join([ref['name'], str(len(ref['refs'])),
+        r_data.append("\t".join([ref['name'], str(len(ref['segs'])),
                                  ref['file']]))
         r_data.append("\t".join(["###", "Segments"]))
         r_data.append("\t".join(["###", "Name", "Start", "Stop"]))
-        for seg in ref['refs']:
+        for seg in ref['segs']:
             r_data.append("\t".join(["", seg['name'],
                                      str(seg['coords'][0]),
                                      str(seg['coords'][1])]))
@@ -155,7 +155,7 @@ def matches_table(ref_ctg, run_id, ref_hits, ctl_scores):
     ensure_dir([report_root])
     rep_fhandle = open(hits_table_txt, 'w')
     rep_fhandle.write("# Matches to the reference segments of "+ref_n)
-    segs = [seg['name'] for seg in ref_ctg['refs']]
+    segs = [seg['name'] for seg in ref_ctg['segs']]
     red_g_list = []
     mf_g_list = []
     mf_ctgs = []
