@@ -28,18 +28,18 @@ genomes = [{'name': 'pXO1', 'input': 'cgbk', 'file': 'pXO1.gbk',
 #           {'name': 'pH30_258', 'input': 'mfas', 'file': 'CP001166.fas',
 #            'offset': (0,0), 'ignore': (0, 0)}, #pH308197_258
            # BI batch 1
-           {'name': 'IS075', 'input': 'mfas', 'file': 'IS075.fas',
-            'offset': (0,0), 'ignore': (0, 0)},
-           {'name': 'Schrouff', 'input': 'mfas', 'file': 'Schrouff.fas',
-            'offset': (0,0), 'ignore': (0, 0)},
-           {'name': 'TIAC129', 'input': 'mfas', 'file': 'TIAC129.fas',
-            'offset': (0,0), 'ignore': (0, 0)},
-           {'name': 'VD022', 'input': 'mfas', 'file': 'VD022.fas',
-            'offset': (0,0), 'ignore': (0, 0)},
-           {'name': 'VD142', 'input': 'mfas', 'file': 'VD142.fas',
-            'offset': (0,0), 'ignore': (0, 0)},
-           {'name': 'VD022_454', 'input': 'mfas', 'file': 'VD022_454.fas',
-            'offset': (0,0), 'ignore': (0, 0)},
+#           {'name': 'IS075', 'input': 'mfas', 'file': 'IS075.fas',
+#            'offset': (0,0), 'ignore': (0, 0)},
+#           {'name': 'Schrouff', 'input': 'mfas', 'file': 'Schrouff.fas',
+#            'offset': (0,0), 'ignore': (0, 0)},
+#           {'name': 'TIAC129', 'input': 'mfas', 'file': 'TIAC129.fas',
+#            'offset': (0,0), 'ignore': (0, 0)},
+#           {'name': 'VD022', 'input': 'mfas', 'file': 'VD022.fas',
+#            'offset': (0,0), 'ignore': (0, 0)},
+#           {'name': 'VD142', 'input': 'mfas', 'file': 'VD142.fas',
+#            'offset': (0,0), 'ignore': (0, 0)},
+#           {'name': 'VD022_454', 'input': 'mfas', 'file': 'VD022_454.fas',
+#            'offset': (0,0), 'ignore': (0, 0)},
            # BI batch 2
 #            {'name': 'VD_022a', 'input': 'mfas',
 #             'file': 'G8177_assembly.fasta',
@@ -225,7 +225,7 @@ references = [{'name': 'pXO1', 'file': 'pXO1.gbk', 'input': 'gbk',
                 {'coords': (155257,157413),'name': 'S', 'note': '182_184'},
                 {'coords': (174223,176584),'name': 'T', 'note': '207_212'})},
               {'name': 'pXO1-X', 'file': 'pXO1.gbk', 'input': 'gbk',
-               'seg_mode': 'chop', 'chop_size': 1000}]
+               'seg_mode': 'chop', 'chop_size': 2000}]
 
 # Function categories and legend (keys MUST be lowercase)
 

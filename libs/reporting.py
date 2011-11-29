@@ -223,7 +223,7 @@ def hits_heatmap_multi(ref_n, segs, g_names, contigs, scores, imgfile):
     ctg_count = 0
     for item in contigs:
         ctg_count += len(item)
-    fig = plt.figure(figsize=(len(segs)/2+1,ctg_count/2+3))
+    fig = plt.figure(figsize=(len(segs)/2+1, ctg_count/2+3))
     grid = AxesGrid(fig, 111, nrows_ncols=(len(g_names), 1), axes_pad=0.4,
                     cbar_location="top", cbar_mode="single", cbar_size=0.1)
     for i in range(len(g_names)):
