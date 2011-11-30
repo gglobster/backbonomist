@@ -8,25 +8,25 @@ project_id = 'BCSL'
 project_date = '2011'
 prot_db_name = 'Bacteria_prot'
 
-genomes = [#{'name': 'pXO1', 'input': 'cgbk', 'file': 'pXO1.gbk',
-#            'offset': (0,0), 'ignore': (0, 0)},
+genomes = [{'name': 'pXO1', 'input': 'cgbk', 'file': 'pXO1.gbk',
+            'offset': (0,0), 'ignore': (0, 0)},
            {'name': 'pXO1X2', 'input': 'cgbk', 'file': 'pXO1.gbk',
             'offset': (0,0), 'ignore': (0, 0)},
            # known plasmids
            {'name': 'pBCXO1', 'input': 'mfas', 'file': 'pBCXO1.fas',
             'offset': (0,0), 'ignore': (0, 0)},
-#           {'name': 'pBc239', 'input': 'mfas', 'file': 'CP000228.fas',
-#            'offset': (0,0), 'ignore': (0, 0)},
-#           {'name': 'pBc10987', 'input': 'mfas', 'file': 'AE017195.fas',
-#            'offset': (0,0), 'ignore': (0, 0)},
-#           {'name': 'pAH187_270', 'input': 'mfas', 'file': 'CP001179.fas',
-#            'offset': (0,0), 'ignore': (0, 0)},
-#           {'name': 'pAH820_272', 'input': 'mfas', 'file': 'CP001285.fas',
-#            'offset': (0,0), 'ignore': (0, 0)},
-#           {'name': 'p03B_179', 'input': 'mfas', 'file': 'CP001406.fas',
-#            'offset': (0,0), 'ignore': (0, 0)}, #p03BB102_179
-#           {'name': 'pH30_258', 'input': 'mfas', 'file': 'CP001166.fas',
-#            'offset': (0,0), 'ignore': (0, 0)}, #pH308197_258
+           {'name': 'pBc239', 'input': 'mfas', 'file': 'CP000228.fas',
+            'offset': (0,0), 'ignore': (0, 0)},
+           {'name': 'pBc10987', 'input': 'mfas', 'file': 'AE017195.fas',
+            'offset': (0,0), 'ignore': (0, 0)},
+           {'name': 'pAH187_270', 'input': 'mfas', 'file': 'CP001179.fas',
+            'offset': (0,0), 'ignore': (0, 0)},
+           {'name': 'pAH820_272', 'input': 'mfas', 'file': 'CP001285.fas',
+            'offset': (0,0), 'ignore': (0, 0)},
+           {'name': 'p03B_179', 'input': 'mfas', 'file': 'CP001406.fas',
+            'offset': (0,0), 'ignore': (0, 0)}, #p03BB102_179
+           {'name': 'pH30_258', 'input': 'mfas', 'file': 'CP001166.fas',
+            'offset': (0,0), 'ignore': (0, 0)}, #pH308197_258
            # BI batch 1
 #           {'name': 'IS075', 'input': 'mfas', 'file': 'IS075.fas',
 #            'offset': (0,0), 'ignore': (0, 0)},

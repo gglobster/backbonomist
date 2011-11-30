@@ -51,9 +51,8 @@ def align_ctg2ref(run_ref, run_id, timestamp):
     ensure_dir([segments_root])
     print " ", ref_n
     # log
-    ref_log = open(run_ref.log, 'a')
-    ref_log.write("".join(["\n\n# Align contigs to reference @", timestamp,
-                           "\n"]))
+    logstring = "".join(["\n\n# Align contigs to ref @", timestamp, "\n"])
+    run_ref.log(logstring)
     # cycle through genomes
     for genome in genomes:
         # set inputs and outputs
@@ -64,7 +63,8 @@ def align_ctg2ref(run_ref, run_id, timestamp):
         ensure_dir([mauve_dir])
         print "\t", g_name, "...",
         # log
-        ref_log.write("".join(["\n", g_name]))
+        logstring = "".join(["\n", g_name])
+        run_ref.log(logstring)
         # list genbank files in matches directory
         dir_contents = listdir(ctgs_fas_dir)
         for item in dir_contents:
@@ -73,7 +73,8 @@ def align_ctg2ref(run_ref, run_id, timestamp):
             if match:
                 ctg_num = match.group(1)
                 print ctg_num,
-                ref_log.write("".join(["\t", ctg_num]))
+                logstring = "".join(["\t", ctg_num])
+                run_ref.log(logstring)
                 # set inputs and outputs
                 q_contig = ctgs_fas_dir+item
                 file_list = (ref_ctg_file, q_contig)
@@ -88,8 +89,8 @@ def align_ctg2ref(run_ref, run_id, timestamp):
                     open(q_contig, 'r')
                 except IOError:
                     msg = "\nERROR: File missing, cannot align\n\t\t\t"
+                    run_ref.log(msg)
                     print msg
-                    ref_log.write(msg)
                 else:
                     align_mauve(file_list, mauve_outfile)
                     try:
@@ -104,8 +105,8 @@ def align_ctg2ref(run_ref, run_id, timestamp):
                                    segfile)
                     except IOError:
                         msg = "\nERROR: Mauve alignment failed\n\t\t\t"
+                        run_ref.log(msg)
                         print msg
-                        ref_log.write(msg)
         print ""
 
 def align_cstrct2ref(run_ref, run_id, timestamp):
@@ -120,18 +121,19 @@ def align_cstrct2ref(run_ref, run_id, timestamp):
     ensure_dir([segments_root])
     print " ", ref_n
     # log
-    ref_log = open(run_ref.log, 'a')
-    ref_log.write("".join(["\n\n# Align scaffold constructs to reference @",
-                           timestamp, "\n"]))
+    logstring = "".join(["\n\n# Align scaffold constructs to reference @",
+                         timestamp, "\n"])
+    run_ref.log(logstring)
     # cycle through genomes
-    for genome in genomes: 
+    for genome in genomes:
         # set inputs
         g_name = genome['name']
         scaff_gbk = scaff_root+g_name+"_"+ref_n+"_scaffold.gbk"
         file_list = (ref_ctg_file, scaff_gbk)
         print "\t", g_name, "...",
         # log
-        ref_log.write("".join(["\n", g_name]))
+        logstring = "".join(["\n", g_name])
+        run_ref.log(logstring)
         # set outputs
         mauve_dir = mauve_root+g_name+"/"
         aln_segs_dir = segments_root+g_name+"/"
@@ -143,14 +145,14 @@ def align_cstrct2ref(run_ref, run_id, timestamp):
         except IOError:
             msg = "ERROR: Reference file not found"
             print msg
-            ref_log.write(msg)
+            run_ref.log(msg)
             raise
         # abort if there is no scaffold construct
         try: open(scaff_gbk, 'r')
         except IOError:
             msg = "WARNING: No scaffold construct to align"
             print msg
-            ref_log.write(msg)
+            run_ref.log(msg)
         else:
             # prep segments file
             open(segfile, 'w').write('')
@@ -165,20 +167,24 @@ def align_cstrct2ref(run_ref, run_id, timestamp):
                 # parse Mauve output (without initial clumping)
                 coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
                 print len(coords), '->',
-                ref_log.write("".join(["\t", str(len(coords))]))
+                logstring = "".join(["\t", str(len(coords))])
+                run_ref.log(logstring)
                 # chop segments that are too long
                 chop_array = chop_rows(coords, max_size, chop_mode)
                 print len(chop_array), 'segments <', max_size, 'bp',
-                ref_log.write("".join(["\t", str(len(chop_array))]))
+                logstring = "".join(["\t", str(len(chop_array))])
+                run_ref.log(logstring)
                 # make detailed pairwise alignments of the segments
                 ref_rec = load_genbank(ref_ctg_file)
                 query_rec = load_genbank(scaff_gbk)
                 id = iter_align(chop_array, ref_rec, query_rec,
                                 aln_segs_dir, segfile)
                 print "@", id, "% id. overall"
-                ref_log.write("".join(["\t", str(id)]))
+                logstring = "".join(["\t", str(id)])
+                run_ref.log(logstring)
             except IOError:
                 msg = "\nERROR: Mauve alignment failed"
+                run_ref.log(msg)
                 print msg
 
 def iter_align(coord_array, ref_rec, query_rec, aln_dir, segs_file):

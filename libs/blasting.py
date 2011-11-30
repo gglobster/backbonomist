@@ -74,9 +74,8 @@ def basic_batch_blastn(run_ref, run_id, timestamp):
     in_root = run_root+run_dirs['ref_seg_dir']+ref_n+"/"
     print " ", ref_n
     # log
-    ref_log = open(run_ref.log, 'a')
-    ref_log.write("".join(["\n\n# Blast segs to genomes @", timestamp,
-                           "\n\n"])) 
+    logstring = "".join(["\n\n# Blast segs to genomes @", timestamp, "\n\n"])
+    run_ref.log(logstring)
     # do blastn
     for seg in run_ref.segs:
         input_file = in_root+ref_n+"_"+seg['name']+".fas"
@@ -90,6 +89,6 @@ def basic_batch_blastn(run_ref, run_id, timestamp):
             print g_name,
             local_blastn_2file(input_file, db_path, outfile, blast_prefs)
         print ""
-    ref_log.write("All OK")
+    run_ref.log("All OK")
     return "OK"
 

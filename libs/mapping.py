@@ -24,20 +24,21 @@ def prep_maps(run_ref, run_id, timestamp, g_select):
                 ctg_aln_maps_root, cst_ann_maps_root, cst_aln_maps_root])
     print " ", ref_ctg_n, "...",
     # log
-    ref_log = open(run_ref.log, 'a')
-    ref_log.write("".join(["\n\n# Generate maps @", timestamp, "\n\n"]))
+    logstring = "".join(["\n\n# Generate maps @", timestamp, "\n\n"])
+    run_ref.log(logstring)
     # map of reference with segment details
     map_ref_segs(run_ref, run_id)
     # log
     logstring = "ref_map"
+    run_ref.log(logstring)
     print logstring
-    ref_log.write(logstring)
     # cycle through genomes
     for genome in genomes:
         # set inputs and outputs
         g_name = genome['name']
         # log
-        ref_log.write("".join(["\n", g_name]))
+        logstring = "".join(["\n", g_name])
+        run_ref.log(logstring)
         while True:
             try:
                 if g_name in g_select: pass
@@ -51,18 +52,21 @@ def prep_maps(run_ref, run_id, timestamp, g_select):
             # maps of contigs aligned to reference
             logstring = "ctg_aln"
             print logstring,
-            ref_log.write("".join(["\t", logstring]))
+            logstring = "".join(["\t", logstring])
+            run_ref.log(logstring)
             map_ctg_alns(run_ref, ref_gbk, genome, ctg_segs_root,
                          ctg_aln_maps_dir)
             # map of scaffold construct
             logstring = "cst_ant"
             print logstring,
-            ref_log.write("".join(["\t", logstring]))
+            logstring = "".join(["\t", logstring])
+            run_ref.log(logstring)
             map_cst_annot(run_ref, genome, scaff_gbk, cst_ann_maps_root)
             # map of construct aligned to reference
             logstring = "cst_aln"
             print logstring
-            ref_log.write("".join(["\t", logstring]))
+            logstring = "".join(["\t", logstring])
+            run_ref.log(logstring)
             map_cst_aln(run_ref, ref_gbk, genome, scaff_gbk, cst_segs_root,
                         cst_aln_maps_root)
             break
@@ -74,15 +78,13 @@ def map_ctg_alns(run_ref, ref_gbk, genome, ctg_segs_root, maps_root):
     ref_ctg_n = run_ref.name
     segs_root = ctg_segs_root+g_name+"/"
     ctgs_dir = fixed_dirs['gbk_contigs_dir']+g_name+"/"
-    # log
-    ref_log = open(run_ref.log, 'a')
     # list genbank files in matches directory
     try:
         dir_contents = listdir(segs_root)
     except OSError:
         msg = "\nWARNING: no matching segments"
+        run_ref.log(msg)
         print msg
-        ref_log.write(msg)
     else:
         for ctg_num in dir_contents:
             ctg_gbk = ctgs_dir+g_name+"_"+ctg_num+".gbk"
@@ -101,13 +103,12 @@ def map_ctg_alns(run_ref, ref_gbk, genome, ctg_segs_root, maps_root):
                              'dual', 'm', 'fct', 'fct')
             except IOError:
                 msg = "\nERROR: could not load segments data"
+                run_ref.log(msg)
                 print msg
-                ref_log.write(msg)
-
             except StopIteration:
                 msg = "\nERROR: could not make map"
+                run_ref.log(msg)
                 print msg
-                ref_log.write(msg)
 
 def map_cst_annot(run_ref, genome, scaff_gbk, maps_root):
     """Generate map of annotated scaffold construct."""
@@ -115,14 +116,12 @@ def map_cst_annot(run_ref, genome, scaff_gbk, maps_root):
     g_name = genome['name']
     ref_ctg_n = run_ref.name
     map_file = maps_root+g_name+"_<"+ref_ctg_n+".pdf"
-    # log
-    ref_log = open(run_ref.log, 'a')
     # start mapping
     try: open(scaff_gbk, 'r')
     except IOError:
         msg = "WARNING: No scaffold construct to map"
+        run_ref.log(msg)
         print msg
-        ref_log.write(msg)
     else:
         contig_draw(g_name, scaff_gbk, map_file, 'm', 'fct')
 
@@ -133,8 +132,6 @@ def map_cst_aln(run_ref, ref_gbk, genome, scaff_gbk, segs_root, maps_root):
     ref_ctg_n = run_ref.name
     seg_file = segs_root+g_name+"/"+g_name+"_"+ref_ctg_n+"_segs.txt"
     map_file = maps_root+g_name+"_vs_"+ref_ctg_n+".pdf"
-    # log
-    ref_log = open(run_ref.log, 'a')
     # start mapping
     try: open(scaff_gbk)
     except IOError:
@@ -145,12 +142,12 @@ def map_cst_aln(run_ref, ref_gbk, genome, scaff_gbk, segs_root, maps_root):
             segdata = np.loadtxt(seg_file, skiprows=1, dtype=segtype)
         except IOError:
                 msg = "\nERROR: could not load segments data"
+                run_ref.log(msg)
                 print msg
-                ref_log.write(msg)
         except StopIteration:
                 msg = "\nERROR: could not make map"
+                run_ref.log(msg)
                 print msg
-                ref_log.write(msg)
         else:
             # offset coordinates where desired
             g_offset = genome['offset']
@@ -177,13 +174,11 @@ def map_ref_segs(run_ref, run_id):
     # set inputs and outputs
     ref_n = run_ref.name
     run_root = p_root_dir+run_id+"/"
-    ori_file = fixed_dirs['ori_g_dir']+run_ref.file
+    ori_file = run_ref.file
     ref_maps_root = run_root+run_dirs['ref_map_dir']
     ensure_dir([ref_maps_root])
     gbk_file = run_root+run_dirs['ref_gbk_dir']+ref_n+"_re-annot.gbk"
     map_file = ref_maps_root+ref_n+"_ref.pdf"
-    # log
-    ref_log = open(run_ref.log, 'a')
     # start mapping
     try:
         # make mock segment, full-length with 100% id
@@ -199,9 +194,9 @@ def map_ref_segs(run_ref, run_id):
                      'm', 'fct', 'product')
     except IOError:
         msg = "\nERROR: could not load segments data"
+        run_ref.log(msg)
         print msg
-        ref_log.write(msg)
     except StopIteration:
         msg = "\nERROR: could not make map"
+        run_ref.log(msg)
         print msg
-        ref_log.write(msg)

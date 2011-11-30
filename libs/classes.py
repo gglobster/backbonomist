@@ -15,7 +15,7 @@ class Reference(object):
         self.fas = fas_out
         self.gbk = gbk_out
         self.segs_dir = seg_out
-        self.log = logfile
+        self.logfile = logfile
 
     def get_segs_from_list(self, list):
         self.segs = list
@@ -47,3 +47,8 @@ class Reference(object):
             record.features.append(feature)
             count +=1
         return record
+
+    def log(self, string):
+        ref_log = open(self.logfile, 'a')
+        ref_log.write(string)
+        ref_log.close()

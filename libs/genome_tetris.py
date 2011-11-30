@@ -108,7 +108,7 @@ def process_ref(ref, run_id, timestamp):
     ref_log = report_root+run_id+"_"+ref_name+"_log.txt"
     ensure_dir([seg_out_root, report_root])
     print " ", ref_name, "...",
-    # initialize run_ref object                                                                    
+    # initialize run_ref object
     run_ref = Reference(ref_name, in_file, ref['input'], ref['seg_mode'],
                         ref_fas, ref_gbk, seg_out_root, ref_log)
     # initialize reference log
@@ -122,7 +122,9 @@ def process_ref(ref, run_id, timestamp):
             record = load_genbank(in_file)
             write_fasta(ref_fas, record)
         else:
-            raise Exception("ERROR: Input not recognized for "+ref_name)
+            msg = "ERROR: Input not recognized for "+ref_name
+            run_ref.log(msg)
+            raise Exception(msg)
     # re-annotate ref contig
     record = annot_ref(ref_name, ref_fas)
     # load or generate segment definitions
@@ -135,9 +137,9 @@ def process_ref(ref, run_id, timestamp):
     # write re-annotated reference sequence to file
     write_genbank(ref_gbk, rec_annot)
     # report results
-    log_string = " ".join([str(len(run_ref.segs)), "segments"])
-    print log_string
-    open(ref_log, 'a').write(log_string)
+    logstring = " ".join([str(len(run_ref.segs)), "segments"])
+    print logstring
+    run_ref.log(logstring)
     return run_ref
 
 def build_scaffolds(run_ref, run_id, timestamp):
@@ -171,17 +173,17 @@ def build_scaffolds(run_ref, run_id, timestamp):
     scaffolds_dir = run_root+run_dirs['scaffolds_dir']+ref_n+"/"
     print " ", ref_n
     # log
-    ref_log = open(run_ref.log, 'a')
-    ref_log.write("".join(["\n\n# Build scaffold constructs @", timestamp,
-                           "\n"]))
+    logstring = "".join(["\n\n# Build scaffold constructs @", timestamp, "\n"])
+    run_ref.log(logstring)
     # cycle through genomes
     for genome in genomes:
         # set inputs
         g_name = genome['name']
-        ctgs_dir = ctgs_root+g_name+"/" 
+        ctgs_dir = ctgs_root+g_name+"/"
         print "\t", g_name, "...",
         # log
-        ref_log.write("".join(["\n", g_name]))
+        logstring = "".join(["\n", g_name])
+        run_ref.log(logstring)
         # set outputs
         mauve_dir = mauve_root+g_name+"/"
         ensure_dir([mauve_dir, scaffolds_dir])
@@ -200,7 +202,8 @@ def build_scaffolds(run_ref, run_id, timestamp):
                 ctg_num = match.group(1)
                 if int(ctg_num) not in genome['ignore']:
                     print ctg_num,
-                    ref_log.write("".join(["\t", ctg_num]))
+                    logstring = "".join(["\t", ctg_num])
+                    run_ref.log(logstring)
                     # set inputs
                     mauve_file = mauve_dir+ctg_num+".mauve"
                     bb_file = mauve_file+".backbone"
@@ -217,14 +220,14 @@ def build_scaffolds(run_ref, run_id, timestamp):
                     except IOError:
                         msg = "\tERROR: Mauve alignment file unavailable\n\t"
                         print msg
-                        ref_log.write(msg)
+                        run_ref.log(msg)
         # abort if there is no valid contig to proceed with
         try:
             assert len(anchors_array) > 1 # always 1 left from stub
         except AssertionError:
             msg = "\tWARNING: Contig list empty\n\t"
             print msg
-            ref_log.write(msg)
+            run_ref.log(msg)
         else:
             # order contigs by anchor location
             anchors_array = np.sort(anchors_array, order='start')

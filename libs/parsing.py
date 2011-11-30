@@ -16,18 +16,17 @@ def glompX_blast_out(run_ref, run_id, timestamp):
     match_root = run_root+run_dirs['match_out_dir']+ref_n+"/"
     print " ", ref_n
     # log
-    ref_log = open(run_ref.log, 'a')
-    ref_log.write("".join(["\n\n# Collect Blast results @", timestamp,
-                           "\n\n"])) 
+    logstring = "".join(["\n\n# Collect Blast results @", timestamp, "\n\n"])
+    run_ref.log(logstring)
     # collect results
     ref_hits = {}
     control_scores = []
-    ref_log.write("Segs/Gs\t")
-    ref_log.write("\t".join([genome['name'] for genome in genomes]))
+    run_ref.log("Segs/Gs\t")
+    run_ref.log("\t".join([genome['name'] for genome in genomes]))
     for seg in run_ref.segs:
         seg_n = seg['name']
         print "\t", seg_n, "...",
-        ref_log.write("".join(["\n", seg_n]))
+        run_ref.log("".join(["\n", seg_n]))
         blast_dir = run_root+run_dirs['blast_out_dir']+ref_n+"/"+seg_n+"/"
         ensure_dir([blast_dir])
         for genome in genomes:
@@ -73,10 +72,10 @@ def glompX_blast_out(run_ref, run_id, timestamp):
                                          str(n_cnt), ")"])
                 else:
                     logstring = "".join(["\t", str(p_cnt)])
-                ref_log.write(logstring)
+                run_ref.log(logstring)
             else:
                 print "-",
-                ref_log.write("".join(["\t", "0"]))
+                run_ref.log("".join(["\t", "0"]))
         print ""
     return ref_hits, control_scores
 

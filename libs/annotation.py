@@ -35,7 +35,7 @@ def annot_genome_contigs(run_ref, run_id, timestamp):
     prot_db = fixed_dirs['ref_dbs_dir']+prot_db_name
     # TODO: add other DB / pfams?
     # set inputs and outputs
-    ref_n = run_ref.name 
+    ref_n = run_ref.name
     run_root = p_root_dir+run_id+"/"
     fas_ctgs_root = run_root+run_dirs['match_out_dir']+ref_n+"/"
     ctg_cds_root = fixed_dirs['ctg_cds_dir']
@@ -46,9 +46,8 @@ def annot_genome_contigs(run_ref, run_id, timestamp):
     annot_trn_root = fixed_dirs['annot_trn_dir']
     print " ", ref_n
     # log
-    ref_log = open(run_ref.log, 'a')
-    ref_log.write("".join(["\n\n# Annotate genome contigs @", timestamp,
-                           "\n"]))
+    logstring = "".join(["\n\n# Annotate genome contigs @", timestamp, "\n"])
+    run_ref.log(logstring)
     # cycle through genomes
     for genome in genomes:
         # set inputs
@@ -57,7 +56,8 @@ def annot_genome_contigs(run_ref, run_id, timestamp):
         g_file = fixed_dirs['ori_g_dir']+genome['file']
         print '\t', g_name, "...",
         # log
-        ref_log.write("".join(["\n", g_name]))
+        logstring = "".join(["\n", g_name])
+        run_ref.log(logstring)
         # set output files
         training_file = annot_trn_root+g_name+"_annot.trn"
         # set output dirs
@@ -76,7 +76,8 @@ def annot_genome_contigs(run_ref, run_id, timestamp):
             if match:
                 ctg_num = match.group(1)
                 print ctg_num,
-                ref_log.write("".join(["\t", ctg_num]))
+                logstring = "".join(["\t", ctg_num])
+                run_ref.log(logstring)
                 # set inputs and outputs
                 ctg_fas = fas_ctgs_dir+item
                 g_ctg_gbk = g_gbk_ctgs_dir+g_name+"_"+ctg_num+".gbk"
