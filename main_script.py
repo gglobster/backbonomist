@@ -94,7 +94,7 @@ if step is 4:
         timestamp = str(datetime.now())
         ref_hits, ctl_scores = glompX_blast_out(ref, run_id, timestamp)
         matches_table(ref, run_id, ref_hits, ctl_scores)
-    step +=1
+    step +=1 # pickle hr & cs to make persistent and do mt later
 
 if step is 5:
     print "\n###", step, ". Annotate matching contigs ###\n"

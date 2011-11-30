@@ -1,9 +1,9 @@
 #import matplotlib
 #matplotlib.use('Agg')
-from matplotlib.backends.backend_pdf import PdfPages
+#from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
-from mpl_toolkits.axes_grid1 import make_axes_locatable, Size, AxesGrid
+from mpl_toolkits.axes_grid1 import AxesGrid#, make_axes_locatable, Size
 from config import ctg_thresholds
 import numpy as np
 
@@ -33,10 +33,7 @@ def plot_ctg_stats(ctg_cats, fname):
         big_x.hist(big_ctgs, big_bins, rwidth=(kb3-kb2)/factor)
         big_x.set_title("length > "+str(kb2)+" kb")
         big_x.set_ylabel("number of contigs")
-    pdf = PdfPages(fname)
-    plt.savefig(pdf)
-    pdf.savefig()
-    pdf.close()
+    plt.savefig(fname)
     plt.clf()
 
 def hits_heatmap_multi(ref_n, segs, g_names, contigs, scores, imgfile):
@@ -70,11 +67,7 @@ def hits_heatmap_multi(ref_n, segs, g_names, contigs, scores, imgfile):
                          horizontalalignment='right',
                          verticalalignment='center',)
             y_index +=1
-    pdf = PdfPages(imgfile)
-    plt.savefig(pdf)
-    pdf.savefig()
-    pdf.close()
-    #plt.savefig(imgfile)
+    plt.savefig(imgfile)
     plt.clf()
 
 #def hits_heatmap(title, segs, contigs, scores, imgfile):
