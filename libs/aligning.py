@@ -39,7 +39,7 @@ def align_mauve(file_list, output):
     # TODO: should set up something to parse Mauve errors
     return report
 
-def align_ctg2ref(run_ref, run_id):
+def align_ctg2ref(run_ref, run_id, timestamp):
     """Align contigs pairwise to the reference contig."""
     # set inputs and outputs
     ref_n = run_ref.name
@@ -50,15 +50,21 @@ def align_ctg2ref(run_ref, run_id):
     q_ctgs_root = run_root+run_dirs['match_out_dir']+ref_n+"/"
     ensure_dir([segments_root])
     print " ", ref_n
+    # log
+    ref_log = open(run_ref.log, 'a')
+    ref_log.write("".join(["\n\n# Align contigs to reference @", timestamp,
+                           "\n"]))
     # cycle through genomes
     for genome in genomes:
         # set inputs and outputs
         g_name = genome['name']
-        print "\t", g_name, "...",
         ctgs_fas_dir = q_ctgs_root+g_name+"/"
         mauve_dir = mauve_root+g_name+"/"
         aln_segs_root = segments_root+g_name+"/"
         ensure_dir([mauve_dir])
+        print "\t", g_name, "...",
+        # log
+        ref_log.write("".join(["\n", g_name]))
         # list genbank files in matches directory
         dir_contents = listdir(ctgs_fas_dir)
         for item in dir_contents:
@@ -67,6 +73,7 @@ def align_ctg2ref(run_ref, run_id):
             if match:
                 ctg_num = match.group(1)
                 print ctg_num,
+                ref_log.write("".join(["\t", ctg_num]))
                 # set inputs and outputs
                 q_contig = ctgs_fas_dir+item
                 file_list = (ref_ctg_file, q_contig)
@@ -80,8 +87,9 @@ def align_ctg2ref(run_ref, run_id):
                     open(ref_ctg_file, 'r')
                     open(q_contig, 'r')
                 except IOError:
-                    print "\nERROR: File missing, cannot align"
-                    print "\t\t\t",
+                    msg = "\nERROR: File missing, cannot align\n\t\t\t"
+                    print msg
+                    ref_log.write(msg)
                 else:
                     align_mauve(file_list, mauve_outfile)
                     try:
@@ -95,38 +103,54 @@ def align_ctg2ref(run_ref, run_id):
                         iter_align(chop_array, ref_rec, query_rec, aln_segs_dir,
                                    segfile)
                     except IOError:
-                        print "\nERROR: Mauve alignment failed"
-                        print "\t\t\t",
+                        msg = "\nERROR: Mauve alignment failed\n\t\t\t"
+                        print msg
+                        ref_log.write(msg)
         print ""
 
-def align_cstrct2ref(run_ref, run_id):
+def align_cstrct2ref(run_ref, run_id, timestamp):
     """Align constructs pairwise to the reference contig."""
     # set inputs and outputs
-    ctg_name = run_ref.name
+    ref_n = run_ref.name
     run_root = p_root_dir+run_id+"/"
-    ref_ctg_file = fixed_dirs['ori_g_dir']+run_ref.file
-    mauve_root = run_root+run_dirs['mauve_out_dir']+ctg_name+"/constructs/"
-    segments_root = run_root+run_dirs['aln_seg_dir']+ctg_name+"/constructs/"
-    scaff_root = run_root+run_dirs['scaffolds_dir']+ctg_name+"/"
+    ref_ctg_file = run_ref.file
+    mauve_root = run_root+run_dirs['mauve_out_dir']+ref_n+"/constructs/"
+    segments_root = run_root+run_dirs['aln_seg_dir']+ref_n+"/constructs/"
+    scaff_root = run_root+run_dirs['scaffolds_dir']+ref_n+"/"
     ensure_dir([segments_root])
-    print " ", ctg_name
+    print " ", ref_n
+    # log
+    ref_log = open(run_ref.log, 'a')
+    ref_log.write("".join(["\n\n# Align scaffold constructs to reference @",
+                           timestamp, "\n"]))
     # cycle through genomes
-    for genome in genomes:
+    for genome in genomes: 
         # set inputs
         g_name = genome['name']
-        scaff_gbk = scaff_root+g_name+"_"+ctg_name+"_scaffold.gbk"
+        scaff_gbk = scaff_root+g_name+"_"+ref_n+"_scaffold.gbk"
         file_list = (ref_ctg_file, scaff_gbk)
         print "\t", g_name, "...",
+        # log
+        ref_log.write("".join(["\n", g_name]))
         # set outputs
         mauve_dir = mauve_root+g_name+"/"
         aln_segs_dir = segments_root+g_name+"/"
         ensure_dir([mauve_dir, aln_segs_dir])
-        mauve_outfile = mauve_dir+g_name+"_"+ctg_name+".mauve"
-        segfile = aln_segs_dir+g_name+"_"+ctg_name+"_segs.txt"
+        mauve_outfile = mauve_dir+g_name+"_"+ref_n+".mauve"
+        segfile = aln_segs_dir+g_name+"_"+ref_n+"_segs.txt"
+        # abort if the reference file is not found
+        try: open(ref_ctg_file, 'r')
+        except IOError:
+            msg = "ERROR: Reference file not found"
+            print msg
+            ref_log.write(msg)
+            raise
         # abort if there is no scaffold construct
         try: open(scaff_gbk, 'r')
         except IOError:
-            print "WARNING: No scaffold construct to align"
+            msg = "WARNING: No scaffold construct to align"
+            print msg
+            ref_log.write(msg)
         else:
             # prep segments file
             open(segfile, 'w').write('')
@@ -141,16 +165,21 @@ def align_cstrct2ref(run_ref, run_id):
                 # parse Mauve output (without initial clumping)
                 coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
                 print len(coords), '->',
+                ref_log.write("".join(["\t", str(len(coords))]))
                 # chop segments that are too long
                 chop_array = chop_rows(coords, max_size, chop_mode)
                 print len(chop_array), 'segments <', max_size, 'bp',
+                ref_log.write("".join(["\t", str(len(chop_array))]))
                 # make detailed pairwise alignments of the segments
                 ref_rec = load_genbank(ref_ctg_file)
                 query_rec = load_genbank(scaff_gbk)
-                id = iter_align(chop_array, ref_rec, query_rec, aln_segs_dir, segfile)
+                id = iter_align(chop_array, ref_rec, query_rec,
+                                aln_segs_dir, segfile)
                 print "@", id, "% id. overall"
+                ref_log.write("".join(["\t", str(id)]))
             except IOError:
-                print "\nERROR: Mauve alignment failed"
+                msg = "\nERROR: Mauve alignment failed"
+                print msg
 
 def iter_align(coord_array, ref_rec, query_rec, aln_dir, segs_file):
     """Iterate through array of coordinates to make pairwise alignments."""

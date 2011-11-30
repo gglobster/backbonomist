@@ -5,7 +5,8 @@ from writers import write_fasta
 class Reference(object):
     """Persistent reference object."""
 
-    def __init__(self, name, file, input, seg_mode, fas_out, gbk_out, seg_out):
+    def __init__(self, name, file, input, seg_mode, fas_out, gbk_out,
+                 seg_out, logfile):
         self.name = name
         self.file = file
         self.input = input
@@ -14,6 +15,7 @@ class Reference(object):
         self.fas = fas_out
         self.gbk = gbk_out
         self.segs_dir = seg_out
+        self.log = logfile
 
     def get_segs_from_list(self, list):
         self.segs = list

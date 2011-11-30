@@ -1,6 +1,7 @@
 import re
 import numpy as np
 from os import path, listdir
+from datetime import datetime
 from shutil import copyfile
 from loaders import load_genbank, load_multifasta
 from writers import write_genbank, write_fasta
@@ -94,7 +95,7 @@ def unpack_genomes(genome):
     # pass records to stats logger
     ctg_stats(g_name, records)
 
-def process_ref(ref, run_id):
+def process_ref(ref, run_id, timestamp):
     """Re-annotate contig and extract reference segments using coordinates."""
     # set inputs and outputs
     run_root = p_root_dir+run_id+"/"
@@ -103,11 +104,16 @@ def process_ref(ref, run_id):
     seg_out_root = run_root+run_dirs['ref_seg_dir']+ref_name+"/"
     ref_gbk = run_root+run_dirs['ref_gbk_dir']+ref_name+"_re-annot.gbk"
     ref_fas = run_root+run_dirs['ref_fas_dir']+ref_name+".fas"
-    ensure_dir([seg_out_root])
+    report_root = run_root+run_dirs['reports']+ref_name+"/"
+    ref_log = report_root+run_id+"_"+ref_name+"_log.txt"
+    ensure_dir([seg_out_root, report_root])
     print " ", ref_name, "...",
-    # initialize run_ref object
+    # initialize run_ref object                                                                    
     run_ref = Reference(ref_name, in_file, ref['input'], ref['seg_mode'],
-                        ref_fas, ref_gbk, seg_out_root)
+                        ref_fas, ref_gbk, seg_out_root, ref_log)
+    # initialize reference log
+    cl_header = ["# Console log:", run_id, "/", ref_name, timestamp, "\n\n"]
+    open(ref_log, 'w').write(" ".join(cl_header))
     # open record and ensure we have a fasta in the right place
     if not path.exists(ref_fas):
         if run_ref.input == 'fas':
@@ -128,10 +134,13 @@ def process_ref(ref, run_id):
     rec_annot = run_ref.extract_segs_seqs(record, seg_out_root)
     # write re-annotated reference sequence to file
     write_genbank(ref_gbk, rec_annot)
-    print len(run_ref.segs), "segments"
+    # report results
+    log_string = " ".join([str(len(run_ref.segs)), "segments"])
+    print log_string
+    open(ref_log, 'a').write(log_string)
     return run_ref
 
-def build_scaffolds(run_ref, run_id):
+def build_scaffolds(run_ref, run_id, timestamp):
     """Build a scaffold of contigs based on the reference.
 
     This takes contigs that gave positive hits when blasted with reference
@@ -155,23 +164,29 @@ def build_scaffolds(run_ref, run_id):
 
     """
     # set inputs and outputs
-    ref_ctg_name = run_ref.name
+    ref_n = run_ref.name
     run_root = p_root_dir+run_id+"/"
-    ctgs_root = run_root+run_dirs['run_gbk_ctgs_dir']+ref_ctg_name+"/"
-    mauve_root = run_root+run_dirs['mauve_out_dir']+ref_ctg_name+"/contigs/"
-    scaffolds_dir = run_root+run_dirs['scaffolds_dir']+ref_ctg_name+"/"
-    print " ", ref_ctg_name
+    ctgs_root = run_root+run_dirs['run_gbk_ctgs_dir']+ref_n+"/"
+    mauve_root = run_root+run_dirs['mauve_out_dir']+ref_n+"/contigs/"
+    scaffolds_dir = run_root+run_dirs['scaffolds_dir']+ref_n+"/"
+    print " ", ref_n
+    # log
+    ref_log = open(run_ref.log, 'a')
+    ref_log.write("".join(["\n\n# Build scaffold constructs @", timestamp,
+                           "\n"]))
     # cycle through genomes
     for genome in genomes:
         # set inputs
         g_name = genome['name']
-        ctgs_dir = ctgs_root+g_name+"/"
+        ctgs_dir = ctgs_root+g_name+"/" 
         print "\t", g_name, "...",
+        # log
+        ref_log.write("".join(["\n", g_name]))
         # set outputs
         mauve_dir = mauve_root+g_name+"/"
         ensure_dir([mauve_dir, scaffolds_dir])
-        scaff_fas = scaffolds_dir+g_name+"_"+ref_ctg_name+"_scaffold.fas"
-        scaff_gbk = scaffolds_dir+g_name+"_"+ref_ctg_name+"_scaffold.gbk"
+        scaff_fas = scaffolds_dir+g_name+"_"+ref_n+"_scaffold.fas"
+        scaff_gbk = scaffolds_dir+g_name+"_"+ref_n+"_scaffold.gbk"
         # list genbank files in matches directory
         dir_contents = listdir(ctgs_dir)
         anchors_array = np.zeros(1, dtype=[('ctg', 'i4'),
@@ -185,6 +200,7 @@ def build_scaffolds(run_ref, run_id):
                 ctg_num = match.group(1)
                 if int(ctg_num) not in genome['ignore']:
                     print ctg_num,
+                    ref_log.write("".join(["\t", ctg_num]))
                     # set inputs
                     mauve_file = mauve_dir+ctg_num+".mauve"
                     bb_file = mauve_file+".backbone"
@@ -199,13 +215,16 @@ def build_scaffolds(run_ref, run_id):
                                                    anchor_seg['end'],
                                                    anchor_seg['orient']))
                     except IOError:
-                        print "ERROR: Mauve alignment file unavailable"
-                        print "\t\t",
+                        msg = "\tERROR: Mauve alignment file unavailable\n\t"
+                        print msg
+                        ref_log.write(msg)
         # abort if there is no valid contig to proceed with
         try:
-            assert len(anchors_array) > 1 # always 1 from stub
+            assert len(anchors_array) > 1 # always 1 left from stub
         except AssertionError:
-            print "WARNING: Contig list empty"
+            msg = "\tWARNING: Contig list empty\n\t"
+            print msg
+            ref_log.write(msg)
         else:
             # order contigs by anchor location
             anchors_array = np.sort(anchors_array, order='start')
@@ -239,6 +258,11 @@ def build_scaffolds(run_ref, run_id):
                                      type='contig',
                                      qualifiers={'id': ctg_num})
                 scaff_record.features.append(feature)
-            scaff_record.id = g_name+"_"+ref_ctg_name
-            write_genbank(scaff_gbk, scaff_record[:-100]) # rm last bumper
+            scaff_record.description = g_name+" scaffold from "+ref_n
+            try:
+                scaff_record.id = g_name
+                write_genbank(scaff_gbk, scaff_record[:-100]) # rm last bumper
+            except ValueError:
+                scaff_record.id = g_name[:10]
+                write_genbank(scaff_gbk, scaff_record[:-100]) # rm last bumper
             print ""

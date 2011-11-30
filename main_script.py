@@ -68,7 +68,8 @@ elif step is 0:
 if step is 1:
     print "\n###", step, ". Prepare references ###\n"
     for ref in references:
-        ref_obj = process_ref(ref, run_id)
+        timestamp = str(datetime.now())
+        ref_obj = process_ref(ref, run_id, timestamp)
         run_refs.append(ref_obj)
     pickle.dump(run_refs, open(pickle_file, 'wb'))
     step +=1
@@ -83,44 +84,51 @@ if step is 2:
 if step is 3:
     print "\n###", step, ". Blast reference segments against genomes ###\n"
     for ref in run_refs:
-        basic_batch_blastn(ref, run_id)
+        timestamp = str(datetime.now())
+        basic_batch_blastn(ref, run_id, timestamp)
     step +=1
 
 if step is 4:
     print "\n###", step, ". Collect Blast results ###\n"
     for ref in run_refs:
-        ref_hits, ctl_scores = glompX_blast_out(ref, run_id)
+        timestamp = str(datetime.now())
+        ref_hits, ctl_scores = glompX_blast_out(ref, run_id, timestamp)
         matches_table(ref, run_id, ref_hits, ctl_scores)
     step +=1
 
 if step is 5:
     print "\n###", step, ". Annotate matching contigs ###\n"
     for ref in run_refs:
-        annot_genome_contigs(ref, run_id)
+        timestamp = str(datetime.now())
+        annot_genome_contigs(ref, run_id, timestamp)
     step +=1
 
 if step is 6:
     print "\n###", step, ". Align contigs pairwise to reference ###\n"
     for ref in run_refs:
-        align_ctg2ref(ref, run_id)
+        timestamp = str(datetime.now())
+        align_ctg2ref(ref, run_id, timestamp)
     step +=1
 
 if step is 7:
     print "\n###", step, ". Construct backbone-based scaffolds ###\n"
     for ref in run_refs:
-        build_scaffolds(ref, run_id)
+        timestamp = str(datetime.now())
+        build_scaffolds(ref, run_id, timestamp)
     step +=1
 
 if step is 8:
     print "\n###", step, ". Align constructs pairwise to reference ###\n"
     for ref in run_refs:
-        align_cstrct2ref(ref, run_id)
+        timestamp = str(datetime.now())
+        align_cstrct2ref(ref, run_id, timestamp)
     step +=1
 
 if step is 9:
     print "\n###", step, ". Generate maps ###\n"
     for ref in run_refs:
-        prep_maps(ref, run_id, g_select)
+        timestamp = str(datetime.now())
+        prep_maps(ref, run_id, timestamp, g_select)
     step +=1
 
 if step > 9:

@@ -82,7 +82,7 @@ def save_datasumm(run_id, timestamp):
     print "dataset summary saved to file"
 
 def init_reports(run_id, timestamp):
-    """Record run initiated in the dataset log."""
+    """Record run info in the logs."""
     # set inputs and outputs
     ctg_stats_file = fixed_dirs['ctg_stats']+"contig_stats.txt"
     # initialize contig stats report

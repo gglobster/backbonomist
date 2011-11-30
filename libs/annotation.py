@@ -29,22 +29,26 @@ def run_prodigal(in_file, an_gbk, an_aa, trn_file, mode):
     output, error = child.communicate()
     return output
 
-def annot_genome_contigs(run_ref, run_id):
+def annot_genome_contigs(run_ref, run_id, timestamp):
     """Annotate genome contigs (predict ORFs and assign function)."""
     # locate the COG database
     prot_db = fixed_dirs['ref_dbs_dir']+prot_db_name
     # TODO: add other DB / pfams?
     # set inputs and outputs
-    ref_name = run_ref.name
+    ref_n = run_ref.name 
     run_root = p_root_dir+run_id+"/"
-    fas_ctgs_root = run_root+run_dirs['match_out_dir']+ref_name+"/"
+    fas_ctgs_root = run_root+run_dirs['match_out_dir']+ref_n+"/"
     ctg_cds_root = fixed_dirs['ctg_cds_dir']
     ctg_prot_root = fixed_dirs['ctg_prot_dir']
     ctg_blast_root = fixed_dirs['ctg_blast_dir']
     g_gbk_ctgs_root = fixed_dirs['gbk_contigs_dir']
-    r_gbk_ctgs_root = run_root+run_dirs['run_gbk_ctgs_dir']+ref_name+"/"
+    r_gbk_ctgs_root = run_root+run_dirs['run_gbk_ctgs_dir']+ref_n+"/"
     annot_trn_root = fixed_dirs['annot_trn_dir']
-    print " ", ref_name
+    print " ", ref_n
+    # log
+    ref_log = open(run_ref.log, 'a')
+    ref_log.write("".join(["\n\n# Annotate genome contigs @", timestamp,
+                           "\n"]))
     # cycle through genomes
     for genome in genomes:
         # set inputs
@@ -52,6 +56,8 @@ def annot_genome_contigs(run_ref, run_id):
         fas_ctgs_dir = fas_ctgs_root+g_name+"/"
         g_file = fixed_dirs['ori_g_dir']+genome['file']
         print '\t', g_name, "...",
+        # log
+        ref_log.write("".join(["\n", g_name]))
         # set output files
         training_file = annot_trn_root+g_name+"_annot.trn"
         # set output dirs
@@ -70,6 +76,7 @@ def annot_genome_contigs(run_ref, run_id):
             if match:
                 ctg_num = match.group(1)
                 print ctg_num,
+                ref_log.write("".join(["\t", ctg_num]))
                 # set inputs and outputs
                 ctg_fas = fas_ctgs_dir+item
                 g_ctg_gbk = g_gbk_ctgs_dir+g_name+"_"+ctg_num+".gbk"
@@ -87,7 +94,7 @@ def annot_genome_contigs(run_ref, run_id):
                                            blast_out, l_tag_base)
                         record.description = g_name+"_"+ctg_num
                         record.name = g_name+"_"+ctg_num
-                        record.dbxrefs = ["Project: "+project_id+"/"+ref_name
+                        record.dbxrefs = ["Project: "+project_id+"/"+ref_n
                                           +"-like backbones"]
                         record.seq.alphabet = generic_dna
                         write_genbank(g_ctg_gbk, record)

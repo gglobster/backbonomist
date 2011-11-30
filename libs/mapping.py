@@ -6,7 +6,7 @@ from drawing import contig_draw, pairwise_draw
 from loaders import load_genbank
 import numpy as np
 
-def prep_maps(run_ref, run_id, g_select):
+def prep_maps(run_ref, run_id, timestamp, g_select):
     """Set up generation of various maps."""
     # set inputs and outputs
     ref_ctg_n = run_ref.name
@@ -23,13 +23,21 @@ def prep_maps(run_ref, run_id, g_select):
     ensure_dir([cst_root, ctg_segs_root, cst_segs_root, maps_root,
                 ctg_aln_maps_root, cst_ann_maps_root, cst_aln_maps_root])
     print " ", ref_ctg_n, "...",
+    # log
+    ref_log = open(run_ref.log, 'a')
+    ref_log.write("".join(["\n\n# Generate maps @", timestamp, "\n\n"]))
     # map of reference with segment details
     map_ref_segs(run_ref, run_id)
-    print "ref_map"
+    # log
+    logstring = "ref_map"
+    print logstring
+    ref_log.write(logstring)
     # cycle through genomes
     for genome in genomes:
         # set inputs and outputs
         g_name = genome['name']
+        # log
+        ref_log.write("".join(["\n", g_name]))
         while True:
             try:
                 if g_name in g_select: pass
@@ -41,14 +49,20 @@ def prep_maps(run_ref, run_id, g_select):
             ctg_aln_maps_dir = ctg_aln_maps_root+g_name+"/"
             ensure_dir([ctg_aln_maps_dir])
             # maps of contigs aligned to reference
-            print "ctg_aln",
+            logstring = "ctg_aln"
+            print logstring,
+            ref_log.write("".join(["\t", logstring]))
             map_ctg_alns(run_ref, ref_gbk, genome, ctg_segs_root,
                          ctg_aln_maps_dir)
             # map of scaffold construct
-            print "cst_annot",
+            logstring = "cst_ant"
+            print logstring,
+            ref_log.write("".join(["\t", logstring]))
             map_cst_annot(run_ref, genome, scaff_gbk, cst_ann_maps_root)
             # map of construct aligned to reference
-            print "cst_aln"
+            logstring = "cst_aln"
+            print logstring
+            ref_log.write("".join(["\t", logstring]))
             map_cst_aln(run_ref, ref_gbk, genome, scaff_gbk, cst_segs_root,
                         cst_aln_maps_root)
             break
@@ -60,11 +74,15 @@ def map_ctg_alns(run_ref, ref_gbk, genome, ctg_segs_root, maps_root):
     ref_ctg_n = run_ref.name
     segs_root = ctg_segs_root+g_name+"/"
     ctgs_dir = fixed_dirs['gbk_contigs_dir']+g_name+"/"
+    # log
+    ref_log = open(run_ref.log, 'a')
     # list genbank files in matches directory
     try:
         dir_contents = listdir(segs_root)
     except OSError:
-        print "\nWARNING: no matching segments for", g_name
+        msg = "\nWARNING: no matching segments"
+        print msg
+        ref_log.write(msg)
     else:
         for ctg_num in dir_contents:
             ctg_gbk = ctgs_dir+g_name+"_"+ctg_num+".gbk"
@@ -82,11 +100,14 @@ def map_ctg_alns(run_ref, ref_gbk, genome, ctg_segs_root, maps_root):
                              segdata, map_file, q_invert, g_offset, 'dual',
                              'dual', 'm', 'fct', 'fct')
             except IOError:
-                print "\nERROR: could not load segments data for", g_name, ctg_num
-                print "\t\t\t",
+                msg = "\nERROR: could not load segments data"
+                print msg
+                ref_log.write(msg)
+
             except StopIteration:
-                print "\nERROR: could not make map for", g_name, ctg_num
-                print "\t\t\t",
+                msg = "\nERROR: could not make map"
+                print msg
+                ref_log.write(msg)
 
 def map_cst_annot(run_ref, genome, scaff_gbk, maps_root):
     """Generate map of annotated scaffold construct."""
@@ -94,10 +115,14 @@ def map_cst_annot(run_ref, genome, scaff_gbk, maps_root):
     g_name = genome['name']
     ref_ctg_n = run_ref.name
     map_file = maps_root+g_name+"_<"+ref_ctg_n+".pdf"
+    # log
+    ref_log = open(run_ref.log, 'a')
     # start mapping
     try: open(scaff_gbk, 'r')
     except IOError:
-        print "WARNING: No scaffold construct to map"
+        msg = "WARNING: No scaffold construct to map"
+        print msg
+        ref_log.write(msg)
     else:
         contig_draw(g_name, scaff_gbk, map_file, 'm', 'fct')
 
@@ -108,6 +133,8 @@ def map_cst_aln(run_ref, ref_gbk, genome, scaff_gbk, segs_root, maps_root):
     ref_ctg_n = run_ref.name
     seg_file = segs_root+g_name+"/"+g_name+"_"+ref_ctg_n+"_segs.txt"
     map_file = maps_root+g_name+"_vs_"+ref_ctg_n+".pdf"
+    # log
+    ref_log = open(run_ref.log, 'a')
     # start mapping
     try: open(scaff_gbk)
     except IOError:
@@ -117,9 +144,13 @@ def map_cst_aln(run_ref, ref_gbk, genome, scaff_gbk, segs_root, maps_root):
             # load segments TODO: add idp-based clumping
             segdata = np.loadtxt(seg_file, skiprows=1, dtype=segtype)
         except IOError:
-            print "\nERROR: could not load segments data for", g_name
+                msg = "\nERROR: could not load segments data"
+                print msg
+                ref_log.write(msg)
         except StopIteration:
-            print "\nERROR: could not make map for", g_name, "construct"
+                msg = "\nERROR: could not make map"
+                print msg
+                ref_log.write(msg)
         else:
             # offset coordinates where desired
             g_offset = genome['offset']
@@ -151,6 +182,8 @@ def map_ref_segs(run_ref, run_id):
     ensure_dir([ref_maps_root])
     gbk_file = run_root+run_dirs['ref_gbk_dir']+ref_n+"_re-annot.gbk"
     map_file = ref_maps_root+ref_n+"_ref.pdf"
+    # log
+    ref_log = open(run_ref.log, 'a')
     # start mapping
     try:
         # make mock segment, full-length with 100% id
@@ -165,8 +198,10 @@ def map_ref_segs(run_ref, run_id):
                      segdata, map_file, q_invert, g_offset, 'dual', 'dual',
                      'm', 'fct', 'product')
     except IOError:
-        print "\nERROR: could not load segments data for", ref_n
-        print "\t\t\t",
+        msg = "\nERROR: could not load segments data"
+        print msg
+        ref_log.write(msg)
     except StopIteration:
-        print "\nERROR: could not make map for", ref_n
-        print "\t\t\t",
+        msg = "\nERROR: could not make map"
+        print msg
+        ref_log.write(msg)

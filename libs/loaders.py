@@ -1,7 +1,6 @@
 from Bio import SeqIO, GenBank
-from config import fixed_dirs, p_root_dir, run_dirs
+from config import fixed_dirs
 from os import listdir
-import cPickle as pickle
 import numpy, re
 
 def load_agnostic(seqfile):

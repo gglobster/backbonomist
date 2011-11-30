@@ -66,13 +66,17 @@ def make_genome_DB(genome):
     # make DB
     make_blastDB(db_dir+g_name, fas_dir+g_name+'_contigs.fas', 'nucl')
 
-def basic_batch_blastn(run_ref, run_id):
+def basic_batch_blastn(run_ref, run_id, timestamp):
     """Send batch jobs to Blast. Muxes to multiple reference DBs."""
     # load inputs
     ref_n = run_ref.name
     run_root = p_root_dir+run_id+"/"
     in_root = run_root+run_dirs['ref_seg_dir']+ref_n+"/"
     print " ", ref_n
+    # log
+    ref_log = open(run_ref.log, 'a')
+    ref_log.write("".join(["\n\n# Blast segs to genomes @", timestamp,
+                           "\n\n"])) 
     # do blastn
     for seg in run_ref.segs:
         input_file = in_root+ref_n+"_"+seg['name']+".fas"
@@ -86,5 +90,6 @@ def basic_batch_blastn(run_ref, run_id):
             print g_name,
             local_blastn_2file(input_file, db_path, outfile, blast_prefs)
         print ""
+    ref_log.write("All OK")
     return "OK"
 

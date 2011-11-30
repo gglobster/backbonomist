@@ -8,24 +8,32 @@ from common import ensure_dir
 from array_tetris import extract_nonzero, clump_rows
 from Bio.Blast import NCBIXML
 
-def glompX_blast_out(run_ref, run_id):
+def glompX_blast_out(run_ref, run_id, timestamp):
     """Collect Blast results and extract match contigs."""
     # load inputs
     ref_n = run_ref.name
     run_root = p_root_dir+run_id+"/"
     match_root = run_root+run_dirs['match_out_dir']+ref_n+"/"
     print " ", ref_n
+    # log
+    ref_log = open(run_ref.log, 'a')
+    ref_log.write("".join(["\n\n# Collect Blast results @", timestamp,
+                           "\n\n"])) 
     # collect results
     ref_hits = {}
     control_scores = []
+    ref_log.write("Segs/Gs\t")
+    ref_log.write("\t".join([genome['name'] for genome in genomes]))
     for seg in run_ref.segs:
         seg_n = seg['name']
         print "\t", seg_n, "...",
+        ref_log.write("".join(["\n", seg_n]))
         blast_dir = run_root+run_dirs['blast_out_dir']+ref_n+"/"+seg_n+"/"
         ensure_dir([blast_dir])
         for genome in genomes:
             g_name = genome['name']
             print g_name,
+            # process
             if g_name not in ref_hits.keys():
                 ref_hits[g_name] = {}
             matches_dir = match_root+g_name+"/"
@@ -34,6 +42,8 @@ def glompX_blast_out(run_ref, run_id):
             genome_ctg_dir = fixed_dirs['fas_contigs_dir']+g_name+"/"
             rec_array = read_array(blast_infile, blast_dtypes)
             if len(rec_array) > 0:  # take qualified hits
+                p_cnt = 0
+                n_cnt = 0
                 if g_name == ref_n: # positive control TODO: better solution
                     control_scores.append(rec_array[0][11])
                 for line in rec_array:
@@ -42,6 +52,7 @@ def glompX_blast_out(run_ref, run_id):
                     length = abs(q_stop-q_start)
                     if length > min_match and score > min_score :
                         print "+",
+                        p_cnt +=1
                         contig_id = line[1]
                         if contig_id not in ref_hits[g_name].keys():
                             ref_hits[g_name][contig_id] = {seg_n: score}
@@ -56,8 +67,16 @@ def glompX_blast_out(run_ref, run_id):
                                     copyfile(genome_ctg_dir+item, fas_file)
                     else:
                         print "-",
+                        n_cnt +=1
+                if n_cnt > 0:
+                    logstring = "".join(["\t", str(p_cnt), " (",
+                                         str(n_cnt), ")"])
+                else:
+                    logstring = "".join(["\t", str(p_cnt)])
+                ref_log.write(logstring)
             else:
                 print "-",
+                ref_log.write("".join(["\t", "0"]))
         print ""
     return ref_hits, control_scores
 
