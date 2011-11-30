@@ -111,9 +111,14 @@ def ctg_stats(g_name, records):
     ctg_cats = small_ctgs, mid_ctgs, big_ctgs
     plot_ctg_stats(ctg_cats, fname)
 
-def matches_table(run_ref, run_id, ref_hits, ctl_scores):
+def matches_table(match_dict, timestamp):
     """Compile tables and graphs of contig matches."""
-    # set imputs and outputs
+    # unpack results
+    run_ref = match_dict['ref']
+    run_id = match_dict['run']
+    ref_hits = match_dict['hits']
+    ctl_scores = match_dict['ctl']
+    # set inputs and outputs
     ref_n = run_ref.name
     run_root = p_root_dir+run_id+"/"
     report_root = run_root+run_dirs['reports']+ref_n+"/"
@@ -121,6 +126,12 @@ def matches_table(run_ref, run_id, ref_hits, ctl_scores):
     red_hits_fig = report_root+run_id+"_"+ref_n+"_sum_hits.pdf"
     mf_hits_fig = report_root+run_id+"_"+ref_n+"_all_hits.pdf"
     ensure_dir([report_root])
+    print ref_n
+    # log
+    logstring = "".join(["\n\n# Make matches results table & graphs @",
+                         timestamp, "\n"])
+    run_ref.log(logstring)
+    # process
     rep_fhandle = open(hits_table_txt, 'w')
     rep_fhandle.write("# Matches to the reference segments of "+ref_n)
     segs = [seg['name'] for seg in run_ref.segs]
@@ -130,6 +141,8 @@ def matches_table(run_ref, run_id, ref_hits, ctl_scores):
     g_names = []
     # traverse dict of results
     for g_name in sorted(ref_hits, reverse=True):
+        print g_name,
+        run_ref.log("".join(["\n", g_name, "\t"]))
         genome_root = report_root+g_name+"/"
         ensure_dir([genome_root])
         g_table_fig = genome_root+g_name+"_hits_"+ref_n+".pdf"
@@ -154,7 +167,9 @@ def matches_table(run_ref, run_id, ref_hits, ctl_scores):
             try:
                 g_norm = np.divide(g_array, ctl_scores)
             except ValueError:
-                print "ERROR: problem processing hits for", g_name
+                msg = "ERROR: problem processing hits for", g_name
+                run_ref.log(msg)
+                print msg
                 g_norm = np.zeros(len(ctl_scores))
                 g_norm = np.reshape(g_norm, (1, len(ctl_scores)))
         # graph detailed scores per genome
@@ -171,6 +186,10 @@ def matches_table(run_ref, run_id, ref_hits, ctl_scores):
         mf_g_list.append(g_norm)
         mf_ctgs.append(contigs)
         g_names.append(g_name)
+        # estimate total score per genome
+        g_score = np.sum(g_reduce)
+        print g_score
+        run_ref.log(str(g_score))
     # graph detailed scores for all genomes
     hits_heatmap_multi(ref_n, segs, g_names, mf_ctgs, mf_g_list, mf_hits_fig)
     # graph summarized scores for all genomes

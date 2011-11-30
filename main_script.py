@@ -1,6 +1,7 @@
 from sys import argv, exit
 import time
 import cPickle as pickle
+import os
 from datetime import datetime
 from libs.common import ensure_dir
 from libs.genome_tetris import process_ref, unpack_genomes, build_scaffolds
@@ -49,11 +50,18 @@ run_dirs_go = ["".join([p_root_dir, run_id, "/", rdir])
 ensure_dir(run_dirs_go)
 
 # check for pickled references
-pickle_file = p_root_dir+run_id+"/"+run_dirs['ref_pickles']+run_id+"_refs.p"
-try: run_refs = pickle.load(open(pickle_file, 'rb'))
+ref_pickles = p_root_dir+run_id+"/"+run_dirs['ref_pickles']+run_id+"_refs.p"
+try: run_refs = pickle.load(open(ref_pickles, 'rb'))
 except IOError:
     step = 0
     run_refs = []
+
+# check for pickled matches
+match_pickles = p_root_dir+run_id+"/"+run_dirs['match_pickles']+run_id\
+                +"_matches.p"
+try: run_matches = pickle.load(open(match_pickles, 'rb'))
+except IOError:
+    run_matches = []
 
 if step is not 0:
     log_resume_run(run_id, start_timestamp, step)
@@ -71,7 +79,9 @@ if step is 1:
         timestamp = str(datetime.now())
         ref_obj = process_ref(ref, run_id, timestamp)
         run_refs.append(ref_obj)
-    pickle.dump(run_refs, open(pickle_file, 'wb'))
+    if os.path.exists(ref_pickles):
+        os.remove(ref_pickles)
+    pickle.dump(run_refs, open(ref_pickles, 'wb'))
     step +=1
 
 if step is 2:
@@ -93,8 +103,13 @@ if step is 4:
     for ref in run_refs:
         timestamp = str(datetime.now())
         ref_hits, ctl_scores = glompX_blast_out(ref, run_id, timestamp)
-        matches_table(ref, run_id, ref_hits, ctl_scores)
-    step +=1 # pickle hr & cs to make persistent and do mt later
+        ref_matches = {'ref': ref, 'run': run_id, 'hits': ref_hits,
+                       'ctl': ctl_scores}
+        run_matches.append(ref_matches)
+    if os.path.exists(match_pickles):
+        os.remove(match_pickles)
+    pickle.dump(run_matches, open(match_pickles, 'wb'))
+    step +=1 
 
 if step is 5:
     print "\n###", step, ". Annotate matching contigs ###\n"
@@ -125,13 +140,20 @@ if step is 8:
     step +=1
 
 if step is 9:
+    print "\n###", step, ". Make match results table & graphs ###\n"
+    for match_dict in run_matches:
+        timestamp = str(datetime.now())
+        matches_table(match_dict, timestamp)
+    step +=1
+
+if step is 10:
     print "\n###", step, ". Generate maps ###\n"
     for ref in run_refs:
         timestamp = str(datetime.now())
         prep_maps(ref, run_id, timestamp, g_select)
     step +=1
 
-if step > 9:
+if step > 10:
     stop_timestamp = str(datetime.now())
     log_end_run(run_id, stop_timestamp)
     print "\n### Nothing more to do! ###\n"
