@@ -221,6 +221,10 @@ def build_scaffolds(run_ref, run_id, timestamp):
                         msg = "\tERROR: Mauve alignment file unavailable\n\t"
                         print msg
                         run_ref.log(msg)
+                    except Exception:
+                        msg = "\tERROR: Iteration failure\n\t"
+                        print msg
+                        run_ref.log(msg)
         # abort if there is no valid contig to proceed with
         try:
             assert len(anchors_array) > 1 # always 1 left from stub

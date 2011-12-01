@@ -107,6 +107,10 @@ def align_ctg2ref(run_ref, run_id, timestamp):
                         msg = "\nERROR: Mauve alignment failed\n\t\t\t"
                         run_ref.log(msg)
                         print msg
+                    except Exception:
+                        msg = "\nERROR: Iteration failed\n\t\t\t"
+                        run_ref.log(msg)
+                        print msg
         print ""
 
 def align_cstrct2ref(run_ref, run_id, timestamp):
