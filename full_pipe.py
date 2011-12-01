@@ -16,13 +16,13 @@ from config import references, genomes, run_dirs, fixed_dirs, p_root_dir
 
 print "\n", \
       "##################################################\n", \
-      "### Backbonomist v. 0.2                        ###\n", \
+      "### Backbonomist v. 0.3 FULL PIPE              ###\n", \
       "### Copyright 2011 Geraldine A. Van der Auwera ###\n", \
       "##################################################\n", \
 
 if len(argv) > 1 and argv[1] == '-h':
     print "Basic usage: \n", \
-          "$ python main_script.py [run_id] [step#]\n", \
+          "$ python full_pipe.py [run_id] [step#]\n", \
           "Note that these arguments are positional: order matters!\n"
     exit()
 
@@ -112,38 +112,38 @@ if step is 4:
     step +=1 
 
 if step is 5:
+    print "\n###", step, ". Make match results table & graphs ###\n"
+    for match_dict in run_matches:
+        timestamp = str(datetime.now())
+        matches_table(match_dict, timestamp)
+    step +=1
+
+if step is 6:
     print "\n###", step, ". Annotate matching contigs ###\n"
     for ref in run_refs:
         timestamp = str(datetime.now())
         annot_genome_contigs(ref, run_id, timestamp)
     step +=1
 
-if step is 6:
+if step is 7:
     print "\n###", step, ". Align contigs pairwise to reference ###\n"
     for ref in run_refs:
         timestamp = str(datetime.now())
         align_ctg2ref(ref, run_id, timestamp)
     step +=1
 
-if step is 7:
+if step is 8:
     print "\n###", step, ". Construct backbone-based scaffolds ###\n"
     for ref in run_refs:
         timestamp = str(datetime.now())
         build_scaffolds(ref, run_id, timestamp)
     step +=1
 
-if step is 8:
+if step is 9:
     print "\n###", step, ". Align constructs pairwise to reference ###\n"
     for ref in run_refs:
         timestamp = str(datetime.now())
         align_cstrct2ref(ref, run_id, timestamp)
-    step +=1
-
-if step is 9:
-    print "\n###", step, ". Make match results table & graphs ###\n"
-    for match_dict in run_matches:
-        timestamp = str(datetime.now())
-        matches_table(match_dict, timestamp)
     step +=1
 
 if step is 10:
