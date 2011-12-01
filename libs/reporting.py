@@ -167,7 +167,7 @@ def matches_table(match_dict, timestamp):
             try:
                 g_norm = np.divide(g_array, ctl_scores)
             except ValueError:
-                msg = "ERROR: problem processing hits for", g_name
+                msg = "ERROR: problem processing hits for "+g_name
                 run_ref.log(msg)
                 print msg
                 g_norm = np.zeros(len(ctl_scores))
