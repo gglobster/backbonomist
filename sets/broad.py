@@ -1,0 +1,62 @@
+all = [
+{'name': 'AND1407a', 'input': 'mfas', 'file': 'G13175_assembly.fasta', 'acc': 'AND1407a', 'size': 0, 'offset': (0,0), 'ignore': (9,1,2,3,5,7,13), 'defline': 'AND1407 assembly  (Broad batch 2)'},
+{'name': 'AND1407c', 'input': 'mfas', 'file': 'G13175_contigs.fasta', 'acc': 'AND1407c', 'size': 0, 'offset': (0,0), 'ignore': (67,75,56,40,80,8,37,17,33), 'defline': 'AND1407 contigs  (Broad batch 2)'},
+{'name': 'BAG1X1-1a', 'input': 'mfas', 'file': 'G13150_assembly.fasta', 'acc': 'BAG1X1-1a', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1X1-1 assembly  (Broad batch 2)'},
+{'name': 'BAG1X1-1c', 'input': 'mfas', 'file': 'G13150_contigs.fasta', 'acc': 'BAG1X1-1c', 'size': 0, 'offset': (0,0), 'ignore': (82,110,75,122,23), 'defline': 'BAG1X1-1 contigs  (Broad batch 2)'},
+{'name': 'BAG1X2-1a', 'input': 'mfas', 'file': 'G13156_assembly.fasta', 'acc': 'BAG1X2-1a', 'size': 0, 'offset': (0,0), 'ignore': (4,9), 'defline': 'BAG1X2-1 assembly  (Broad batch 2)'},
+{'name': 'BAG1X2-1c', 'input': 'mfas', 'file': 'G13156_contigs.fasta', 'acc': 'BAG1X2-1c', 'size': 0, 'offset': (0,0), 'ignore': (70,100,114), 'defline': 'BAG1X2-1 contigs  (Broad batch 2)'},
+{'name': 'IS075', 'input': 'mfas', 'file': 'IS075.fas', 'acc': 'IS075', 'size': 0, 'offset': (0,0), 'ignore': (57,45,123,14), 'defline': 'Bacillus cereus IS075 (Broad batch 1)'},
+{'name': 'Schrouff', 'input': 'mfas', 'file': 'Schrouff.fas', 'acc': 'Schrouff', 'size': 0, 'offset': (0,0), 'ignore': (116,75,115,117,118), 'defline': 'Bacillus cereus Schrouff contigs (Broad batch 1)'},
+{'name': 'TIAC129', 'input': 'mfas', 'file': 'TIAC129.fas', 'acc': 'TIAC129', 'size': 0, 'offset': (0,0), 'ignore': (138,133,105,66,65,64,108), 'defline': 'Bacillus cereus TIAC129 contigs (Broad batch 1)'},
+{'name': 'VD022', 'input': 'mfas', 'file': 'VD022.fas', 'acc': 'VD022', 'size': 0, 'offset': (0,0), 'ignore': (129,134,131,130,59,164), 'defline': 'Bacillus cereus VD022 contigs (Broad batch 1)'},
+{'name': 'VD022_454', 'input': 'mfas', 'file': 'VD022_454.fas', 'acc': 'VD022_454', 'size': 0, 'offset': (0,0), 'ignore': (3,2), 'defline': 'Bacillus cereus VD022 contigs (454 version)'},
+{'name': 'VD_022a', 'input': 'mfas', 'file': 'G8177_assembly.fasta', 'acc': 'VD_022a', 'size': 0, 'offset': (0,0), 'ignore': (9,31,30,3,10), 'defline': 'VD_022 assembly  (Broad batch 2)'},
+{'name': 'VD_022c', 'input': 'mfas', 'file': 'G8177_contigs.fasta', 'acc': 'VD_022c', 'size': 0, 'offset': (0,0), 'ignore': (38,64,60,30,92,91), 'defline': 'VD_022 contigs  (Broad batch 2)'}
+{'name': 'VD142', 'input': 'mfas', 'file': 'VD142.fas', 'acc': 'VD142', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus VD142 contigs (Broad batch 1)'},
+{'name': 'BAG1O-2a', 'input': 'mfas', 'file': 'G13159_assembly.fasta', 'acc': 'BAG1O-2a', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1O-2 assembly  (Broad batch 2)'},
+{'name': 'BAG1O-2c', 'input': 'mfas', 'file': 'G13159_contigs.fasta', 'acc': 'BAG1O-2c', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1O-2 contigs  (Broad batch 2)'},
+{'name': 'BAG1O-3a', 'input': 'mfas', 'file': 'G13160_assembly.fasta', 'acc': 'BAG1O-3a', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1O-3 assembly  (Broad batch 2)'},
+{'name': 'BAG1O-3c', 'input': 'mfas', 'file': 'G13160_contigs.fasta', 'acc': 'BAG1O-3c', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1O-3 contigs  (Broad batch 2)'},
+{'name': 'BAG1X1-2a', 'input': 'mfas', 'file': 'G13151_assembly.fasta', 'acc': 'BAG1X1-2a', 'size': 0, 'offset': (0,0), 'ignore': (4,8,1), 'defline': 'BAG1X1-2 assembly  (Broad batch 2)'},
+{'name': 'BAG1X1-2c', 'input': 'mfas', 'file': 'G13151_contigs.fasta', 'acc': 'BAG1X1-2c', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1X1-2 contigs  (Broad batch 2)'},
+{'name': 'BAG1X1-3a', 'input': 'mfas', 'file': 'G13172_assembly.fasta', 'acc': 'BAG1X1-3a', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1X1-3 assembly  (Broad batch 2)'},
+{'name': 'BAG1X1-3c', 'input': 'mfas', 'file': 'G13172_contigs.fasta', 'acc': 'BAG1X1-3c', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1X1-3 contigs  (Broad batch 2)'},
+{'name': 'BAG2X1-3a', 'input': 'mfas', 'file': 'G13211_assembly.fasta', 'acc': 'BAG2X1-3a', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG2X1-3 assembly  (Broad batch 2)'},
+{'name': 'BAG2X1-3c', 'input': 'mfas', 'file': 'G13211_contigs.fasta', 'acc': 'BAG2X1-3c', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG2X1-3 contigs  (Broad batch 2)'}
+]
+
+pXO1_positives = [
+{'name': 'AND1407a', 'input': 'mfas', 'file': 'G13175_assembly.fasta', 'acc': 'AND1407a', 'size': 0, 'offset': (0,0), 'ignore': (9,1,2,3,5,7,13), 'defline': 'AND1407 assembly  (Broad batch 2)'},
+{'name': 'AND1407c', 'input': 'mfas', 'file': 'G13175_contigs.fasta', 'acc': 'AND1407c', 'size': 0, 'offset': (0,0), 'ignore': (67,75,56,40,80,8,37,17,33), 'defline': 'AND1407 contigs  (Broad batch 2)'},
+{'name': 'BAG1X1-1a', 'input': 'mfas', 'file': 'G13150_assembly.fasta', 'acc': 'BAG1X1-1a', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1X1-1 assembly  (Broad batch 2)'},
+{'name': 'BAG1X1-1c', 'input': 'mfas', 'file': 'G13150_contigs.fasta', 'acc': 'BAG1X1-1c', 'size': 0, 'offset': (0,0), 'ignore': (82,110,75,122,23), 'defline': 'BAG1X1-1 contigs  (Broad batch 2)'},
+{'name': 'BAG1X2-1a', 'input': 'mfas', 'file': 'G13156_assembly.fasta', 'acc': 'BAG1X2-1a', 'size': 0, 'offset': (0,0), 'ignore': (4,9), 'defline': 'BAG1X2-1 assembly  (Broad batch 2)'},
+{'name': 'BAG1X2-1c', 'input': 'mfas', 'file': 'G13156_contigs.fasta', 'acc': 'BAG1X2-1c', 'size': 0, 'offset': (0,0), 'ignore': (70,100,114), 'defline': 'BAG1X2-1 contigs  (Broad batch 2)'},
+{'name': 'IS075', 'input': 'mfas', 'file': 'IS075.fas', 'acc': 'IS075', 'size': 0, 'offset': (0,0), 'ignore': (57,45,123,14), 'defline': 'Bacillus cereus IS075 (Broad batch 1)'},
+{'name': 'Schrouff', 'input': 'mfas', 'file': 'Schrouff.fas', 'acc': 'Schrouff', 'size': 0, 'offset': (0,0), 'ignore': (116,75,115,117,118), 'defline': 'Bacillus cereus Schrouff contigs (Broad batch 1)'},
+{'name': 'TIAC129', 'input': 'mfas', 'file': 'TIAC129.fas', 'acc': 'TIAC129', 'size': 0, 'offset': (0,0), 'ignore': (138,133,105,66,65,64,108), 'defline': 'Bacillus cereus TIAC129 contigs (Broad batch 1)'},
+{'name': 'VD022', 'input': 'mfas', 'file': 'VD022.fas', 'acc': 'VD022', 'size': 0, 'offset': (0,0), 'ignore': (129,134,131,130,59,164), 'defline': 'Bacillus cereus VD022 contigs (Broad batch 1)'},
+{'name': 'VD022_454', 'input': 'mfas', 'file': 'VD022_454.fas', 'acc': 'VD022_454', 'size': 0, 'offset': (0,0), 'ignore': (3,2), 'defline': 'Bacillus cereus VD022 contigs (454 version)'},
+{'name': 'VD_022a', 'input': 'mfas', 'file': 'G8177_assembly.fasta', 'acc': 'VD_022a', 'size': 0, 'offset': (0,0), 'ignore': (9,31,30,3,10), 'defline': 'VD_022 assembly  (Broad batch 2)'},
+{'name': 'VD_022c', 'input': 'mfas', 'file': 'G8177_contigs.fasta', 'acc': 'VD_022c', 'size': 0, 'offset': (0,0), 'ignore': (38,64,60,30,92,91), 'defline': 'VD_022 contigs  (Broad batch 2)'}
+]
+
+pXO1_negatives = [
+{'name': 'VD142', 'input': 'mfas', 'file': 'VD142.fas', 'acc': 'VD142', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus VD142 contigs (Broad batch 1)'},
+{'name': 'BAG1O-2a', 'input': 'mfas', 'file': 'G13159_assembly.fasta', 'acc': 'BAG1O-2a', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1O-2 assembly  (Broad batch 2)'},
+{'name': 'BAG1O-2c', 'input': 'mfas', 'file': 'G13159_contigs.fasta', 'acc': 'BAG1O-2c', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1O-2 contigs  (Broad batch 2)'},
+{'name': 'BAG1O-3a', 'input': 'mfas', 'file': 'G13160_assembly.fasta', 'acc': 'BAG1O-3a', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1O-3 assembly  (Broad batch 2)'},
+{'name': 'BAG1O-3c', 'input': 'mfas', 'file': 'G13160_contigs.fasta', 'acc': 'BAG1O-3c', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1O-3 contigs  (Broad batch 2)'},
+{'name': 'BAG1X1-2a', 'input': 'mfas', 'file': 'G13151_assembly.fasta', 'acc': 'BAG1X1-2a', 'size': 0, 'offset': (0,0), 'ignore': (4,8,1), 'defline': 'BAG1X1-2 assembly  (Broad batch 2)'},
+{'name': 'BAG1X1-2c', 'input': 'mfas', 'file': 'G13151_contigs.fasta', 'acc': 'BAG1X1-2c', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1X1-2 contigs  (Broad batch 2)'},
+{'name': 'BAG1X1-3a', 'input': 'mfas', 'file': 'G13172_assembly.fasta', 'acc': 'BAG1X1-3a', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1X1-3 assembly  (Broad batch 2)'},
+{'name': 'BAG1X1-3c', 'input': 'mfas', 'file': 'G13172_contigs.fasta', 'acc': 'BAG1X1-3c', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1X1-3 contigs  (Broad batch 2)'},
+{'name': 'BAG2X1-3a', 'input': 'mfas', 'file': 'G13211_assembly.fasta', 'acc': 'BAG2X1-3a', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG2X1-3 assembly  (Broad batch 2)'},
+{'name': 'BAG2X1-3c', 'input': 'mfas', 'file': 'G13211_contigs.fasta', 'acc': 'BAG2X1-3c', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG2X1-3 contigs  (Broad batch 2)'}
+]
+
+pXO2_positives = [
+]
+
+pXO2_negatives = [
+]

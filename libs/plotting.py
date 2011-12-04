@@ -48,11 +48,13 @@ def hits_heatmap_multi(ref_n, segs, g_names, contigs, scores, imgfile):
     grid = AxesGrid(fig, 111, nrows_ncols=(len(g_names), 1), axes_pad=0.4,
                     cbar_location="top", cbar_mode="single", cbar_size=0.1)
     for i in range(len(g_names)):
-        hmap = grid[i].pcolor(scores[i], cmap='hot', vmin=0, vmax=1)
+        mod_score = [-score for score in scores[i]]
+        score_RA = np.array(mod_score)
+        hmap = grid[i].pcolor(score_RA, cmap='hot', vmin=-1, vmax=0)
         grid[i].xaxis.set_major_locator(MaxNLocator(len(segs)))
         grid[i].yaxis.set_major_locator(MaxNLocator(len(scores[i])))
         grid.cbar_axes[i].colorbar(hmap)
-        grid.cbar_axes[i].set_xticks([0, 0.5, 1])
+        grid.cbar_axes[i].set_xticks([-1, -0.5, 0])
         grid.cbar_axes[i].set_xticklabels(['Low', 'Medium', 'High'])
         grid[i].set_xticklabels(segs, size='small')
         grid[i].set_xlabel(ref_n+" reference segments", size='small')
