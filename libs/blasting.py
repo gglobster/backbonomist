@@ -1,8 +1,6 @@
 import os, subprocess, re
-from config import blast_prefs, fixed_dirs, run_dirs, p_root_dir, genomes
-from loaders import load_multifasta
+from config import blast_prefs, fixed_dirs, run_dirs, r_root_dir
 from common import ensure_dir
-from datetime import datetime
 from Bio.Blast.Applications import NcbiblastnCommandline, \
     NcbirpsblastCommandline, NcbiblastpCommandline
 from Bio.Blast import NCBIWWW
@@ -66,11 +64,11 @@ def make_genome_DB(genome):
     # make DB
     make_blastDB(db_dir+g_name, fas_dir+g_name+'_contigs.fas', 'nucl')
 
-def basic_batch_blastn(run_ref, run_id, timestamp):
+def basic_batch_blastn(genomes, run_ref, run_id, timestamp):
     """Send batch jobs to Blast. Muxes to multiple reference DBs."""
     # load inputs
     ref_n = run_ref.name
-    run_root = p_root_dir+run_id+"/"
+    run_root = r_root_dir+run_id+"/"
     in_root = run_root+run_dirs['ref_seg_dir']+ref_n+"/"
     print " ", ref_n
     # log
@@ -81,12 +79,12 @@ def basic_batch_blastn(run_ref, run_id, timestamp):
         input_file = in_root+ref_n+"_"+seg['name']+".fas"
         out_dir = run_root+run_dirs['blast_out_dir']+ref_n+"/"+seg['name']+"/"
         ensure_dir([out_dir])
-        print "\t", seg['name'], "...",
+        print "\t", seg['name'], 
         for genome in genomes:
             g_name = genome['name']
             db_path = fixed_dirs['blast_db_dir']+g_name
             outfile = out_dir+g_name+"_out.txt"
-            print g_name,
+            print ".",
             local_blastn_2file(input_file, db_path, outfile, blast_prefs)
         print ""
     run_ref.log("All OK")

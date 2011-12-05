@@ -1,13 +1,12 @@
 import re
 import numpy as np
 from os import path, listdir
-from datetime import datetime
 from shutil import copyfile
 from loaders import load_genbank, load_multifasta
 from writers import write_genbank, write_fasta
 from string_ops import multisplit_finder
 from common import ensure_dir
-from config import separator, fixed_dirs, run_dirs, p_root_dir, genomes, prox_D
+from config import separator, fixed_dirs, run_dirs, r_root_dir, genomes, prox_D
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from Bio.Alphabet import generic_dna
@@ -98,7 +97,7 @@ def unpack_genomes(genome):
 def process_ref(ref, run_id, timestamp):
     """Re-annotate contig and extract reference segments using coordinates."""
     # set inputs and outputs
-    run_root = p_root_dir+run_id+"/"
+    run_root = r_root_dir+run_id+"/"
     ref_name = ref['name']
     in_file = fixed_dirs['ori_g_dir']+ref['file']
     seg_out_root = run_root+run_dirs['ref_seg_dir']+ref_name+"/"
@@ -167,7 +166,7 @@ def build_scaffolds(run_ref, run_id, timestamp):
     """
     # set inputs and outputs
     ref_n = run_ref.name
-    run_root = p_root_dir+run_id+"/"
+    run_root = r_root_dir+run_id+"/"
     ctgs_root = run_root+run_dirs['run_gbk_ctgs_dir']+ref_n+"/"
     mauve_root = run_root+run_dirs['mauve_out_dir']+ref_n+"/contigs/"
     scaffolds_dir = run_root+run_dirs['scaffolds_dir']+ref_n+"/"
@@ -200,31 +199,43 @@ def build_scaffolds(run_ref, run_id, timestamp):
             match = pattern.match(item)
             if match:
                 ctg_num = match.group(1)
-                if int(ctg_num) not in genome['ignore']:
-                    print ctg_num,
-                    logstring = "".join(["\t", ctg_num])
-                    run_ref.log(logstring)
-                    # set inputs
-                    mauve_file = mauve_dir+ctg_num+".mauve"
-                    bb_file = mauve_file+".backbone"
+                while True:
                     try:
-                        # parse Mauve output
-                        coords = mauver_load2_k0(bb_file, prox_D)
-                        # determine which segment to use as anchor
-                        anchor_seg = get_anchor_loc(coords)
-                        anchors_array = np.insert(anchors_array, 0,
-                                                  (ctg_num,
-                                                   anchor_seg['start'],
-                                                   anchor_seg['end'],
-                                                   anchor_seg['orient']))
-                    except IOError:
-                        msg = "\tERROR: Mauve alignment file unavailable\n\t"
+                        if int(ctg_num) in genome['ignore']:
+                            msg = "("+ctg_num+")"
+                            print msg,
+                            run_ref.log(msg)
+                            break
+                    except KeyError:
+                        msg = "WARNING: no ignored segments list"
                         print msg
-                        run_ref.log(msg)
-                    except Exception:
-                        msg = "\tERROR: Iteration failure\n\t"
-                        print msg
-                        run_ref.log(msg)
+                    else:
+                        print ctg_num,
+                        logstring = "".join(["\t", ctg_num])
+                        run_ref.log(logstring)
+                        # set inputs
+                        mauve_file = mauve_dir+ctg_num+".mauve"
+                        bb_file = mauve_file+".backbone"
+                        try:
+                            # parse Mauve output
+                            coords = mauver_load2_k0(bb_file, prox_D)
+                            # determine which segment to use as anchor
+                            anchor_seg = get_anchor_loc(coords)
+                            anchors_array = np.insert(anchors_array, 0,
+                                                      (ctg_num,
+                                                       anchor_seg['start'],
+                                                       anchor_seg['end'],
+                                                       anchor_seg['orient']))
+                        except IOError:
+                            msg = "\tERROR: Mauve alignment not found\n\t"
+                            print msg
+                            run_ref.log(msg)
+                        except Exception:
+                            msg = "\tERROR: Iteration failure\n\t"
+                            print msg
+                            run_ref.log(msg)
+                    finally:
+                        break
         # abort if there is no valid contig to proceed with
         try:
             assert len(anchors_array) > 1 # always 1 left from stub
@@ -243,7 +254,8 @@ def build_scaffolds(run_ref, run_id, timestamp):
                     contig_gbk = ctgs_dir+g_name+"_"+str(ctg_num)+".gbk"
                     record = load_genbank(contig_gbk)
                     if ctg_anchor['orient'] == -1: # flip record
-                        record.seq = record.seq.reverse_complement()
+                        record = record.reverse_complement(id=True, name=True,
+                            annotations=True, description=True)
                     ctg_list.append(record)
                 else: # workaround for having 0 value leftover from stub
                     pass # having it might come in handy in later dev
@@ -273,3 +285,9 @@ def build_scaffolds(run_ref, run_id, timestamp):
                 scaff_record.id = g_name[:10]
                 write_genbank(scaff_gbk, scaff_record[:-100]) # rm last bumper
             print ""
+
+def add_refs_2g(genomes, references):
+    """ Add references to persistent genomes list."""
+    for ref in references:
+        genomes.append(ref)
+    return genomes

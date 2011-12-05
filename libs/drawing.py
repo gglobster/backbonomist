@@ -2,7 +2,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm
 from reportlab.lib.colors import black, white, HexColor
 from loaders import load_genbank
-from config import fct_flags, fct_colors, idpt
+from config import fct_flags, fct_colors, idpt, min_size
 from array_tetris import offset_coord, nudge_coord, shade_split, \
     coord_flipper
 
@@ -515,41 +515,46 @@ def pairwise_draw(ref_name, q_name, ref_file, q_file, segs, map_file, q_inv,
 
 def shadowfax(canvas_def, xa, xb, xc, xd, aby0, cdy0, sh_color):
     """Draw shaded area between homologous segments."""
-    canvas_def.setLineWidth(1)
-    # convert sequence-scale values to canvas-space
-    axr, bxr, cxr, dxr = xa*u, xb*u, xc*u, xd*u
-    # check for negatives that need to be flipped
-    ax, bx = coord_flipper(axr,bxr)
-    cx, dx = coord_flipper(cxr,dxr)
-    # these are the actual Y coordinates that will be used to draw the cues
-    aby1 = aby0-da
-    aby2 = aby1-tm
-    cdy1 = cdy0+da
-    cdy2 = cdy1+tm
-    # this draws the parallelograms between matching segments
-    canvas_def.setLineWidth(1)
-    canvas_def.setFillColor(sh_color)
-    ppg = canvas_def.beginPath()
-    ppg.moveTo(ax,aby2)
-    ppg.lineTo(bx,aby2)
-    ppg.lineTo(dx,cdy2)
-    ppg.lineTo(cx,cdy2)
-    ppg.lineTo(ax,aby2)
-    canvas_def.drawPath(ppg, stroke=0, fill=1)
-    ppg.close()
-    # this draws the tick marks and lines delineating matching segments
-    canvas_def.setLineWidth(1)
-    puck = canvas_def.beginPath()
-    puck.moveTo(ax,aby1)
-    puck.lineTo(ax,aby2)
-    puck.lineTo(cx,cdy2)
-    puck.lineTo(cx,cdy1)
-    puck.moveTo(bx,aby1)
-    puck.lineTo(bx,aby2)
-    puck.lineTo(dx,cdy2)
-    puck.lineTo(dx,cdy1)
-    canvas_def.drawPath(puck, stroke=1, fill=0)
-    puck.close()
+    # cancel drawing if segments too small to draw
+    if abs(xb)-abs(xa) < min_size:
+        pass
+    else:
+        # draw segment pair shading
+        canvas_def.setLineWidth(1)
+        # convert sequence-scale values to canvas-space
+        axr, bxr, cxr, dxr = xa*u, xb*u, xc*u, xd*u
+        # check for negatives that need to be flipped
+        ax, bx = coord_flipper(axr,bxr)
+        cx, dx = coord_flipper(cxr,dxr)
+        # these are the actual Y coordinates that will be used to draw the cues
+        aby1 = aby0-da
+        aby2 = aby1-tm
+        cdy1 = cdy0+da
+        cdy2 = cdy1+tm
+        # this draws the parallelograms between matching segments
+        canvas_def.setLineWidth(1)
+        canvas_def.setFillColor(sh_color)
+        ppg = canvas_def.beginPath()
+        ppg.moveTo(ax,aby2)
+        ppg.lineTo(bx,aby2)
+        ppg.lineTo(dx,cdy2)
+        ppg.lineTo(cx,cdy2)
+        ppg.lineTo(ax,aby2)
+        canvas_def.drawPath(ppg, stroke=0, fill=1)
+        ppg.close()
+        # this draws the tick marks and lines delineating matching segments
+        canvas_def.setLineWidth(1)
+        puck = canvas_def.beginPath()
+        puck.moveTo(ax,aby1)
+        puck.lineTo(ax,aby2)
+        puck.lineTo(cx,cdy2)
+        puck.lineTo(cx,cdy1)
+        puck.moveTo(bx,aby1)
+        puck.lineTo(bx,aby2)
+        puck.lineTo(dx,cdy2)
+        puck.lineTo(dx,cdy1)
+        canvas_def.drawPath(puck, stroke=1, fill=0)
+        puck.close()
 
 def simcolor(idp):
     """Evaluate class of similarity."""

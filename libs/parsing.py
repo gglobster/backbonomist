@@ -2,17 +2,17 @@ import re, numpy as np
 from os import listdir, path
 from shutil import copyfile
 from loaders import read_array, td_txt_file_load
-from config import fixed_dirs, run_dirs, p_root_dir, blast_dtypes, genomes, \
-    mtype, min_match, min_score
+from config import fixed_dirs, run_dirs, r_root_dir, blast_dtypes, mtype, \
+    min_match, min_score
 from common import ensure_dir
 from array_tetris import extract_nonzero, clump_rows
 from Bio.Blast import NCBIXML
 
-def glompX_blast_out(run_ref, run_id, timestamp):
+def glompX_blast_out(genomes, run_ref, run_id, timestamp):
     """Collect Blast results and extract match contigs."""
     # load inputs
     ref_n = run_ref.name
-    run_root = p_root_dir+run_id+"/"
+    run_root = r_root_dir+run_id+"/"
     match_root = run_root+run_dirs['match_out_dir']+ref_n+"/"
     print " ", ref_n
     # log
@@ -31,7 +31,7 @@ def glompX_blast_out(run_ref, run_id, timestamp):
         ensure_dir([blast_dir])
         for genome in genomes:
             g_name = genome['name']
-            print g_name,
+            print "|",
             # process
             if g_name not in ref_hits.keys():
                 ref_hits[g_name] = {}

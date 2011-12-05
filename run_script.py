@@ -5,7 +5,7 @@ import time
 import cPickle as pickle
 from datetime import datetime
 from libs.common import ensure_dir
-from config import run_dirs, fixed_dirs, p_root_dir
+from config import run_dirs, fixed_dirs, r_root_dir
 
 print "\n", \
       "##################################################\n", \
@@ -38,19 +38,19 @@ start_timestamp = str(datetime.now())
 
 # ensure existence of all directories
 ensure_dir(fixed_dirs.values())
-run_dirs_go = ["".join([p_root_dir, run_id, "/", rdir])
+run_dirs_go = ["".join([r_root_dir, run_id, "/", rdir])
                for rdir in run_dirs.values()]
 ensure_dir(run_dirs_go)
 
 # check for pickled references
-ref_pickles = p_root_dir+run_id+"/"+run_dirs['ref_pickles']+run_id+"_refs.p"
+ref_pickles = r_root_dir+run_id+"/"+run_dirs['ref_pickles']+run_id+"_refs.p"
 try: run_refs = pickle.load(open(ref_pickles, 'rb'))
 except IOError:
     step = 0
     run_refs = []
 
 # check for pickled matches
-match_pickles = p_root_dir+run_id+"/"+run_dirs['match_pickles']+run_id\
+match_pickles = r_root_dir+run_id+"/"+run_dirs['match_pickles']+run_id\
                 +"_matches.p"
 try: run_matches = pickle.load(open(match_pickles, 'rb'))
 except IOError:

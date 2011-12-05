@@ -1,13 +1,13 @@
 from os import path
-from config import fixed_dirs, run_dirs, p_root_dir, project_id, \
-    project_date, genomes, references, ctg_thresholds
+from config import fixed_dirs, run_dirs, r_root_dir, base_root, project_id, \
+    genomes, project_date, references, ctg_thresholds
 from common import ensure_dir
 from plotting import plot_ctg_stats, hits_heatmap_multi
 import numpy as np
 
 def log_start_run(run_id, timestamp):
     """Record run initiated in the dataset log."""
-    set_log = p_root_dir+"/"+project_id+"_log.html"
+    set_log = base_root+"/"+project_id+"_log.html"
     param_file = run_id+"/"+run_dirs['reports']+run_id+"_dataset.txt"
     header = "<p><b>Log of processing runs for "+project_id+"</b></p><p><ul>"
     set_log_htm = ["<li><b>", run_id, "</b>&nbsp;- initiated ", timestamp,
@@ -19,7 +19,7 @@ def log_start_run(run_id, timestamp):
 
 def log_end_run(run_id, timestamp):
     """Record run in the dataset log."""
-    set_log = p_root_dir+"/"+project_id+"_log.html"
+    set_log = base_root+"/"+project_id+"_log.html"
     run_report = run_id+"/"+run_id+"_report.html"
     set_log_htm = ["<li><b>", run_id, "</b>", "&nbsp;- completed ", timestamp,
                    " (<a href='", run_report, "'>report</a>)</li>"]
@@ -28,7 +28,7 @@ def log_end_run(run_id, timestamp):
 
 def log_resume_run(run_id, timestamp, step):
     """Record run resumed in the dataset log."""
-    set_log = p_root_dir+"/"+project_id+"_log.html"
+    set_log = base_root+"/"+project_id+"_log.html"
     set_log_htm = ["<li><b>", run_id, "</b>", "&nbsp;- resumed ", timestamp,
                    " (from step "+str(step)+")</li>"]
     linkline = "".join(set_log_htm)
@@ -37,7 +37,7 @@ def log_resume_run(run_id, timestamp, step):
 def save_datasumm(run_id, timestamp):
     """Save a summary of the dataset composition to file."""
     print " ", run_id,
-    report_root = p_root_dir+run_id+"/"+run_dirs['reports']
+    report_root = r_root_dir+run_id+"/"+run_dirs['reports']
     param_file = report_root+run_id+"_dataset.txt"
     # genome data
     g_title = "\t".join(["## Genomes"])
@@ -120,7 +120,7 @@ def matches_table(match_dict, timestamp):
     ctl_scores = match_dict['ctl']
     # set inputs and outputs
     ref_n = run_ref.name
-    run_root = p_root_dir+run_id+"/"
+    run_root = r_root_dir+run_id+"/"
     report_root = run_root+run_dirs['reports']+ref_n+"/"
     hits_table_txt = report_root+run_id+"_"+ref_n+"_hits_table.txt"
     red_hits_fig = report_root+run_id+"_"+ref_n+"_sum_hits.pdf"

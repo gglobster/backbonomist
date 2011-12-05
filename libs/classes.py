@@ -52,3 +52,4 @@ class Reference(object):
         ref_log = open(self.logfile, 'a')
         ref_log.write(string)
         ref_log.close()
+        

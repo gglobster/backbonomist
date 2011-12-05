@@ -8,12 +8,21 @@ project_id = 'BCSL'
 project_date = '2011'
 prot_db_name = 'Bacteria_prot'
 
-from sets.broad import pXO1_positives as genomes
+from sets.wgs import pXO1_positives as genomes
 from sets.references import pXO1 as references
+
+# Blast parameters
+blast_prefs = {'evalue': 0.01,
+               'outfmt_pref': 6}
+min_match = 500     # min size for a blast hit to be considered relevant
+min_score = 1000    # min score for a blast hit to be considered relevant
 
 # Proximity thresholds for clumping
 prox_D = 2000   # for ballpark estimation
-prox_F = 100    # for fine alignment (set to 0 to skip clumping)
+prox_F = 300    # for fine alignment (set to 0 to skip clumping)
+
+# Size threshold for drawing shading segment
+min_size = 100
 
 # Chopping size to limit length of detailed alignments
 max_size = 3000
@@ -63,8 +72,9 @@ fct_colors = {'mge': ('#66CC00', 'MGE'),
 separator = "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN"
 
 # Project root directory
-g_root_dir = 'data/'+project_id+'genomes/'
-p_root_dir = g_root_dir+'runs/'
+base_root = 'data/'+project_id
+g_root_dir = base_root+'/genomes/'
+r_root_dir = base_root+'/runs/'
 
 # run-independent directories
 fixed_dirs = {
@@ -83,7 +93,7 @@ fixed_dirs = {
 
 # run-dependent directories
 run_dirs = {
-'ref_pickles': 'references/',
+'pickles': 'pickles/',
 'ref_seg_dir': 'references/segments/',
 'ref_gbk_dir': 'references/genbank/',
 'ref_fas_dir': 'references/fasta/',
@@ -98,12 +108,6 @@ run_dirs = {
 'maps_dir': 'maps/',
 'reports': 'reports/'
 }
-
-# Blast parameters
-blast_prefs = {'evalue': 0.01,
-               'outfmt_pref': 6}
-min_match = 500     # min size for a blast hit to be considered relevant
-min_score = 1000    # min score for a blast hit to be considered relevant
 
 # Blast results arrays datatypes
 blast_dtypes = numpy.dtype([('query', 'S16'),

@@ -1,6 +1,6 @@
 import os
 from config import genomes, fixed_dirs, run_dirs, blast_prefs, \
-    prot_db_name, project_id, p_root_dir
+    prot_db_name, project_id, r_root_dir
 import re, subprocess
 from loaders import load_multifasta, load_fasta, load_genbank
 from writers import write_genbank
@@ -36,7 +36,7 @@ def annot_genome_contigs(run_ref, run_id, timestamp):
     # TODO: add other DB / pfams?
     # set inputs and outputs
     ref_n = run_ref.name
-    run_root = p_root_dir+run_id+"/"
+    run_root = r_root_dir+run_id+"/"
     fas_ctgs_root = run_root+run_dirs['match_out_dir']+ref_n+"/"
     ctg_cds_root = fixed_dirs['ctg_cds_dir']
     ctg_prot_root = fixed_dirs['ctg_prot_dir']

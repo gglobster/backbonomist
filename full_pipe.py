@@ -4,7 +4,8 @@ import cPickle as pickle
 import os
 from datetime import datetime
 from libs.common import ensure_dir
-from libs.genome_tetris import process_ref, unpack_genomes, build_scaffolds
+from libs.genome_tetris import process_ref, unpack_genomes, add_refs_2g, \
+    build_scaffolds
 from libs.blasting import make_genome_DB, basic_batch_blastn
 from libs.parsing import glompX_blast_out
 from libs.annotation import annot_genome_contigs
@@ -12,7 +13,7 @@ from libs.mapping import prep_maps
 from libs.aligning import align_cstrct2ref, align_ctg2ref
 from libs.reporting import save_datasumm, log_start_run, log_end_run, \
     init_reports, log_resume_run, matches_table
-from config import references, genomes, run_dirs, fixed_dirs, p_root_dir
+from config import references, genomes, run_dirs, fixed_dirs, r_root_dir
 
 print "\n", \
       "##################################################\n", \
@@ -45,23 +46,31 @@ start_timestamp = str(datetime.now())
 
 # ensure existence of all directories
 ensure_dir(fixed_dirs.values())
-run_dirs_go = ["".join([p_root_dir, run_id, "/", rdir])
+run_dirs_go = ["".join([r_root_dir, run_id, "/", rdir])
                for rdir in run_dirs.values()]
 ensure_dir(run_dirs_go)
 
-# check for pickled references
-ref_pickles = p_root_dir+run_id+"/"+run_dirs['ref_pickles']+run_id+"_refs.p"
+# check for pickles
+pickle_root = r_root_dir+run_id+"/"+run_dirs['pickles']+run_id
+ref_pickles = pickle_root+"_refs.p"
+genome_pickles = pickle_root+"_genomes.p"
+match_pickles = pickle_root+"_matches.p"
+# references
 try: run_refs = pickle.load(open(ref_pickles, 'rb'))
 except IOError:
     step = 0
     run_refs = []
-
-# check for pickled matches
-match_pickles = p_root_dir+run_id+"/"+run_dirs['match_pickles']+run_id\
-                +"_matches.p"
+# genomes
+try: run_gs = pickle.load(open(genome_pickles, 'rb'))
+except IOError:
+    step = 0
+    run_gs = []
+# matches
 try: run_matches = pickle.load(open(match_pickles, 'rb'))
 except IOError:
     run_matches = []
+
+## pipeline
 
 if step is not 0:
     log_resume_run(run_id, start_timestamp, step)
@@ -89,20 +98,24 @@ if step is 2:
     for genome in genomes:
         unpack_genomes(genome)
         make_genome_DB(genome)
+    run_gs = add_refs_2g(genomes, references)
+    if os.path.exists(genome_pickles):
+        os.remove(genome_pickles)
+    pickle.dump(run_gs, open(genome_pickles, 'wb'))
     step +=1
 
 if step is 3:
     print "\n###", step, ". Blast reference segments against genomes ###\n"
     for ref in run_refs:
         timestamp = str(datetime.now())
-        basic_batch_blastn(ref, run_id, timestamp)
+        basic_batch_blastn(run_gs, ref, run_id, timestamp)
     step +=1
 
 if step is 4:
     print "\n###", step, ". Collect Blast results ###\n"
     for ref in run_refs:
         timestamp = str(datetime.now())
-        ref_hits, ctl_scores = glompX_blast_out(ref, run_id, timestamp)
+        ref_hits, ctl_scores = glompX_blast_out(run_gs, ref, run_id, timestamp)
         ref_matches = {'ref': ref, 'run': run_id, 'hits': ref_hits,
                        'ctl': ctl_scores}
         run_matches.append(ref_matches)

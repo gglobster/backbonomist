@@ -2,7 +2,7 @@ import os, subprocess, re
 from os import listdir
 from Bio.Align.Applications import ClustalwCommandline
 from Bio.Align.Applications import MuscleCommandline
-from config import mauve_exec, fixed_dirs, run_dirs, p_root_dir, genomes, \
+from config import mauve_exec, fixed_dirs, run_dirs, r_root_dir, genomes, \
     max_size, chop_mode
 from common import ensure_dir
 from parsing import mauver_load2_k0, parse_clustal_idstars
@@ -43,7 +43,7 @@ def align_ctg2ref(run_ref, run_id, timestamp):
     """Align contigs pairwise to the reference contig."""
     # set inputs and outputs
     ref_n = run_ref.name
-    run_root = p_root_dir+run_id+"/"
+    run_root = r_root_dir+run_id+"/"
     ref_ctg_file = run_ref.file
     mauve_root = run_root+run_dirs['mauve_out_dir']+ref_n+"/contigs/"
     segments_root = run_root+run_dirs['aln_seg_dir']+ref_n+"/contigs/"
@@ -117,7 +117,7 @@ def align_cstrct2ref(run_ref, run_id, timestamp):
     """Align constructs pairwise to the reference contig."""
     # set inputs and outputs
     ref_n = run_ref.name
-    run_root = p_root_dir+run_id+"/"
+    run_root = r_root_dir+run_id+"/"
     ref_ctg_file = run_ref.file
     mauve_root = run_root+run_dirs['mauve_out_dir']+ref_n+"/constructs/"
     segments_root = run_root+run_dirs['aln_seg_dir']+ref_n+"/constructs/"

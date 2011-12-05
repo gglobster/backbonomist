@@ -1,5 +1,5 @@
 from os import listdir
-from config import fixed_dirs, run_dirs, p_root_dir, genomes, segtype
+from config import fixed_dirs, run_dirs, r_root_dir, genomes, segtype
 from common import ensure_dir
 from array_tetris import offset_q2r_coords
 from drawing import contig_draw, pairwise_draw
@@ -10,7 +10,7 @@ def prep_maps(run_ref, run_id, timestamp, g_select):
     """Set up generation of various maps."""
     # set inputs and outputs
     ref_ctg_n = run_ref.name
-    run_root = p_root_dir+run_id+"/"
+    run_root = r_root_dir+run_id+"/"
     ref_gbk = run_ref.gbk
     cst_root = run_root+run_dirs['scaffolds_dir']+ref_ctg_n+"/"
     segments_root = run_root+run_dirs['aln_seg_dir']+ref_ctg_n+"/"
@@ -173,7 +173,7 @@ def map_ref_segs(run_ref, run_id):
     """
     # set inputs and outputs
     ref_n = run_ref.name
-    run_root = p_root_dir+run_id+"/"
+    run_root = r_root_dir+run_id+"/"
     ori_file = run_ref.file
     ref_maps_root = run_root+run_dirs['ref_map_dir']
     ensure_dir([ref_maps_root])
