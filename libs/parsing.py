@@ -29,6 +29,7 @@ def glompX_blast_out(genomes, run_ref, run_id, timestamp):
         run_ref.log("".join(["\n", seg_n]))
         blast_dir = run_root+run_dirs['blast_out_dir']+ref_n+"/"+seg_n+"/"
         ensure_dir([blast_dir])
+        ref_flag = True
         for genome in genomes:
             g_name = genome['name']
             print "|",
@@ -43,8 +44,10 @@ def glompX_blast_out(genomes, run_ref, run_id, timestamp):
             if len(rec_array) > 0:  # take qualified hits
                 p_cnt = 0
                 n_cnt = 0
-                if g_name == ref_n: # positive control TODO: better solution
+                if g_name == ref_n and ref_flag:
+                    # positive control TODO: better solution
                     control_scores.append(rec_array[0][11])
+                    ref_flag = False
                 for line in rec_array:
                     q_start, q_stop = line[6], line[7]
                     score = line[11]

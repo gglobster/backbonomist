@@ -8,8 +8,8 @@ project_id = 'BCSL'
 project_date = '2011'
 prot_db_name = 'Bacteria_prot'
 
-from sets.wgs import pXO1_positives as genomes
-from sets.references import pXO1 as references
+from sets.plasmids import pXO2s as genomes
+from sets.references import pXO2 as references
 
 # Blast parameters
 blast_prefs = {'evalue': 0.01,

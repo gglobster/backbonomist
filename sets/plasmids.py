@@ -29,7 +29,7 @@ above_100 = [
 {'name': 'pG9842_209', 'input': 'cgbk', 'file': 'NC_011775.gbk', 'acc': 'NC_011775', 'size': 209, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus G9842 plasmid pG9842_209'}
 ]
 
-20_to_100 = [
+below_100 = [
 {'name': 'pCT51', 'input': 'cgbk', 'file': 'CP001911.gbk', 'acc': 'CP001911', 'size': 51, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv chinensis CT-43 plasmid pCT51'},
 {'name': 'pCT72', 'input': 'cgbk', 'file': 'CP001913.gbk', 'acc': 'CP001913', 'size': 72, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv chinensis CT-43 plasmid pCT72'},
 {'name': 'pCT83', 'input': 'cgbk', 'file': 'CP001915.gbk', 'acc': 'CP001915', 'size': 84, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv chinensis CT-43 plasmid pCT83'},
@@ -42,7 +42,7 @@ above_100 = [
 {'name': 'pAH187_45', 'input': 'cgbk', 'file': 'NC_011656.gbk', 'acc': 'NC_011656', 'size': 45, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus AH187 plasmid pAH187_45'}
 ]
 
-0_to_20 = [
+below_20 = [
 {'name': 'pCT6880', 'input': 'cgbk', 'file': 'CP001912.gbk', 'acc': 'CP001912', 'size': 7, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv chinensis CT-43 plasmid pCT6880'},
 {'name': 'pCT8252', 'input': 'cgbk', 'file': 'CP001914.gbk', 'acc': 'CP001914', 'size': 8, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv chinensis CT-43 plasmid pCT8252'},
 {'name': 'pCT8513', 'input': 'cgbk', 'file': 'CP001916.gbk', 'acc': 'CP001916', 'size': 9, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv chinensis CT-43 plasmid pCT8513'},

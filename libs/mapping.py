@@ -150,14 +150,17 @@ def map_cst_aln(run_ref, ref_gbk, genome, scaff_gbk, segs_root, maps_root):
                 print msg
         else:
             # offset coordinates where desired
-            g_offset = genome['offset']
-            if g_offset[0] != 0 or g_offset[1] != 0:
-                q_len = len(load_genbank(scaff_gbk).seq)
-                segdata = offset_q2r_coords(segdata, q_len, g_offset)
-            # determine whether to flip the query sequence (negative offset)
-            if g_offset[1] < 0:
-                q_invert = True
-            else:
+            try:
+                g_offset = genome['offset']
+                if g_offset[0] != 0 or g_offset[1] != 0:
+                    q_len = len(load_genbank(scaff_gbk).seq)
+                    segdata = offset_q2r_coords(segdata, q_len, g_offset)
+                # determine whether to flip the query sequence (negative offset)
+                if g_offset[1] < 0:
+                    q_invert = True
+                else:
+                    q_invert = False
+            except KeyError:
                 q_invert = False
             # generate graphical map
             pairwise_draw(ref_ctg_n, g_name, ref_gbk, scaff_gbk, segdata,

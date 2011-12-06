@@ -57,24 +57,24 @@ excluded = [
 ]
 
 pXO1_positives = [
-{'name': 'T04001', 'input': 'mfas', 'file': 'NZ_ACNB0.fas', 'acc': 'NZ_ACNB0', 'size': 0, 'offset': (0,0), 'ignore': (367,453), 'defline': 'Bacillus thuringiensis sv sotto str. T04001'},
+{'name': 'T04001', 'input': 'mfas', 'file': 'NZ_ACNB0.fas', 'acc': 'NZ_ACNB0', 'size': 0, 'offset': (0, 142551), 'ignore': (367,453), 'defline': 'Bacillus thuringiensis sv sotto str. T04001'},
 {'name': '03BB108', 'input': 'mfas', 'file': 'NZ_ABDM0.fas', 'acc': 'NZ_ABDM0', 'size': 0, 'offset': (0,0), 'ignore': (1,2,7), 'defline': 'Bacillus cereus 03BB108'},
-{'name': '172560W', 'input': 'mfas', 'file': 'NZ_ACLV0.fas', 'acc': 'NZ_ACLV0', 'size': 0, 'offset': (0,0), 'ignore': (71,116,126), 'defline': 'Bacillus cereus 172560W'},
+{'name': '172560W', 'input': 'mfas', 'file': 'NZ_ACLV0.fas', 'acc': 'NZ_ACLV0', 'size': 0, 'offset': (0, 19174), 'ignore': (71,116,126), 'defline': 'Bacillus cereus 172560W'},
 {'name': 'AH1134', 'input': 'mfas', 'file': 'NZ_ABDA0.fas', 'acc': 'NZ_ABDA0', 'size': 0, 'offset': (0,0), 'ignore': (0,2), 'defline': 'Bacillus cereus AH1134'},
-{'name': 'AH1271', 'input': 'mfas', 'file': 'NZ_ACMR0.fas', 'acc': 'NZ_ACMR0', 'size': 0, 'offset': (0,0), 'ignore': (140,357), 'defline': 'Bacillus cereus AH1271'},
+{'name': 'AH1271', 'input': 'mfas', 'file': 'NZ_ACMR0.fas', 'acc': 'NZ_ACMR0', 'size': 0, 'offset': (0, 45176), 'ignore': (140,357), 'defline': 'Bacillus cereus AH1271'},
 {'name': 'AH1272', 'input': 'mfas', 'file': 'NZ_ACMS0.fas', 'acc': 'NZ_ACMS0', 'size': 0, 'offset': (0,0), 'ignore': (0,291), 'defline': 'Bacillus cereus AH1272'},
 {'name': 'AH1273', 'input': 'mfas', 'file': 'NZ_ACMT0.fas', 'acc': 'NZ_ACMT0', 'size': 0, 'offset': (0,0), 'ignore': (0,396), 'defline': 'Bacillus cereus AH1273'},
 {'name': 'AH603', 'input': 'mfas', 'file': 'NZ_ACMP0.fas', 'acc': 'NZ_ACMP0', 'size': 0, 'offset': (0,0), 'ignore': (157,159,160), 'defline': 'Bacillus cereus AH603'},
-{'name': 'ATCC10792', 'input': 'mfas', 'file': 'NZ_ACNF0.fas', 'acc': 'NZ_ACNF0', 'size': 0, 'offset': (0,0), 'ignore': (57,128,151,167,186), 'defline': 'berliner ATCC 10792'},
-{'name': 'F65185', 'input': 'mfas', 'file': 'NZ_ACMO0.fas', 'acc': 'NZ_ACMO0', 'size': 0, 'offset': (0,0), 'ignore': (124,159,188,203,218,224,231,234,240,243,255), 'defline': 'Bacillus cereus F65185'},
-{'name': 'R309803', 'input': 'mfas', 'file': 'NZ_ACLY0.fas', 'acc': 'NZ_ACLY0', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus R309803'},
-{'name': 'ATCC10876', 'input': 'mfas', 'file': 'NZ_ACLT0.fas', 'acc': 'NZ_ACLT0', 'size': 0, 'offset': (0,0), 'ignore': (140,154), 'defline': 'Bacillus cereus ATCC 10876'},
-{'name': 'BDRD-ST26', 'input': 'mfas', 'file': 'NZ_ACMC0.fas', 'acc': 'NZ_ACMC0', 'size': 0, 'offset': (0,0), 'ignore': (136,144,166,116), 'defline': 'BDRD-ST26'},
-{'name': 'BGSC4AJ1', 'input': 'mfas', 'file': 'NZ_ACNE0.fas', 'acc': 'NZ_ACNE0', 'size': 0, 'offset': (0,0), 'ignore': (224,138,186,187,180), 'defline': 'BGSC 4AJ1'},
-{'name': 'BGSC4BD1', 'input': 'mfas', 'file': 'NZ_ACNI0.fas', 'acc': 'NZ_ACNI0', 'size': 0, 'offset': (0,0), 'ignore': (191,212,70,132,251), 'defline': 'BGSC 4BD1'},
-{'name': 'BGSC4CC1', 'input': 'mfas', 'file': 'NZ_ACNJ0.fas', 'acc': 'NZ_ACNJ0', 'size': 0, 'offset': (0,0), 'ignore': (144,141,208,200,201,202,203,204,205,244,220,248,139,154,136,134,246,197,257), 'defline': 'BGSC 4CC1'},
-{'name': 'IBL200', 'input': 'mfas', 'file': 'NZ_ACNK0.fas', 'acc': 'NZ_ACNK0', 'size': 0, 'offset': (0,0), 'ignore': (122,125,207,194,235,147,222,145,149,96,242), 'defline': 'Bacillus thuringiensis IBL 200'},
-{'name': 'T01001', 'input': 'mfas', 'file': 'NZ_ACNA0.fas', 'acc': 'NZ_ACNA0', 'size': 0, 'offset': (0,0), 'ignore': (133,235,182,154,169,118), 'defline': 'Bacillus thuringiensis sv thuringiensis str. T01001'},
+{'name': 'ATCC10792', 'input': 'mfas', 'file': 'NZ_ACNF0.fas', 'acc': 'NZ_ACNF0', 'size': 0, 'offset': (0, 7668), 'ignore': (57,128,151,167,186), 'defline': 'berliner ATCC 10792'},
+{'name': 'F65185', 'input': 'mfas', 'file': 'NZ_ACMO0.fas', 'acc': 'NZ_ACMO0', 'size': 0, 'offset': (0, 10446), 'ignore': (124,159,188,203,218,224,231,234,239,240,243,255), 'defline': 'Bacillus cereus F65185'},
+{'name': 'R309803', 'input': 'mfas', 'file': 'NZ_ACLY0.fas', 'acc': 'NZ_ACLY0', 'size': 0, 'offset': (0, 10214), 'ignore': (0, 0), 'defline': 'Bacillus cereus R309803'},
+{'name': 'ATCC10876', 'input': 'mfas', 'file': 'NZ_ACLT0.fas', 'acc': 'NZ_ACLT0', 'size': 0, 'offset': (0, 20882), 'ignore': (140,154), 'defline': 'Bacillus cereus ATCC 10876'},
+{'name': 'BDRD-ST26', 'input': 'mfas', 'file': 'NZ_ACMC0.fas', 'acc': 'NZ_ACMC0', 'size': 0, 'offset': (0, 31913), 'ignore': (136,144,166,116), 'defline': 'BDRD-ST26'},
+{'name': 'BGSC4AJ1', 'input': 'mfas', 'file': 'NZ_ACNE0.fas', 'acc': 'NZ_ACNE0', 'size': 0, 'offset': (0, 129515), 'ignore': (224,138,186,187,180), 'defline': 'BGSC 4AJ1'},
+{'name': 'BGSC4BD1', 'input': 'mfas', 'file': 'NZ_ACNI0.fas', 'acc': 'NZ_ACNI0', 'size': 0, 'offset': (0, 41684), 'ignore': (191,212,70,132,251), 'defline': 'BGSC 4BD1'},
+{'name': 'BGSC4CC1', 'input': 'mfas', 'file': 'NZ_ACNJ0.fas', 'acc': 'NZ_ACNJ0', 'size': 0, 'offset': (0, 155948), 'ignore': (144,141,208,200,201,202,203,204,205,244,220,248,139,154,136,134,246,197,257), 'defline': 'BGSC 4CC1'},
+{'name': 'IBL200', 'input': 'mfas', 'file': 'NZ_ACNK0.fas', 'acc': 'NZ_ACNK0', 'size': 0, 'offset': (0, 29435), 'ignore': (122,125,207,194,235,147,222,145,149,96,242), 'defline': 'Bacillus thuringiensis IBL 200'},
+{'name': 'T01001', 'input': 'mfas', 'file': 'NZ_ACNA0.fas', 'acc': 'NZ_ACNA0', 'size': 0, 'offset': (0, 9634), 'ignore': (133,235,182,154,169,118), 'defline': 'Bacillus thuringiensis sv thuringiensis str. T01001'},
 {'name': 'Rock1-15', 'input': 'mfas', 'file': 'NZ_ACMH0.fas', 'acc': 'NZ_ACMH0', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus Rock1-15'}
 ]
 

@@ -126,7 +126,7 @@ def matches_table(match_dict, timestamp):
     red_hits_fig = report_root+run_id+"_"+ref_n+"_sum_hits.pdf"
     mf_hits_fig = report_root+run_id+"_"+ref_n+"_all_hits.pdf"
     ensure_dir([report_root])
-    print ref_n
+    print " ", ref_n
     # log
     logstring = "".join(["\n\n# Make matches results table & graphs @",
                          timestamp, "\n"])
@@ -141,14 +141,14 @@ def matches_table(match_dict, timestamp):
     g_names = []
     # traverse dict of results
     for g_name in sorted(ref_hits, reverse=True):
-        print g_name,
+        print "\t", g_name,
         run_ref.log("".join(["\n", g_name, "\t"]))
         genome_root = report_root+g_name+"/"
         ensure_dir([genome_root])
         g_table_fig = genome_root+g_name+"_hits_"+ref_n+".pdf"
         # collect scores
         g_list = []
-        g_header = ["\n\n"+g_name] + segs
+        g_header = ["\n\n"+g_name]+segs
         g_lines = ["\t".join(g_header)]
         for contig in ref_hits[g_name]:
             ctg_hits = [ref_hits[g_name][contig][seg]
@@ -169,7 +169,7 @@ def matches_table(match_dict, timestamp):
             except ValueError:
                 msg = "ERROR: problem processing hits for "+g_name
                 run_ref.log(msg)
-                print msg
+                print msg,
                 g_norm = np.zeros(len(ctl_scores))
                 g_norm = np.reshape(g_norm, (1, len(ctl_scores)))
         # graph detailed scores per genome
@@ -178,10 +178,20 @@ def matches_table(match_dict, timestamp):
                            g_table_fig)
         # prep for global graphs
         if len(g_array) > 1:
-            g_reduce = np.amax(g_array, 0)
-            g_reduce = np.divide(g_reduce, ctl_scores)
+            try:
+                g_reduce = np.amax(g_array, 0)
+                g_reduce = np.divide(g_reduce, ctl_scores)
+            except Exception:
+                msg = "ERROR: #1 problem preparing global graphs for "+g_name
+                run_ref.log(msg)
+                print msg,
         else:
-            g_reduce = np.reshape(g_norm, (len(ctl_scores),))
+            try:
+                g_reduce = np.reshape(g_norm, (len(ctl_scores),))
+            except Exception:
+                msg = "ERROR: #2 problem preparing global graphs for "+g_name
+                run_ref.log(msg)
+                print msg,
         red_g_list.append(g_reduce)
         mf_g_list.append(g_norm)
         mf_ctgs.append(contigs)
