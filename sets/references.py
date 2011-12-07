@@ -1,5 +1,5 @@
 pXO1 = [
-{'name': 'pXO1', 'input': 'gbk', 'file': 'NC_007322.gbk', 'acc': 'NC_007322', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pXO1', 'input': 'gbk', 'file': 'NC_007322.gbk', 'acc': 'NC_007322', 'seg_mode': 'chop', 'chop_size': 1000},
 #{'name': 'pXO1', 'input': 'gbk', 'file': 'NC_007322.gbk', 'acc': 'NC_007322', 'seg_mode': 'list',
 #	 'segs': ({'coords': (1127,6561), 'name': 'A', 'note': '3_10'},
 #                  {'coords': (8991,13756),'name': 'B', 'note': '12_17'},
@@ -24,5 +24,33 @@ pXO1 = [
 ]
 
 pXO2 = [
+{'name': 'pXO2', 'input': 'gbk', 'file': 'NC_007323.gbk', 'acc': 'NC_007323', 'seg_mode': 'chop', 'chop_size': 1000}
+]
+
+pXO12 = [
+{'name': 'pXO1', 'input': 'gbk', 'file': 'NC_007322.gbk', 'acc': 'NC_007322', 'seg_mode': 'chop', 'chop_size': 2000},
 {'name': 'pXO2', 'input': 'gbk', 'file': 'NC_007323.gbk', 'acc': 'NC_007323', 'seg_mode': 'chop', 'chop_size': 2000}
+]
+
+biggies = [
+{'name': 'pBMB171', 'input': 'gbk', 'file': 'CP001904.gbk', 'acc': 'CP001904', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pCT127', 'input': 'gbk', 'file': 'CP001908.gbk', 'acc': 'CP001908', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pBMB26', 'input': 'gbk', 'file': 'CP002509.gbk', 'acc': 'CP002509', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pBMB28', 'input': 'gbk', 'file': 'CP002510.gbk', 'acc': 'CP002510', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pE33L466', 'input': 'gbk', 'file': 'NC_007103.gbk', 'acc': 'NC_007103', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pBWB401', 'input': 'gbk', 'file': 'NC_010180.gbk', 'acc': 'NC_010180', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pG9842_140', 'input': 'gbk', 'file': 'NC_011774.gbk', 'acc': 'NC_011774', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pG9842_209', 'input': 'gbk', 'file': 'NC_011775.gbk', 'acc': 'NC_011775', 'seg_mode': 'chop', 'chop_size': 2000}
+]
+
+middies = [
+{'name': 'pCT51', 'input': 'gbk', 'file': 'CP001911.gbk', 'acc': 'CP001911', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pCT72', 'input': 'gbk', 'file': 'CP001913.gbk', 'acc': 'CP001913', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pCT83', 'input': 'gbk', 'file': 'CP001915.gbk', 'acc': 'CP001915', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pE33L54', 'input': 'gbk', 'file': 'NC_007105.gbk', 'acc': 'NC_007105', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pALH1', 'input': 'gbk', 'file': 'NC_008598.gbk', 'acc': 'NC_008598', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pBc53', 'input': 'gbk', 'file': 'NC_011971.gbk', 'acc': 'NC_011971', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pBWB403', 'input': 'gbk', 'file': 'NC_010182.gbk', 'acc': 'NC_010182', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pBWB404', 'input': 'gbk', 'file': 'NC_010183.gbk', 'acc': 'NC_010183', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pAH187_45', 'input': 'gbk', 'file': 'NC_011656.gbk', 'acc': 'NC_011656', 'seg_mode': 'chop', 'chop_size': 2000}
 ]

@@ -161,6 +161,7 @@ def map_cst_aln(run_ref, ref_gbk, genome, scaff_gbk, segs_root, maps_root):
                 else:
                     q_invert = False
             except KeyError:
+            	g_offset = (0,0)
                 q_invert = False
             # generate graphical map
             pairwise_draw(ref_ctg_n, g_name, ref_gbk, scaff_gbk, segdata,

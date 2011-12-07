@@ -15,31 +15,31 @@ pXO2s = [
 {'name': 'pXO2', 'input': 'cgbk', 'file': 'NC_007323.gbk', 'acc': 'NC_007323', 'size': 95, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus anthracis str. Ames Ancestor plasmid pXO2'},
 {'name': 'pCI-XO2', 'input': 'cgbk', 'file': 'NC_014332.gbk', 'acc': 'NC_014332', 'size': 94, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus biovar anthracis str. CI plasmid pCI-XO2'},
 {'name': 'pAW63', 'input': 'cgbk', 'file': 'DQ025752.gbk', 'acc': 'DQ025752', 'size': 72, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv kurstaki str. HD73 plasmid pAW63'},
-{'name': 'pBT9727', 'input': 'cgbk', 'file': 'NC_006578.gbk', 'acc': 'NC_006578', 'size': 77, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv konkukian str. 97-27 plasmid pBT9727'}
+{'name': 'pBT9727', 'input': 'cgbk', 'file': 'NC_006578.gbk', 'acc': 'NC_006578', 'size': 77, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv konkukian str. 97-27 plasmid pBT9727'},
+{'name': 'pBWB402', 'input': 'cgbk', 'file': 'NC_010181.gbk', 'acc': 'NC_010181', 'size': 75, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus weihenstephanensis KBAB4 plasmid pBWB402'},
 ]
 
 above_100 = [
-{'name': 'pBMB171', 'input': 'cgbk', 'file': 'CP001904.gbk', 'acc': 'CP001904', 'size': 313, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis BMB171 plasmid pBMB171'},
-{'name': 'pCT127', 'input': 'cgbk', 'file': 'CP001908.gbk', 'acc': 'CP001908', 'size': 128, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv chinensis CT-43 plasmid pCT127'},
-{'name': 'pBMB26', 'input': 'cgbk', 'file': 'CP002509.gbk', 'acc': 'CP002509', 'size': 188, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv finitimus YBT-020 plasmid pBMB26'},
-{'name': 'pBMB28', 'input': 'cgbk', 'file': 'CP002510.gbk', 'acc': 'CP002510', 'size': 139, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv finitimus YBT-020 plasmid pBMB28'},
-{'name': 'pE33L466', 'input': 'cgbk', 'file': 'NC_007103.gbk', 'acc': 'NC_007103', 'size': 466, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus E33L plasmid pE33L466'},
-{'name': 'pBWB401', 'input': 'cgbk', 'file': 'NC_010180.gbk', 'acc': 'NC_010180', 'size': 417, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus weihenstephanensis KBAB4 plasmid pBWB401'},
-{'name': 'pG9842_140', 'input': 'cgbk', 'file': 'NC_011774.gbk', 'acc': 'NC_011774', 'size': 140, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus G9842 plasmid pG9842_140'},
-{'name': 'pG9842_209', 'input': 'cgbk', 'file': 'NC_011775.gbk', 'acc': 'NC_011775', 'size': 209, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus G9842 plasmid pG9842_209'}
+{'name': 'pBMB171', 'input': 'cgbk', 'file': 'CP001904.gbk', 'acc': 'CP001904', 'size': 313, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis BMB171 plasmid pBMB171'}, #BPG1
+{'name': 'pBMB26', 'input': 'cgbk', 'file': 'CP002509.gbk', 'acc': 'CP002509', 'size': 188, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv finitimus YBT-020 plasmid pBMB26'}, #BPG1
+{'name': 'pBMB28', 'input': 'cgbk', 'file': 'CP002510.gbk', 'acc': 'CP002510', 'size': 139, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv finitimus YBT-020 plasmid pBMB28'}, #BPG1
+{'name': 'pE33L466', 'input': 'cgbk', 'file': 'NC_007103.gbk', 'acc': 'NC_007103', 'size': 466, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus E33L plasmid pE33L466'}, #BPG1
+{'name': 'pCT127', 'input': 'cgbk', 'file': 'CP001908.gbk', 'acc': 'CP001908', 'size': 128, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv chinensis CT-43 plasmid pCT127'}, 
+{'name': 'pBWB401', 'input': 'cgbk', 'file': 'NC_010180.gbk', 'acc': 'NC_010180', 'size': 417, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus weihenstephanensis KBAB4 plasmid pBWB401'}, 
+{'name': 'pG9842_140', 'input': 'cgbk', 'file': 'NC_011774.gbk', 'acc': 'NC_011774', 'size': 140, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus G9842 plasmid pG9842_140'}, 
+{'name': 'pG9842_209', 'input': 'cgbk', 'file': 'NC_011775.gbk', 'acc': 'NC_011775', 'size': 209, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus G9842 plasmid pG9842_209'} 
 ]
 
 below_100 = [
-{'name': 'pCT51', 'input': 'cgbk', 'file': 'CP001911.gbk', 'acc': 'CP001911', 'size': 51, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv chinensis CT-43 plasmid pCT51'},
+{'name': 'pCT51', 'input': 'cgbk', 'file': 'CP001911.gbk', 'acc': 'CP001911', 'size': 51, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv chinensis CT-43 plasmid pCT51'}, #MPG1 phage?
+{'name': 'pBc53', 'input': 'cgbk', 'file': 'NC_011971.gbk', 'acc': 'NC_011971', 'size': 53, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus Q1 plasmid pBc53'}, #MPG1 phage?
+{'name': 'pCT83', 'input': 'cgbk', 'file': 'CP001915.gbk', 'acc': 'CP001915', 'size': 84, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv chinensis CT-43 plasmid pCT83'}, #MPG2
+{'name': 'pAH187_45', 'input': 'cgbk', 'file': 'NC_011656.gbk', 'acc': 'NC_011656', 'size': 45, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus AH187 plasmid pAH187_45'}, #MPG2
 {'name': 'pCT72', 'input': 'cgbk', 'file': 'CP001913.gbk', 'acc': 'CP001913', 'size': 72, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv chinensis CT-43 plasmid pCT72'},
-{'name': 'pCT83', 'input': 'cgbk', 'file': 'CP001915.gbk', 'acc': 'CP001915', 'size': 84, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv chinensis CT-43 plasmid pCT83'},
-{'name': 'pE33L54', 'input': 'cgbk', 'file': 'NC_007105.gbk', 'acc': 'NC_007105', 'size': 54, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus E33L plasmid pE33L54'},
-{'name': 'pALH1', 'input': 'cgbk', 'file': 'NC_008598.gbk', 'acc': 'NC_008598', 'size': 56, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis str. Al Hakam plasmid pALH1'},
-{'name': 'pBc53', 'input': 'cgbk', 'file': 'NC_011971.gbk', 'acc': 'NC_011971', 'size': 53, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus Q1 plasmid pBc53'},
-{'name': 'pBWB402', 'input': 'cgbk', 'file': 'NC_010181.gbk', 'acc': 'NC_010181', 'size': 75, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus weihenstephanensis KBAB4 plasmid pBWB402'},
+{'name': 'pE33L54', 'input': 'cgbk', 'file': 'NC_007105.gbk', 'acc': 'NC_007105', 'size': 54, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus E33L plasmid pE33L54'}, 
+{'name': 'pALH1', 'input': 'cgbk', 'file': 'NC_008598.gbk', 'acc': 'NC_008598', 'size': 56, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis str. Al Hakam plasmid pALH1'}, 
 {'name': 'pBWB403', 'input': 'cgbk', 'file': 'NC_010182.gbk', 'acc': 'NC_010182', 'size': 65, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus weihenstephanensis KBAB4 plasmid pBWB403'},
-{'name': 'pBWB404', 'input': 'cgbk', 'file': 'NC_010183.gbk', 'acc': 'NC_010183', 'size': 53, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus weihenstephanensis KBAB4 plasmid pBWB404'},
-{'name': 'pAH187_45', 'input': 'cgbk', 'file': 'NC_011656.gbk', 'acc': 'NC_011656', 'size': 45, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus AH187 plasmid pAH187_45'}
+{'name': 'pBWB404', 'input': 'cgbk', 'file': 'NC_010183.gbk', 'acc': 'NC_010183', 'size': 53, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus weihenstephanensis KBAB4 plasmid pBWB404'} 
 ]
 
 below_20 = [

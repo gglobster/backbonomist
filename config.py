@@ -8,14 +8,14 @@ project_id = 'BCSL'
 project_date = '2011'
 prot_db_name = 'Bacteria_prot'
 
-from sets.plasmids import pXO2s as genomes
+from sets.broad import pXO2_positives as genomes
 from sets.references import pXO2 as references
 
 # Blast parameters
 blast_prefs = {'evalue': 0.01,
                'outfmt_pref': 6}
 min_match = 500     # min size for a blast hit to be considered relevant
-min_score = 1000    # min score for a blast hit to be considered relevant
+min_score = 500     # min score for a blast hit to be considered relevant
 
 # Proximity thresholds for clumping
 prox_D = 2000   # for ballpark estimation

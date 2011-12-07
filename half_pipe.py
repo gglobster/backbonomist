@@ -4,7 +4,7 @@ import cPickle as pickle
 import os
 from datetime import datetime
 from libs.common import ensure_dir
-from libs.genome_tetris import process_ref, unpack_genomes
+from libs.genome_tetris import process_ref, unpack_genomes, add_refs_2g
 from libs.blasting import make_genome_DB, basic_batch_blastn
 from libs.parsing import glompX_blast_out
 from libs.reporting import save_datasumm, log_start_run, log_end_run, \
