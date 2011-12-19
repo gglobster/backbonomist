@@ -1,5 +1,5 @@
 pXO1 = [
-{'name': 'pXO1', 'input': 'gbk', 'file': 'NC_007322.gbk', 'acc': 'NC_007322', 'seg_mode': 'chop', 'chop_size': 1000},
+{'name': 'pXO1', 'input': 'gbk', 'file': 'NC_007322.gbk', 'acc': 'NC_007322', 'seg_mode': 'chop', 'chop_size': 2000},
 #{'name': 'pXO1', 'input': 'gbk', 'file': 'NC_007322.gbk', 'acc': 'NC_007322', 'seg_mode': 'list',
 #	 'segs': ({'coords': (1127,6561), 'name': 'A', 'note': '3_10'},
 #                  {'coords': (8991,13756),'name': 'B', 'note': '12_17'},
@@ -24,7 +24,7 @@ pXO1 = [
 ]
 
 pXO2 = [
-{'name': 'pXO2', 'input': 'gbk', 'file': 'NC_007323.gbk', 'acc': 'NC_007323', 'seg_mode': 'chop', 'chop_size': 1000}
+{'name': 'pXO2', 'input': 'gbk', 'file': 'NC_007323.gbk', 'acc': 'NC_007323', 'seg_mode': 'chop', 'chop_size': 2000}
 ]
 
 pXO12 = [
