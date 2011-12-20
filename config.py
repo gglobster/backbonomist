@@ -8,7 +8,7 @@ project_id = 'BCSL67'
 project_date = '2011'
 prot_db_name = 'Bacteria_prot'
 
-from sets.broad67 import pXO1_positives as genomes
+from sets.broad67 import pXO1_second as genomes
 from sets.references import pXO1 as references
 
 # Blast parameters
