@@ -194,21 +194,35 @@ def build_scaffolds(run_ref, run_id, timestamp):
                                            ('start', 'i4'),
                                            ('end', 'i4'),
                                            ('orient', 'i2')])
+        # look for list of segments to select/ignore (mutually exclusive)
+        try:
+            my_list = genome['select']
+        except KeyError:
+            try:
+                my_list = genome['ignore']
+            except KeyError:
+                msg = "WARNING: no on/off segments list"
+                print msg,
+                run_ref.log(msg)
+                flag = None
+                my_list = None
+            else:
+                flag = 'kill'
+        else:
+            flag = 'keep'
+        # loop through potential matching contigs
         for item in dir_contents:
             pattern = re.compile(r'.*_(\d*)\.gbk$')
             match = pattern.match(item)
             if match:
                 ctg_num = match.group(1)
                 while True:
-                    try:
-                        if int(ctg_num) in genome['ignore']:
-                            msg = "("+ctg_num+")"
-                            print msg,
-                            run_ref.log(msg)
-                            break
-                    except KeyError:
-                        msg = "WARNING: no ignored segments list"
-                        print msg
+                    if (flag is 'kill' and int(ctg_num) in my_list) \
+                    or (flag is 'keep' and not int(ctg_num) in my_list):
+                        msg = "("+ctg_num+")"
+                        print msg,
+                        run_ref.log(msg)
+                        break
                     else:
                         print ctg_num,
                         logstring = "".join(["\t", ctg_num])
@@ -234,8 +248,7 @@ def build_scaffolds(run_ref, run_id, timestamp):
                             msg = "\tERROR: Iteration failure\n\t"
                             print msg
                             run_ref.log(msg)
-                    finally:
-                        break
+                    break
         # abort if there is no valid contig to proceed with
         try:
             assert len(anchors_array) > 1 # always 1 left from stub
