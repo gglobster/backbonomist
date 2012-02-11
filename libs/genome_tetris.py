@@ -6,7 +6,8 @@ from loaders import load_genbank, load_multifasta
 from writers import write_genbank, write_fasta
 from string_ops import multisplit_finder
 from common import ensure_dir
-from config import separator, fixed_dirs, run_dirs, r_root_dir, genomes, prox_D
+from config import separator, fixed_dirs, run_dirs, r_root_dir, genomes, \
+    prox_D, ref_annot_flag
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from Bio.Alphabet import generic_dna
@@ -15,6 +16,7 @@ from parsing import mauver_load2_k0
 from array_tetris import get_anchor_loc
 from reporting import ctg_stats
 from classes import Reference
+from blasting import make_ref_DB
 
 def unpack_genomes(genome):
     """Unpack genome files.
@@ -101,11 +103,13 @@ def process_ref(ref, run_id, timestamp):
     ref_name = ref['name']
     in_file = fixed_dirs['ori_g_dir']+ref['file']
     seg_out_root = run_root+run_dirs['ref_seg_dir']+ref_name+"/"
+    gen_fas_root = fixed_dirs['fas_contigs_dir']+ref_name+"/"
     ref_gbk = run_root+run_dirs['ref_gbk_dir']+ref_name+"_re-annot.gbk"
     ref_fas = run_root+run_dirs['ref_fas_dir']+ref_name+".fas"
+    genome_fas = gen_fas_root+ref_name+"_1.fas"
     report_root = run_root+run_dirs['reports']+ref_name+"/"
     ref_log = report_root+run_id+"_"+ref_name+"_log.txt"
-    ensure_dir([seg_out_root, report_root])
+    ensure_dir([seg_out_root, report_root, gen_fas_root])
     print " ", ref_name, "...",
     # initialize run_ref object
     run_ref = Reference(ref_name, in_file, ref['input'], ref['seg_mode'],
@@ -124,8 +128,14 @@ def process_ref(ref, run_id, timestamp):
             msg = "ERROR: Input not recognized for "+ref_name
             run_ref.log(msg)
             raise Exception(msg)
+    # make a BLAST DB
+    make_ref_DB(ref, run_id)
+    copyfile(in_file, genome_fas)
     # re-annotate ref contig
-    record = annot_ref(ref_name, ref_fas)
+    if ref_annot_flag:
+        record = annot_ref(ref_name, ref_fas)
+    else: ## bypass re-annotation
+        record = load_genbank(in_file)
     # load or generate segment definitions
     if run_ref.seg_mode == 'chop':
         run_ref.get_segs_from_chop(len(record.seq), ref['chop_size'])
@@ -194,35 +204,21 @@ def build_scaffolds(run_ref, run_id, timestamp):
                                            ('start', 'i4'),
                                            ('end', 'i4'),
                                            ('orient', 'i2')])
-        # look for list of segments to select/ignore (mutually exclusive)
-        try:
-            my_list = genome['select']
-        except KeyError:
-            try:
-                my_list = genome['ignore']
-            except KeyError:
-                msg = "WARNING: no on/off segments list"
-                print msg,
-                run_ref.log(msg)
-                flag = None
-                my_list = None
-            else:
-                flag = 'kill'
-        else:
-            flag = 'keep'
-        # loop through potential matching contigs
         for item in dir_contents:
             pattern = re.compile(r'.*_(\d*)\.gbk$')
             match = pattern.match(item)
             if match:
                 ctg_num = match.group(1)
                 while True:
-                    if (flag is 'kill' and int(ctg_num) in my_list) \
-                    or (flag is 'keep' and not int(ctg_num) in my_list):
-                        msg = "("+ctg_num+")"
-                        print msg,
-                        run_ref.log(msg)
-                        break
+                    try:
+                        if int(ctg_num) in genome['ignore']:
+                            msg = "("+ctg_num+")"
+                            print msg,
+                            run_ref.log(msg)
+                            break
+                    except KeyError:
+                        msg = "WARNING: no ignored segments list"
+                        print msg
                     else:
                         print ctg_num,
                         logstring = "".join(["\t", ctg_num])
@@ -248,7 +244,8 @@ def build_scaffolds(run_ref, run_id, timestamp):
                             msg = "\tERROR: Iteration failure\n\t"
                             print msg
                             run_ref.log(msg)
-                    break
+                    finally:
+                        break
         # abort if there is no valid contig to proceed with
         try:
             assert len(anchors_array) > 1 # always 1 left from stub

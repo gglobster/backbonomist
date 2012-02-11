@@ -65,22 +65,6 @@ def align_ctg2ref(run_ref, run_id, timestamp):
         # log
         logstring = "".join(["\n", g_name])
         run_ref.log(logstring)
-        # look for list of segments to select/ignore (mutually exclusive)
-        try:
-            my_list = genome['select']
-        except KeyError:
-            try:
-                my_list = genome['ignore']
-            except KeyError:
-                msg = "WARNING: no on/off segments list"
-                print msg,
-                run_ref.log(msg)
-                flag = None
-                my_list = None
-            else:
-                flag = 'kill'
-        else:
-            flag = 'keep'
         # list genbank files in matches directory
         dir_contents = listdir(ctgs_fas_dir)
         for item in dir_contents:
@@ -88,54 +72,45 @@ def align_ctg2ref(run_ref, run_id, timestamp):
             match = pattern.match(item)
             if match:
                 ctg_num = match.group(1)
-                while True:
-                    if (flag is 'kill' and int(ctg_num) in my_list)\
-                    or (flag is 'keep' and not int(ctg_num) in my_list):
-                        msg = "("+ctg_num+")"
-                        print msg,
+                print ctg_num,
+                logstring = "".join(["\t", ctg_num])
+                run_ref.log(logstring)
+                # set inputs and outputs
+                q_contig = ctgs_fas_dir+item
+                file_list = (ref_ctg_file, q_contig)
+                mauve_outfile = mauve_dir+ctg_num+".mauve"
+                aln_segs_dir = aln_segs_root+ctg_num+"/"
+                ensure_dir([aln_segs_dir])
+                segfile = aln_segs_dir+ctg_num+"_"+ref_n+"_segs.txt"
+                open(segfile, 'w').write('')
+                # do Mauve alignment
+                try:
+                    open(ref_ctg_file, 'r')
+                    open(q_contig, 'r')
+                except IOError:
+                    msg = "\nERROR: File missing, cannot align\n\t\t\t"
+                    run_ref.log(msg)
+                    print msg
+                else:
+                    align_mauve(file_list, mauve_outfile)
+                    try:
+                        # parse Mauve output (without initial clumping)
+                        coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
+                        # chop segments that are too long
+                        chop_array = chop_rows(coords, max_size, chop_mode)
+                        # make detailed pairwise alignments of the segments
+                        ref_rec = load_genbank(ref_ctg_file)
+                        query_rec = load_fasta(q_contig)
+                        iter_align(chop_array, ref_rec, query_rec, aln_segs_dir,
+                                   segfile)
+                    except IOError:
+                        msg = "\nERROR: Mauve alignment failed\n\t\t\t"
                         run_ref.log(msg)
-                        break
-                    else:
-                        print ctg_num,
-                        logstring = "".join(["\t", ctg_num])
-                        run_ref.log(logstring)
-                        # set inputs and outputs
-                        q_contig = ctgs_fas_dir+item
-                        file_list = (ref_ctg_file, q_contig)
-                        mauve_outfile = mauve_dir+ctg_num+".mauve"
-                        aln_segs_dir = aln_segs_root+ctg_num+"/"
-                        ensure_dir([aln_segs_dir])
-                        segfile = aln_segs_dir+ctg_num+"_"+ref_n+"_segs.txt"
-                        open(segfile, 'w').write('')
-                        # do Mauve alignment
-                        try:
-                            open(ref_ctg_file, 'r')
-                            open(q_contig, 'r')
-                        except IOError:
-                            msg = "\nERROR: File missing, cannot align\n\t\t\t"
-                            run_ref.log(msg)
-                            print msg
-                        else:
-                            align_mauve(file_list, mauve_outfile)
-                            try:
-                                # parse Mauve output (without initial clumping)
-                                coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
-                                # chop segments that are too long
-                                chop_array = chop_rows(coords, max_size, chop_mode)
-                                # make detailed pairwise alignments of the segments
-                                ref_rec = load_genbank(ref_ctg_file)
-                                query_rec = load_fasta(q_contig)
-                                iter_align(chop_array, ref_rec, query_rec, aln_segs_dir,
-                                           segfile)
-                            except IOError:
-                                msg = "\nERROR: Mauve alignment failed\n\t\t\t"
-                                run_ref.log(msg)
-                                print msg
-                            except Exception:
-                                msg = "\nERROR: Iteration failed\n\t\t\t"
-                                run_ref.log(msg)
-                                print msg
-                        break
+                        print msg
+                    except Exception:
+                        msg = "\nERROR: Iteration failed\n\t\t\t"
+                        run_ref.log(msg)
+                        print msg
         print ""
 
 def align_cstrct2ref(run_ref, run_id, timestamp):

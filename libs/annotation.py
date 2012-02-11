@@ -68,22 +68,6 @@ def annot_genome_contigs(run_ref, run_id, timestamp):
         r_gbk_ctgs_dir = r_gbk_ctgs_root+g_name+"/"
         ensure_dir([ctg_cds_dir, ctg_prot_dir, ctg_blast_dir,
                     g_gbk_ctgs_dir, r_gbk_ctgs_dir])
-        # look for list of segments to select/ignore (mutually exclusive)
-        try:
-            my_list = genome['select']
-        except KeyError:
-            try:
-                my_list = genome['ignore']
-            except KeyError:
-                msg = "WARNING: no on/off segments list"
-                print msg,
-                run_ref.log(msg)
-                flag = None
-                my_list = None
-            else:
-                flag = 'kill'
-        else:
-            flag = 'keep'
         # list fasta files in matches directory
         dir_contents = listdir(fas_ctgs_dir)
         for item in dir_contents:
@@ -91,41 +75,31 @@ def annot_genome_contigs(run_ref, run_id, timestamp):
             match = pattern.match(item)
             if match:
                 ctg_num = match.group(1)
-                while True:
-                    if (flag is 'kill' and int(ctg_num) in my_list)\
-                    or (flag is 'keep' and not int(ctg_num) in my_list):
-                        msg = "("+ctg_num+")"
-                        print msg,
-                        run_ref.log(msg)
-                        break
-                    else:
-                        print ctg_num,
-                        logstring = "".join(["\t", ctg_num])
-                        run_ref.log(logstring)
-                        # set inputs and outputs
-                        ctg_fas = fas_ctgs_dir+item
-                        g_ctg_gbk = g_gbk_ctgs_dir+g_name+"_"+ctg_num+".gbk"
-                        r_ctg_gbk = r_gbk_ctgs_dir+g_name+"_"+ctg_num+".gbk"
-                        annot_gbk = ctg_cds_dir+g_name+"_"+ctg_num+"_cds.gbk"
-                        annot_aa = ctg_prot_dir+g_name+"_"+ctg_num+"_aa.fas"
-                        blast_out = ctg_blast_dir+g_name+"_"+ctg_num+".xml"
-                        if path.exists(blast_out) and os.stat(blast_out)[6]==0:
-                            os.remove(blast_out)
-                        if not path.exists(r_ctg_gbk):
-                            if not path.exists(g_ctg_gbk):
-                                l_tag_base = g_name+"_"+ctg_num
-                                record = annot_ctg(g_file, ctg_fas, annot_gbk,
-                                                   annot_aa, training_file,
-                                                   prot_db, blast_out,
-                                                   l_tag_base)
-                                record.description = g_name+"_"+ctg_num
-                                record.name = g_name+"_"+ctg_num
-                                record.dbxrefs = ["Project: "+project_id+"/"
-                                                  +ref_n+"-like backbones"]
-                                record.seq.alphabet = generic_dna
-                                write_genbank(g_ctg_gbk, record)
-                            copyfile(g_ctg_gbk, r_ctg_gbk)
-                        break
+                print ctg_num,
+                logstring = "".join(["\t", ctg_num])
+                run_ref.log(logstring)
+                # set inputs and outputs
+                ctg_fas = fas_ctgs_dir+item
+                g_ctg_gbk = g_gbk_ctgs_dir+g_name+"_"+ctg_num+".gbk"
+                r_ctg_gbk = r_gbk_ctgs_dir+g_name+"_"+ctg_num+".gbk"
+                annot_gbk = ctg_cds_dir+g_name+"_"+ctg_num+"_cds.gbk"
+                annot_aa = ctg_prot_dir+g_name+"_"+ctg_num+"_aa.fas"
+                blast_out = ctg_blast_dir+g_name+"_"+ctg_num+".xml"
+                if path.exists(blast_out) and os.stat(blast_out)[6]==0:
+                    os.remove(blast_out)
+                if not path.exists(r_ctg_gbk):
+                    if not path.exists(g_ctg_gbk):
+                        l_tag_base = g_name+"_"+ctg_num
+                        record = annot_ctg(g_file, ctg_fas, annot_gbk,
+                                           annot_aa, training_file, prot_db,
+                                           blast_out, l_tag_base)
+                        record.description = g_name+"_"+ctg_num
+                        record.name = g_name+"_"+ctg_num
+                        record.dbxrefs = ["Project: "+project_id+"/"+ref_n
+                                          +"-like backbones"]
+                        record.seq.alphabet = generic_dna
+                        write_genbank(g_ctg_gbk, record)
+                    copyfile(g_ctg_gbk, r_ctg_gbk)
         print ""
 
 def annot_ref(ref_name, ctg_fas):

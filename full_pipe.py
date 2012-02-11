@@ -6,7 +6,7 @@ from datetime import datetime
 from libs.common import ensure_dir
 from libs.genome_tetris import process_ref, unpack_genomes, add_refs_2g, \
     build_scaffolds
-from libs.blasting import make_ref_DB, make_genome_DB, basic_batch_blastn
+from libs.blasting import make_genome_DB, basic_batch_blastn
 from libs.parsing import glompX_blast_out
 from libs.annotation import annot_genome_contigs
 from libs.mapping import prep_maps
@@ -88,7 +88,6 @@ if step is 1:
         timestamp = str(datetime.now())
         ref_obj = process_ref(ref, run_id, timestamp)
         run_refs.append(ref_obj)
-        make_ref_DB(run_id, ref)
     if os.path.exists(ref_pickles):
         os.remove(ref_pickles)
     pickle.dump(run_refs, open(ref_pickles, 'wb'))
@@ -123,7 +122,7 @@ if step is 4:
     if os.path.exists(match_pickles):
         os.remove(match_pickles)
     pickle.dump(run_matches, open(match_pickles, 'wb'))
-    step +=1
+    step +=1 
 
 if step is 5:
     print "\n###", step, ". Make match results table & graphs ###\n"

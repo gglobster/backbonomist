@@ -1,5 +1,5 @@
 ##############################################################################
-### Backbonomist v. 0.3                                                    ###
+### Backbonomist v. 0.2                                                    ###
 ### Copyright 2011 Geraldine A. Van der Auwera                             ###
 ##############################################################################
 
@@ -14,13 +14,15 @@ unfinished microbial genomes and producing tentative assemblies.
 This replaces an older project that did the job but was unnecessarily complex
 in its design.
 
-STATUS: The code is completely operational and can be run halfway through (for 
-preliminary analysis) then resumed, or fully from the onset. It does require 
-setting up some files and config parameters manually. This procedure is not 
-yet described in the documentation.
+STATUS: The code is operational up to scaffold production and annotation. It
+does require setting up some files and config parameters manually. This
+procedure is not yet described in the documentation.
 
-As of 20 Dec 2011 extensive testing is underway with real datasets. Ongoing 
-development consists of bugfixes and minimal improvements.
+As of 25 Oct 2011 development is in active development.
+
+The next step in development will be to:
+
+- Add generation of pairwise alignments with graphical output
 
 A feature that is desired but not currently on the list of next steps is:
 

@@ -8,14 +8,14 @@ from array_tetris import offset_coord, nudge_coord, shade_split, \
 
 ### Hardcoded presets ###
 ## General proportions ##
-u 		= 0.0125		# conversion factor for sequence length-related values (0.0125, increase for short sequences)
+u 		= 0.05   		# conversion factor for sequence length-related values (0.0125, increase for short sequences)
 hmar 	= 2*cm			# horizontal margin to canvas (1*cm)
 vmar 	= 2.5*cm		# vertical margin to canvas (2*cm)  
 pNsize 	= 5*cm			# width to set aside for plasmid names (2.5*cm)
 di 		= 0.18*cm		# half-length of interruption/frameshift tick marks (0.18*cm)
 doLup 	= 0.6*cm		# distance of ORF labels from their ORF (0.6*cm) (above)
 doLdn   = 0.8*cm		# distance of ORF labels from their ORF (0.8*cm) (below)
-minL 	= 700			# minimum ORF size (in base pairs) for 'full arrows' (700, decrease for short seq)
+minL 	= 200			# minimum ORF size (in base pairs) for 'full arrows' (700, decrease for short seq)
 w 		= 0.3*cm     	# half-width of the tail (0.3*cm)
 h 		= 0.175*cm		# distance from the side tips of the head to the neck (0.175*cm)
 dBL	 	= 3*cm			# distance between plasmid baselines (4*cm)

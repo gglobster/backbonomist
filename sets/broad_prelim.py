@@ -56,13 +56,13 @@ pXO1_negatives = [
 ]
 
 pXO2_positives = [
-{'name': 'BAG1X1-1a', 'input': 'mfas', 'file': 'G13150_assembly.fasta', 'acc': 'BAG1X1-1a', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1X1-1 assembly  (Broad batch 2)'},
-{'name': 'BAG1X1-1c', 'input': 'mfas', 'file': 'G13150_contigs.fasta', 'acc': 'BAG1X1-1c', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1X1-1 contigs  (Broad batch 2)'},
-{'name': 'BAG1X2-1a', 'input': 'mfas', 'file': 'G13156_assembly.fasta', 'acc': 'BAG1X2-1a', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1X2-1 assembly  (Broad batch 2)'},
-{'name': 'BAG1X2-1c', 'input': 'mfas', 'file': 'G13156_contigs.fasta', 'acc': 'BAG1X2-1c', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'BAG1X2-1 contigs  (Broad batch 2)'},
-{'name': 'IS075', 'input': 'mfas', 'file': 'IS075.fas', 'acc': 'IS075', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus IS075 (Broad batch 1)'},
-{'name': 'Schrouff', 'input': 'mfas', 'file': 'Schrouff.fas', 'acc': 'Schrouff', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus Schrouff contigs (Broad batch 1)'},
-{'name': 'VD142', 'input': 'mfas', 'file': 'VD142.fas', 'acc': 'VD142', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus VD142 contigs (Broad batch 1)'},
+{'name': 'BAG1X1-1a', 'input': 'mfas', 'file': 'G13150_assembly.fasta', 'acc': 'BAG1X1-1a', 'size': 0, 'offset': (0,88506), 'ignore': (1,2,3,6), 'defline': 'BAG1X1-1 assembly  (Broad batch 2)'},
+{'name': 'BAG1X1-1c', 'input': 'mfas', 'file': 'G13150_contigs.fasta', 'acc': 'BAG1X1-1c', 'size': 0, 'offset': (0,38315), 'ignore': (81,117,69,82,41,7,99,109,23,22,18,42), 'defline': 'BAG1X1-1 contigs  (Broad batch 2)'},
+{'name': 'BAG1X2-1a', 'input': 'mfas', 'file': 'G13156_assembly.fasta', 'acc': 'BAG1X2-1a', 'size': 0, 'offset': (0,45332), 'ignore': (5,11,6,1,3,2), 'defline': 'BAG1X2-1 assembly  (Broad batch 2)'},
+{'name': 'BAG1X2-1c', 'input': 'mfas', 'file': 'G13156_contigs.fasta', 'acc': 'BAG1X2-1c', 'size': 0, 'offset': (0,37368), 'ignore': (54,106,70,39,38,90,40,110,21,23,35,12,116), 'defline': 'BAG1X2-1 contigs  (Broad batch 2)'},
+{'name': 'IS075', 'input': 'mfas', 'file': 'IS075.fas', 'acc': 'IS075', 'size': 0, 'offset': (0,60882), 'ignore': (109,123,57,75,85,76,89,14), 'defline': 'Bacillus cereus IS075 (Broad batch 1)'},
+{'name': 'Schrouff', 'input': 'mfas', 'file': 'Schrouff.fas', 'acc': 'Schrouff', 'size': 0, 'offset': (0,77940), 'ignore': (44,4,5,118,109), 'defline': 'Bacillus cereus Schrouff contigs (Broad batch 1)'},
+{'name': 'VD142', 'input': 'mfas', 'file': 'VD142.fas', 'acc': 'VD142', 'size': 0, 'offset': (0,68331), 'ignore': (29,120,74,108,106,103), 'defline': 'Bacillus cereus VD142 contigs (Broad batch 1)'},
 ]
 
 pXO2_negatives = [

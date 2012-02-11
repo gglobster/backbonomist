@@ -64,16 +64,15 @@ def make_genome_DB(genome):
     # make DB
     make_blastDB(db_dir+g_name, fas_dir+g_name+'_contigs.fas', 'nucl')
 
-def make_ref_DB(run_id, ref):
+def make_ref_DB(reference, run_id):
     """Make a Blast DB from a reference FastA file."""
     # load inputs
-    run_root = r_root_dir+run_id+"/"
-    fas_dir = run_root+run_dirs['ref_fas_dir']
+    fas_dir = r_root_dir+run_id+"/"+run_dirs['ref_fas_dir']
     db_dir = fixed_dirs['blast_db_dir']
     ensure_dir([fas_dir, db_dir])
-    r_name = ref['name']
+    g_name = reference['name']
     # make DB
-    make_blastDB(db_dir+r_name, fas_dir+r_name+'.fas', 'nucl')
+    make_blastDB(db_dir+g_name, fas_dir+g_name+'.fas', 'nucl')
 
 def basic_batch_blastn(genomes, run_ref, run_id, timestamp):
     """Send batch jobs to Blast. Muxes to multiple reference DBs."""
@@ -90,7 +89,7 @@ def basic_batch_blastn(genomes, run_ref, run_id, timestamp):
         input_file = in_root+ref_n+"_"+seg['name']+".fas"
         out_dir = run_root+run_dirs['blast_out_dir']+ref_n+"/"+seg['name']+"/"
         ensure_dir([out_dir])
-        print "\t", seg['name'],
+        print "\t", seg['name'], 
         for genome in genomes:
             g_name = genome['name']
             db_path = fixed_dirs['blast_db_dir']+g_name

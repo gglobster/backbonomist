@@ -1,12 +1,14 @@
 import re, numpy as np
 from os import listdir, path
 from shutil import copyfile
-from loaders import read_array, td_txt_file_load
+from loaders import read_array, td_txt_file_load, load_fasta
+from writers import write_fasta
 from config import fixed_dirs, run_dirs, r_root_dir, blast_dtypes, mtype, \
-    min_match, min_score
+    min_match, min_score, capture_segs, capture_span
 from common import ensure_dir
 from array_tetris import extract_nonzero, clump_rows
 from Bio.Blast import NCBIXML
+from Bio.SeqRecord import SeqRecord
 
 def glompX_blast_out(genomes, run_ref, run_id, timestamp):
     """Collect Blast results and extract match contigs."""
@@ -14,6 +16,7 @@ def glompX_blast_out(genomes, run_ref, run_id, timestamp):
     ref_n = run_ref.name
     run_root = r_root_dir+run_id+"/"
     match_root = run_root+run_dirs['match_out_dir']+ref_n+"/"
+    capture_root = run_root+run_dirs['capture_dir']+ref_n+"/"
     print " ", ref_n
     # log
     logstring = "".join(["\n\n# Collect Blast results @", timestamp, "\n\n"])
@@ -28,7 +31,8 @@ def glompX_blast_out(genomes, run_ref, run_id, timestamp):
         print "\t", seg_n, "...",
         run_ref.log("".join(["\n", seg_n]))
         blast_dir = run_root+run_dirs['blast_out_dir']+ref_n+"/"+seg_n+"/"
-        ensure_dir([blast_dir])
+        capture_dir = capture_root+"/"+seg_n+"/"
+        ensure_dir([blast_dir, capture_dir])
         ref_flag = True
         for genome in genomes:
             g_name = genome['name']
@@ -67,6 +71,24 @@ def glompX_blast_out(genomes, run_ref, run_id, timestamp):
                                 fas_file = matches_dir+match.group(1)+".fas"
                                 if not path.exists(fas_file):
                                     copyfile(genome_ctg_dir+item, fas_file)
+                        if int(seg_n) in capture_segs:
+                            # capture the context
+                            contig_file = matches_dir+contig_id+".fas"
+                            contig_rec = load_fasta(contig_file)
+                            c_start = q_start-capture_span
+                            c_stop = q_stop+capture_span
+                            if c_start < 0:
+                                c_start = 0
+                            if c_stop > len(contig_rec.seq):
+                                c_stop = len(contig_rec.seq)
+                            cxt_file = capture_dir+g_name+"_"+contig_id+".fas"
+                            cxt_rec = SeqRecord(id=g_name+"_"
+                                                    +contig_id+"_"
+                                                    +str(c_start)+"_"
+                                                    +str(c_stop),
+                                                seq=contig_rec.seq
+                                                    [c_start:c_stop])
+                            write_fasta(cxt_file, cxt_rec)
                     else:
                         print "-",
                         n_cnt +=1

@@ -54,3 +54,14 @@ middies = [
 {'name': 'pBWB404', 'input': 'gbk', 'file': 'NC_010183.gbk', 'acc': 'NC_010183', 'seg_mode': 'chop', 'chop_size': 2000},
 {'name': 'pAH187_45', 'input': 'gbk', 'file': 'NC_011656.gbk', 'acc': 'NC_011656', 'seg_mode': 'chop', 'chop_size': 2000}
 ]
+
+phages = [
+{'name': 'AP50', 'input': 'gbk', 'file': 'NC_011523.gbk', 'acc': 'NC_011523', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pGIL01', 'input': 'gbk', 'file': 'AJ536073.gbk', 'acc': 'AJ536073', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pBClin15', 'input': 'gbk', 'file': 'NC_004721.gbk', 'acc': 'NC_004721', 'seg_mode': 'chop', 'chop_size': 2000}
+]
+
+thuricins = [
+{'name': 'NEB17', 'input': 'gbk', 'file': 'FJ159242.gbk', 'acc': 'FJ159242', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'SF361', 'input': 'gbk', 'file': 'FJ977580.gbk', 'acc': 'FJ977580', 'seg_mode': 'chop', 'chop_size': 2000},
+]
