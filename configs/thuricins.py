@@ -6,6 +6,10 @@ prot_db_name = 'Bacteria_prot'
 from sets.broad_draft import all as genomes
 from sets.references import thuricins as references
 
+# segment context capture
+capture_segs = []
+capture_span = 5000
+
 # re-annotation flag -- only set to False is the original ref format is gbk
 ref_annot_flag = False
 
