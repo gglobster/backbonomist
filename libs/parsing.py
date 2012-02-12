@@ -4,7 +4,7 @@ from shutil import copyfile
 from loaders import read_array, td_txt_file_load, load_fasta
 from writers import write_fasta
 from config import fixed_dirs, run_dirs, r_root_dir, blast_dtypes, mtype, \
-    min_match, min_score, capture_segs, capture_span
+    min_match, min_score, capture_span
 from common import ensure_dir
 from array_tetris import extract_nonzero, clump_rows
 from Bio.Blast import NCBIXML
@@ -48,10 +48,14 @@ def glompX_blast_out(genomes, run_ref, run_id, timestamp):
             if len(rec_array) > 0:  # take qualified hits
                 p_cnt = 0
                 n_cnt = 0
-                if g_name == ref_n and ref_flag:
-                    # positive control TODO: better solution
-                    control_scores.append(rec_array[0][11])
-                    ref_flag = False
+                from config import references
+                if g_name in [ref['name'] for ref in references]:
+                    copyfile(genome_ctg_dir+g_name+"_1.fas",
+                             matches_dir+g_name+".fas")
+                    if ref_flag:
+                        # positive control TODO: better solution
+                        control_scores.append(rec_array[0][11])
+                        ref_flag = False
                 for line in rec_array:
                     q_start, q_stop = line[6], line[7]
                     score = line[11]
@@ -71,7 +75,7 @@ def glompX_blast_out(genomes, run_ref, run_id, timestamp):
                                 fas_file = matches_dir+match.group(1)+".fas"
                                 if not path.exists(fas_file):
                                     copyfile(genome_ctg_dir+item, fas_file)
-                        if int(seg_n) in capture_segs:
+                        if int(seg_n) in run_ref.capture:
                             # capture the context
                             contig_file = matches_dir+contig_id+".fas"
                             contig_rec = load_fasta(contig_file)
@@ -82,8 +86,7 @@ def glompX_blast_out(genomes, run_ref, run_id, timestamp):
                             if c_stop > len(contig_rec.seq):
                                 c_stop = len(contig_rec.seq)
                             cxt_file = capture_dir+g_name+"_"+contig_id+".fas"
-                            cxt_rec = SeqRecord(id=g_name+"_"
-                                                    +contig_id+"_"
+                            cxt_rec = SeqRecord(id=contig_id+"_"
                                                     +str(c_start)+"_"
                                                     +str(c_stop),
                                                 seq=contig_rec.seq

@@ -113,7 +113,8 @@ def process_ref(ref, run_id, timestamp):
     print " ", ref_name, "...",
     # initialize run_ref object
     run_ref = Reference(ref_name, in_file, ref['input'], ref['seg_mode'],
-                        ref_fas, ref_gbk, seg_out_root, ref_log)
+                        ref['capture'], ref_fas, ref_gbk, seg_out_root,
+                        ref_log)
     # initialize reference log
     cl_header = ["# Console log:", run_id, "/", ref_name, timestamp, "\n\n"]
     open(ref_log, 'w').write(" ".join(cl_header))
@@ -123,6 +124,7 @@ def process_ref(ref, run_id, timestamp):
             copyfile(in_file, ref_fas)
         elif run_ref.input == 'gbk':
             record = load_genbank(in_file)
+            record.id = ref_name
             write_fasta(ref_fas, record)
         else:
             msg = "ERROR: Input not recognized for "+ref_name
@@ -130,11 +132,11 @@ def process_ref(ref, run_id, timestamp):
             raise Exception(msg)
     # make a BLAST DB
     make_ref_DB(ref, run_id)
-    copyfile(in_file, genome_fas)
+    copyfile(ref_fas, genome_fas)
     # re-annotate ref contig
     if ref_annot_flag:
         record = annot_ref(ref_name, ref_fas)
-    else: ## bypass re-annotation
+    else: ## bypass re-annotation ONLY IF ORIGINAL INPUT IS GBK #todo: fix
         record = load_genbank(in_file)
     # load or generate segment definitions
     if run_ref.seg_mode == 'chop':

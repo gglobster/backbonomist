@@ -1,5 +1,6 @@
 pXO1 = [
-{'name': 'pXO1', 'input': 'gbk', 'file': 'NC_007322.gbk', 'acc': 'NC_007322', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'pXO1', 'input': 'gbk', 'file': 'NC_007322.gbk',
+ 'acc': 'NC_007322', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []}, 
 #{'name': 'pXO1', 'input': 'gbk', 'file': 'NC_007322.gbk', 'acc': 'NC_007322', 'seg_mode': 'list',
 #	 'segs': ({'coords': (1127,6561), 'name': 'A', 'note': '3_10'},
 #                  {'coords': (8991,13756),'name': 'B', 'note': '12_17'},
@@ -24,44 +25,69 @@ pXO1 = [
 ]
 
 pXO2 = [
-{'name': 'pXO2', 'input': 'gbk', 'file': 'NC_007323.gbk', 'acc': 'NC_007323', 'seg_mode': 'chop', 'chop_size': 2000}
+{'name': 'pXO2', 'input': 'gbk', 'file': 'NC_007323.gbk',
+ 'acc': 'NC_007323', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []}
 ]
 
 pXO12 = [
-{'name': 'pXO1', 'input': 'gbk', 'file': 'NC_007322.gbk', 'acc': 'NC_007322', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pXO2', 'input': 'gbk', 'file': 'NC_007323.gbk', 'acc': 'NC_007323', 'seg_mode': 'chop', 'chop_size': 2000}
+{'name': 'pXO1', 'input': 'gbk', 'file': 'NC_007322.gbk',
+ 'acc': 'NC_007322', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pXO2', 'input': 'gbk', 'file': 'NC_007323.gbk',
+ 'acc': 'NC_007323', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []}
 ]
 
 biggies = [
-{'name': 'pBMB171', 'input': 'gbk', 'file': 'CP001904.gbk', 'acc': 'CP001904', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pCT127', 'input': 'gbk', 'file': 'CP001908.gbk', 'acc': 'CP001908', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pBMB26', 'input': 'gbk', 'file': 'CP002509.gbk', 'acc': 'CP002509', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pBMB28', 'input': 'gbk', 'file': 'CP002510.gbk', 'acc': 'CP002510', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pE33L466', 'input': 'gbk', 'file': 'NC_007103.gbk', 'acc': 'NC_007103', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pBWB401', 'input': 'gbk', 'file': 'NC_010180.gbk', 'acc': 'NC_010180', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pG9842_140', 'input': 'gbk', 'file': 'NC_011774.gbk', 'acc': 'NC_011774', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pG9842_209', 'input': 'gbk', 'file': 'NC_011775.gbk', 'acc': 'NC_011775', 'seg_mode': 'chop', 'chop_size': 2000}
+{'name': 'pBMB171', 'input': 'gbk', 'file': 'CP001904.gbk',
+ 'acc': 'CP001904', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pCT127', 'input': 'gbk', 'file': 'CP001908.gbk',
+ 'acc': 'CP001908', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pBMB26', 'input': 'gbk', 'file': 'CP002509.gbk',
+ 'acc': 'CP002509', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pBMB28', 'input': 'gbk', 'file': 'CP002510.gbk',
+ 'acc': 'CP002510', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pE33L466', 'input': 'gbk', 'file': 'NC_007103.gbk',
+ 'acc': 'NC_007103', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pBWB401', 'input': 'gbk', 'file': 'NC_010180.gbk',
+ 'acc': 'NC_010180', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pG9842_140', 'input': 'gbk', 'file': 'NC_011774.gbk',
+ 'acc': 'NC_011774', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pG9842_209', 'input': 'gbk', 'file': 'NC_011775.gbk',
+ 'acc': 'NC_011775', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []}
 ]
 
 middies = [
-{'name': 'pCT51', 'input': 'gbk', 'file': 'CP001911.gbk', 'acc': 'CP001911', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pCT72', 'input': 'gbk', 'file': 'CP001913.gbk', 'acc': 'CP001913', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pCT83', 'input': 'gbk', 'file': 'CP001915.gbk', 'acc': 'CP001915', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pE33L54', 'input': 'gbk', 'file': 'NC_007105.gbk', 'acc': 'NC_007105', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pALH1', 'input': 'gbk', 'file': 'NC_008598.gbk', 'acc': 'NC_008598', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pBc53', 'input': 'gbk', 'file': 'NC_011971.gbk', 'acc': 'NC_011971', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pBWB403', 'input': 'gbk', 'file': 'NC_010182.gbk', 'acc': 'NC_010182', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pBWB404', 'input': 'gbk', 'file': 'NC_010183.gbk', 'acc': 'NC_010183', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pAH187_45', 'input': 'gbk', 'file': 'NC_011656.gbk', 'acc': 'NC_011656', 'seg_mode': 'chop', 'chop_size': 2000}
+{'name': 'pCT51', 'input': 'gbk', 'file': 'CP001911.gbk',
+ 'acc': 'CP001911', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pCT72', 'input': 'gbk', 'file': 'CP001913.gbk',
+ 'acc': 'CP001913', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pCT83', 'input': 'gbk', 'file': 'CP001915.gbk',
+ 'acc': 'CP001915', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pE33L54', 'input': 'gbk', 'file': 'NC_007105.gbk',
+ 'acc': 'NC_007105', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pALH1', 'input': 'gbk', 'file': 'NC_008598.gbk',
+ 'acc': 'NC_008598', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pBc53', 'input': 'gbk', 'file': 'NC_011971.gbk',
+ 'acc': 'NC_011971', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pBWB403', 'input': 'gbk', 'file': 'NC_010182.gbk',
+ 'acc': 'NC_010182', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pBWB404', 'input': 'gbk', 'file': 'NC_010183.gbk',
+ 'acc': 'NC_010183', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pAH187_45', 'input': 'gbk', 'file': 'NC_011656.gbk',
+ 'acc': 'NC_011656', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []}
 ]
 
 phages = [
-{'name': 'AP50', 'input': 'gbk', 'file': 'NC_011523.gbk', 'acc': 'NC_011523', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pGIL01', 'input': 'gbk', 'file': 'AJ536073.gbk', 'acc': 'AJ536073', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'pBClin15', 'input': 'gbk', 'file': 'NC_004721.gbk', 'acc': 'NC_004721', 'seg_mode': 'chop', 'chop_size': 2000}
+{'name': 'AP50', 'input': 'gbk', 'file': 'NC_011523.gbk',
+ 'acc': 'NC_011523', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pGIL01', 'input': 'gbk', 'file': 'AJ536073.gbk',
+ 'acc': 'AJ536073', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+{'name': 'pBClin15', 'input': 'gbk', 'file': 'NC_004721.gbk',
+ 'acc': 'NC_004721', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []} 
 ]
 
 thuricins = [
-{'name': 'NEB17', 'input': 'gbk', 'file': 'FJ159242.gbk', 'acc': 'FJ159242', 'seg_mode': 'chop', 'chop_size': 2000},
-{'name': 'SF361', 'input': 'gbk', 'file': 'FJ977580.gbk', 'acc': 'FJ977580', 'seg_mode': 'chop', 'chop_size': 2000},
+{'name': 'NEB17', 'input': 'gbk', 'file': 'FJ159242.gbk',
+ 'acc': 'FJ159242', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': [1]},
+{'name': 'SF361', 'input': 'gbk', 'file': 'FJ977580.gbk',
+ 'acc': 'FJ977580', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': [3]},
 ]

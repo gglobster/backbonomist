@@ -5,13 +5,14 @@ from writers import write_fasta
 class Reference(object):
     """Persistent reference object."""
 
-    def __init__(self, name, file, input, seg_mode, fas_out, gbk_out,
+    def __init__(self, name, file, input, seg_mode, capture, fas_out, gbk_out,
                  seg_out, logfile):
         self.name = name
         self.file = file
         self.input = input
         self.seg_mode = seg_mode
         self.segs = []
+        self.capture = capture
         self.fas = fas_out
         self.gbk = gbk_out
         self.segs_dir = seg_out

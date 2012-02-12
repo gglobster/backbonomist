@@ -32,6 +32,7 @@ run_dirs = {
 'match_pickles': 'matching/',
 'blast_out_dir': 'matching/blastn/',
 'match_out_dir': 'matching/matches/',
+'capture_dir': 'matching/capture/',
 'scaffolds_dir': 'scaffolds/',
 'run_gbk_ctgs_dir': 'gbk_contigs/',
 'mauve_out_dir': 'alignments/mauve_out/',
