@@ -1,6 +1,6 @@
 pXO1 = [
 {'name': 'pXO1', 'input': 'gbk', 'file': 'NC_007322.gbk',
- 'acc': 'NC_007322', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []}, 
+ 'acc': 'NC_007322', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
 #{'name': 'pXO1', 'input': 'gbk', 'file': 'NC_007322.gbk', 'acc': 'NC_007322', 'seg_mode': 'list',
 #	 'segs': ({'coords': (1127,6561), 'name': 'A', 'note': '3_10'},
 #                  {'coords': (8991,13756),'name': 'B', 'note': '12_17'},
@@ -26,7 +26,7 @@ pXO1 = [
 
 pXO2 = [
 {'name': 'pXO2', 'input': 'gbk', 'file': 'NC_007323.gbk',
- 'acc': 'NC_007323', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []}
+ 'acc': 'NC_007323', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': [12]}
 ]
 
 pXO12 = [
@@ -87,7 +87,7 @@ phages = [
 
 thuricins = [
 {'name': 'NEB17', 'input': 'gbk', 'file': 'FJ159242.gbk',
- 'acc': 'FJ159242', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': [1]},
-{'name': 'SF361', 'input': 'gbk', 'file': 'FJ977580.gbk',
- 'acc': 'FJ977580', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': [3]},
+ 'acc': 'FJ159242', 'seg_mode': 'chop', 'chop_size': 350, 'capture': [1, 2]},
+#{'name': 'SF361', 'input': 'gbk', 'file': 'FJ977580.gbk',
+# 'acc': 'FJ977580', 'seg_mode': 'chop', 'chop_size': 1000, 'capture': [5]},
 ]

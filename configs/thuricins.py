@@ -3,19 +3,19 @@ project_id = 'BCSL'
 project_date = '2012'
 prot_db_name = 'Bacteria_prot'
 
-from sets.broad_draft import all as genomes
+from sets.thuricins import all as genomes
 from sets.references import thuricins as references
 
 # segment context capture
-capture_span = 5000
+capture_span = 500
 
 # re-annotation flag -- only set to False is the original ref format is gbk
 ref_annot_flag = False
 
 # Blast parameters
-blast_prefs = {'evalue': 0.001, 'outfmt_pref': 6}
+blast_prefs = {'evalue': 0.01, 'outfmt_pref': 6}
 min_match = 200     # min size for a blast hit to be considered relevant
-min_score = 100     # min score for a blast hit to be considered relevant
+min_score = 600     # min score for a blast hit to be considered relevant
 
 # Proximity thresholds for clumping
 prox_D = 2000   # for ballpark estimation

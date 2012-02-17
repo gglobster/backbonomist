@@ -3,8 +3,11 @@ project_id = 'BCSL'
 project_date = '2011'
 prot_db_name = 'Bacteria_prot'
 
-from sets.phage_trio import all as genomes
-from sets.references import phages as references
+from sets.broad_draft import all as genomes
+from sets.references import pXO12 as references
+
+# segment context capture
+capture_span = 1000
 
 # re-annotation flag -- only set to False is the original ref format is gbk
 ref_annot_flag = False

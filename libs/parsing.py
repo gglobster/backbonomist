@@ -57,7 +57,7 @@ def glompX_blast_out(genomes, run_ref, run_id, timestamp):
                         control_scores.append(rec_array[0][11])
                         ref_flag = False
                 for line in rec_array:
-                    q_start, q_stop = line[6], line[7]
+                    q_start, q_stop = line[8], line[9]
                     score = line[11]
                     length = abs(q_stop-q_start)
                     if length > min_match and score > min_score :
@@ -79,12 +79,20 @@ def glompX_blast_out(genomes, run_ref, run_id, timestamp):
                             # capture the context
                             contig_file = matches_dir+contig_id+".fas"
                             contig_rec = load_fasta(contig_file)
-                            c_start = q_start-capture_span
-                            c_stop = q_stop+capture_span
+                            # check orientation
+                            if q_start < q_stop:
+                                c_start = q_start-capture_span
+                                c_stop = q_stop+capture_span
+                            else:
+                                c_start = q_stop-capture_span
+                                c_stop = q_start+capture_span
+                            print c_start, c_stop
+                            # check limits
                             if c_start < 0:
-                                c_start = 0
+                                c_start = 1
                             if c_stop > len(contig_rec.seq):
                                 c_stop = len(contig_rec.seq)
+                            # proceed
                             cxt_file = capture_dir+g_name+"_"+contig_id+".fas"
                             cxt_rec = SeqRecord(id=contig_id+"_"
                                                     +str(c_start)+"_"

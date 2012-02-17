@@ -1,8 +1,9 @@
-import os, subprocess, re
+import subprocess
 from config import blast_prefs, fixed_dirs, run_dirs, r_root_dir
 from common import ensure_dir
 from Bio.Blast.Applications import NcbiblastnCommandline, \
-    NcbirpsblastCommandline, NcbiblastpCommandline
+    NcbirpsblastCommandline, NcbiblastpCommandline, NcbitblastxCommandline, \
+    NcbiblastxCommandline 
 from Bio.Blast import NCBIWWW
 
 def make_blastDB(name, infile, db_type):
@@ -30,6 +31,26 @@ def local_blastp_2file(query_file, dbfile_path, outfile, prefs):
                                   out=outfile,
                                   evalue=prefs['evalue'],
                                   outfmt=5) # must output XML!
+    child = subprocess.Popen(str(cline), stdout=subprocess.PIPE, shell=True)
+    output, error = child.communicate() # forces the main script to wait
+
+def local_tblastx_2file(query_file, dbfile_path, outfile, prefs):
+    """Perform blastx against local database."""
+    cline = NcbitblastxCommandline(query=query_file,
+                                  db=dbfile_path,
+                                  out=outfile,
+                                  evalue=prefs['evalue'],
+                                  outfmt=prefs['outfmt_pref'])
+    child = subprocess.Popen(str(cline), stdout=subprocess.PIPE, shell=True)
+    output, error = child.communicate() # forces the main script to wait
+
+def local_blastx_2file(query_file, dbfile_path, outfile, prefs):
+    """Perform blastx against local database."""
+    cline = NcbiblastxCommandline(query=query_file,
+                                  db=dbfile_path,
+                                  out=outfile,
+                                  evalue=prefs['evalue'],
+                                  outfmt=prefs['outfmt_pref'])
     child = subprocess.Popen(str(cline), stdout=subprocess.PIPE, shell=True)
     output, error = child.communicate() # forces the main script to wait
 
@@ -95,7 +116,8 @@ def basic_batch_blastn(genomes, run_ref, run_id, timestamp):
             db_path = fixed_dirs['blast_db_dir']+g_name
             outfile = out_dir+g_name+"_out.txt"
             print ".",
-            local_blastn_2file(input_file, db_path, outfile, blast_prefs)
+            local_blastn_2file(input_file, db_path, outfile,
+                               blast_prefs) ## n to tx for tblastx
         print ""
     run_ref.log("All OK")
     return "OK"
