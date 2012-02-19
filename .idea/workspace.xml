@@ -2,15 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d21c3716-ec9e-48fb-9180-b0950c4e0f24" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config.py" afterPath="$PROJECT_DIR$/config.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/configs/BCSL.py" afterPath="$PROJECT_DIR$/configs/BCSL.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/configs/thuricins.py" afterPath="$PROJECT_DIR$/configs/thuricins.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libs/blasting.py" afterPath="$PROJECT_DIR$/libs/blasting.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libs/parsing.py" afterPath="$PROJECT_DIR$/libs/parsing.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sets/references.py" afterPath="$PROJECT_DIR$/sets/references.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sets/thuricins.py" afterPath="$PROJECT_DIR$/sets/thuricins.py" />
     </list>
     <ignored path="backbonomist.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -35,10 +29,10 @@
     <splitter split-orientation="horizontal" split-proportion="0.48356807">
       <split-first>
         <leaf>
-          <file leaf-file-name="config.py" pinned="false" current="false" current-in-tab="false">
+          <file leaf-file-name="config.py" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/config.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="2" column="26" selection-start="40" selection-end="40" vertical-scroll-proportion="0.0">
+                <state line="39" column="20" selection-start="1227" selection-end="1227" vertical-scroll-proportion="0.51664877">
                   <folding />
                 </state>
               </provider>
@@ -47,7 +41,7 @@
           <file leaf-file-name="thuricins.py" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/configs/thuricins.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="62" column="49" selection-start="413" selection-end="413" vertical-scroll-proportion="0.0">
+                <state line="62" column="49" selection-start="2588" selection-end="2588" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -80,10 +74,10 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="references.py" pinned="false" current="true" current-in-tab="true">
+          <file leaf-file-name="references.py" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/sets/references.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="31" column="9" selection-start="1911" selection-end="1911" vertical-scroll-proportion="0.4874214">
+                <state line="28" column="72" selection-start="1894" selection-end="1894" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -92,7 +86,7 @@
           <file leaf-file-name="BCSL.py" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/configs/BCSL.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="5" column="43" selection-start="132" selection-end="132" vertical-scroll-proportion="0.0">
+                <state line="6" column="45" selection-start="178" selection-end="178" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -105,7 +99,16 @@
           <file leaf-file-name="parsing.py" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/libs/parsing.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="60" column="36" selection-start="2526" selection-end="2526" vertical-scroll-proportion="0.0">
+                <state line="33" column="36" selection-start="1302" selection-end="1302" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="loaders.py" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/libs/loaders.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="73" column="28" selection-start="2424" selection-end="2424" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -138,10 +141,10 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="blasting.py" pinned="false" current="false" current-in-tab="true">
+          <file leaf-file-name="blasting.py" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/libs/blasting.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="115" column="55" selection-start="5232" selection-end="5238" vertical-scroll-proportion="0.7673216">
+                <state line="115" column="55" selection-start="5232" selection-end="5238" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -165,10 +168,10 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="plasmids.py" pinned="false" current="false" current-in-tab="false">
+          <file leaf-file-name="plasmids.py" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/sets/plasmids.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="13" column="5" selection-start="1939" selection-end="1944" vertical-scroll-proportion="0.0">
+                <state line="16" column="63" selection-start="2407" selection-end="2407" vertical-scroll-proportion="0.26143792">
                   <folding />
                 </state>
               </provider>
@@ -257,6 +260,7 @@
     </navigator>
     <panes>
       <pane id="Scope" />
+      <pane id="Favorites" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -265,55 +269,16 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="backbonomist" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="backbonomist" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="backbonomist" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="backbonomist" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sets" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="backbonomist" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="backbonomist" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="configs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
-      <pane id="Favorites" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="options.lastSelected" value="project.propVCSSupport.Confirmation" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -399,15 +364,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="103" y="22" width="1807" height="1136" extended-state="0" />
+    <frame x="122" y="22" width="1756" height="1100" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297244" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24958949" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16376893" sideWeight="0.67027557" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16339491" sideWeight="0.67027557" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -415,8 +379,9 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297244" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -458,16 +423,80 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/libs/array_tetris.py">
+    <entry file="file://$PROJECT_DIR$/sets/wgs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="33" selection-start="1063" selection-end="1063" vertical-scroll-proportion="0.0">
+        <state line="0" column="7" selection-start="7" selection-end="7" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="39" column="20" selection-start="1227" selection-end="1227" vertical-scroll-proportion="0.51664877">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sets/plasmids.py">
+    <entry file="file://$PROJECT_DIR$/configs/thuricins.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="5" selection-start="1939" selection-end="1944" vertical-scroll-proportion="0.0">
+        <state line="62" column="49" selection-start="2588" selection-end="2588" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sets/broad_draft.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="22" selection-start="1081" selection-end="1081" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sets/broad_assembly.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="52" selection-start="3993" selection-end="3993" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sets/references.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="72" selection-start="1894" selection-end="1894" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/configs/BCSL.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="45" selection-start="178" selection-end="178" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/parsing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="36" selection-start="1302" selection-end="1302" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/loaders.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="73" column="28" selection-start="2424" selection-end="2424" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/half_pipe.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="113" column="43" selection-start="3408" selection-end="3408" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sets/thuricins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="34" selection-start="1141" selection-end="1141" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/genome_tetris.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="110" column="38" selection-start="4665" selection-end="4665" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/blasting.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="115" column="55" selection-start="5232" selection-end="5238" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libs/array_tetris.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="33" selection-start="1063" selection-end="1063" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -479,91 +508,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/libs/genome_tetris.py">
+    <entry file="file://$PROJECT_DIR$/sets/plasmids.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="110" column="38" selection-start="4665" selection-end="4665" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libs/parsing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="60" column="36" selection-start="2526" selection-end="2526" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/configs/thuricins.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="49" selection-start="413" selection-end="413" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/half_pipe.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="113" column="43" selection-start="3408" selection-end="3408" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sets/thuricins.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="27" selection-start="510" selection-end="510" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libs/blasting.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="115" column="55" selection-start="5232" selection-end="5238" vertical-scroll-proportion="0.7673216">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sets/chromosomes.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="0" selection-start="3364" selection-end="3364" vertical-scroll-proportion="0.3301887">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sets/wgs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="7" selection-start="7" selection-end="7" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sets/broad_assembly.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="52" selection-start="3993" selection-end="3993" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="26" selection-start="40" selection-end="40" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sets/broad_draft.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="22" selection-start="1081" selection-end="1081" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/configs/BCSL.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="43" selection-start="132" selection-end="132" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sets/references.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="9" selection-start="1911" selection-end="1911" vertical-scroll-proportion="0.4874214">
+        <state line="16" column="63" selection-start="2407" selection-end="2407" vertical-scroll-proportion="0.26143792">
           <folding />
         </state>
       </provider>

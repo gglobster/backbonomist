@@ -26,7 +26,7 @@ pXO1 = [
 
 pXO2 = [
 {'name': 'pXO2', 'input': 'gbk', 'file': 'NC_007323.gbk',
- 'acc': 'NC_007323', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': [12]}
+ 'acc': 'NC_007323', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []}
 ]
 
 pXO12 = [

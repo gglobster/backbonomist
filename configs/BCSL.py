@@ -4,7 +4,7 @@ project_date = '2011'
 prot_db_name = 'Bacteria_prot'
 
 from sets.broad_draft import all as genomes
-from sets.references import pXO12 as references
+from sets.references import pXO2 as references
 
 # segment context capture
 capture_span = 1000
