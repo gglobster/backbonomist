@@ -11,8 +11,10 @@ ref_annot_flag = False
 
 # Blast parameters
 blast_prefs = {'evalue': 0.01, 'outfmt_pref': 6}
-min_match = 500     # min size for a blast hit to be considered relevant
-min_score = 300     # min score for a blast hit to be considered relevant
+min_nt_match = 500     # min size for a NT blast hit to be relevant
+min_nt_score = 300     # min score for a NT blast hit to be relevant
+min_aa_match = 50      # min size for an AA blast hit to be relevant
+min_aa_score = 100     # min score for an AA blast hit to be relevant
 
 # Proximity thresholds for clumping
 prox_D = 2000   # for ballpark estimation

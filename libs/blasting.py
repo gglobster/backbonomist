@@ -1,9 +1,11 @@
 import subprocess
 from config import blast_prefs, fixed_dirs, run_dirs, r_root_dir
 from common import ensure_dir
+from loaders import load_fasta
+from writers import write_fasta
 from Bio.Blast.Applications import NcbiblastnCommandline, \
     NcbirpsblastCommandline, NcbiblastpCommandline, NcbitblastxCommandline, \
-    NcbiblastxCommandline 
+    NcbiblastxCommandline, NcbitblastnCommandline
 from Bio.Blast import NCBIWWW
 
 def make_blastDB(name, infile, db_type):
@@ -41,6 +43,16 @@ def local_tblastx_2file(query_file, dbfile_path, outfile, prefs):
                                   out=outfile,
                                   evalue=prefs['evalue'],
                                   outfmt=prefs['outfmt_pref'])
+    child = subprocess.Popen(str(cline), stdout=subprocess.PIPE, shell=True)
+    output, error = child.communicate() # forces the main script to wait
+
+def local_tblastn_2file(query_file, dbfile_path, outfile, prefs):
+    """Perform blastx against local database."""
+    cline = NcbitblastnCommandline(query=query_file,
+                                   db=dbfile_path,
+                                   out=outfile,
+                                   evalue=prefs['evalue'],
+                                   outfmt=prefs['outfmt_pref'])
     child = subprocess.Popen(str(cline), stdout=subprocess.PIPE, shell=True)
     output, error = child.communicate() # forces the main script to wait
 
@@ -95,7 +107,7 @@ def make_ref_DB(reference, run_id):
     # make DB
     make_blastDB(db_dir+g_name, fas_dir+g_name+'.fas', 'nucl')
 
-def basic_batch_blastn(genomes, run_ref, run_id, timestamp):
+def basic_batch_blast(genomes, run_ref, blast_mode, run_id, timestamp):
     """Send batch jobs to Blast. Muxes to multiple reference DBs."""
     # load inputs
     ref_n = run_ref.name
@@ -105,19 +117,29 @@ def basic_batch_blastn(genomes, run_ref, run_id, timestamp):
     # log
     logstring = "".join(["\n\n# Blast segs to genomes @", timestamp, "\n\n"])
     run_ref.log(logstring)
-    # do blastn
+    # do blast
     for seg in run_ref.segs:
         input_file = in_root+ref_n+"_"+seg['name']+".fas"
+        # translate if required
+        if blast_mode == 'tn':
+            record = load_fasta(input_file)
+            record.seq = record.seq.translate()
+            input_file = in_root+ref_n+"_"+seg['name']+"_aa.fas" # substitute
+            write_fasta(input_file, record)
         out_dir = run_root+run_dirs['blast_out_dir']+ref_n+"/"+seg['name']+"/"
         ensure_dir([out_dir])
-        print "\t", seg['name'], 
+        print "\t", seg['name'],
         for genome in genomes:
             g_name = genome['name']
             db_path = fixed_dirs['blast_db_dir']+g_name
             outfile = out_dir+g_name+"_out.txt"
             print ".",
-            local_blastn_2file(input_file, db_path, outfile,
-                               blast_prefs) ## n to tx for tblastx
+            if blast_mode == 'n':
+                local_blastn_2file(input_file, db_path, outfile, blast_prefs)
+            elif blast_mode == 'tx':
+                local_tblastx_2file(input_file, db_path, outfile, blast_prefs)
+            elif blast_mode == 'tn':
+                local_tblastn_2file(input_file, db_path, outfile, blast_prefs)
         print ""
     run_ref.log("All OK")
     return "OK"

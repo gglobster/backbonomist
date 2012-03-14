@@ -4,13 +4,14 @@ from shutil import copyfile
 from loaders import read_array, td_txt_file_load, load_fasta
 from writers import write_fasta
 from config import fixed_dirs, run_dirs, r_root_dir, blast_dtypes, mtype, \
-    min_match, min_score, capture_span
+    min_nt_match, min_nt_score, min_nt_idp, min_aa_match, min_aa_score, \
+    min_aa_idp, capture_span
 from common import ensure_dir
 from array_tetris import extract_nonzero, clump_rows
 from Bio.Blast import NCBIXML
 from Bio.SeqRecord import SeqRecord
 
-def glompX_blast_out(genomes, run_ref, run_id, timestamp):
+def glompX_blast_out(genomes, run_ref, blast_mode, run_id, timestamp):
     """Collect Blast results and extract match contigs."""
     # load inputs
     ref_n = run_ref.name
@@ -57,10 +58,24 @@ def glompX_blast_out(genomes, run_ref, run_id, timestamp):
                         control_scores.append(rec_array[0][11])
                         ref_flag = False
                 for line in rec_array:
+                    idp = line[2]
                     q_start, q_stop = line[8], line[9]
                     score = line[11]
                     length = abs(q_stop-q_start)
-                    if length > min_match and score > min_score :
+                    # check the blast mode to use the right thresholds
+                    if blast_mode == 'n' or blast_mode == 'tx':
+                        min_match = min_nt_match
+                        min_score = min_nt_score
+                        min_idp = min_nt_idp
+                    elif blast_mode == 'tn':
+                        min_match = min_aa_match
+                        min_score = min_aa_score
+                        min_idp = min_aa_idp
+                    else: # default to nucleotide mode
+                        min_match = min_nt_match
+                        min_score = min_nt_score
+                        min_idp = min_nt_idp
+                    if length>min_match and score>min_score and idp>min_idp:
                         print "+",
                         p_cnt +=1
                         contig_id = line[1]
@@ -75,8 +90,23 @@ def glompX_blast_out(genomes, run_ref, run_id, timestamp):
                                 fas_file = matches_dir+match.group(1)+".fas"
                                 if not path.exists(fas_file):
                                     copyfile(genome_ctg_dir+item, fas_file)
-                        if int(seg_n) in run_ref.capture:
-                            # capture the context
+                        # context capture
+                        capture_flag = False
+                        while True:
+                            try:
+                                if int(seg_n) in run_ref.capture:
+                                    capture_flag = True
+                                else:
+                                    break
+                            except ValueError:
+                                if seg_n in run_ref.capture:
+                                    capture_flag = True
+                                else:
+                                    break
+                            else:
+                                break
+                        if capture_flag:
+                            # load the sequence
                             contig_file = matches_dir+contig_id+".fas"
                             contig_rec = load_fasta(contig_file)
                             # check orientation

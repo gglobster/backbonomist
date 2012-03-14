@@ -104,7 +104,10 @@ def process_ref(ref, run_id, timestamp):
     in_file = fixed_dirs['ori_g_dir']+ref['file']
     seg_out_root = run_root+run_dirs['ref_seg_dir']+ref_name+"/"
     gen_fas_root = fixed_dirs['fas_contigs_dir']+ref_name+"/"
-    ref_gbk = run_root+run_dirs['ref_gbk_dir']+ref_name+"_re-annot.gbk"
+    if ref_annot_flag:
+        ref_gbk = run_root+run_dirs['ref_gbk_dir']+ref_name+"_re-annot.gbk"
+    else: ## bypass re-annotated ONLY IF ORIGINAL INPUT IS GBK #todo: fix
+        ref_gbk = in_file
     ref_fas = run_root+run_dirs['ref_fas_dir']+ref_name+".fas"
     genome_fas = gen_fas_root+ref_name+"_1.fas"
     report_root = run_root+run_dirs['reports']+ref_name+"/"
@@ -143,6 +146,8 @@ def process_ref(ref, run_id, timestamp):
         run_ref.get_segs_from_chop(len(record.seq), ref['chop_size'])
     elif run_ref.seg_mode == 'list':
         run_ref.get_segs_from_list(ref['segs'])
+    elif run_ref.seg_mode == 'feats':
+        run_ref.get_segs_from_feats(ref['feat_type'])
     # extract segment sequences
     rec_annot = run_ref.extract_segs_seqs(record, seg_out_root)
     # write re-annotated reference sequence to file

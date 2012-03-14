@@ -1,6 +1,7 @@
 from array_tetris import coord_chop
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from writers import write_fasta
+from loaders import load_genbank
 
 class Reference(object):
     """Persistent reference object."""
@@ -26,7 +27,21 @@ class Reference(object):
         counter = 0
         for a,b in pair_list:
             counter +=1
-            seg = {'coords': (a, b), 'name': str(counter), 'note': str(a)+'_'+str(b)}
+            seg = {'coords': (a, b), 'strand': 1, 'name': str(counter),
+                   'note': str(a)+'_'+str(b)}
+            self.segs.append(seg)
+
+    def get_segs_from_feats(self, feat_type):
+        feats = [feat for feat in load_genbank(self.gbk).features
+                 if feat.type == feat_type]
+        counter = 0
+        for feat in feats: # TODO: there must be a better way to do this !!!
+            counter +=1
+            a = int(str(feat.location.start))
+            b = int(str(feat.location.end))
+            feat_id = feat_type+'_'+str(counter)
+            seg = {'coords': (a, b), 'strand': feat.strand, 'name': feat_id,
+                   'note': str(a)+'_'+str(b)}
             self.segs.append(seg)
 
     def extract_segs_seqs(self, record, out_dir):
@@ -36,6 +51,8 @@ class Reference(object):
             seg_start, seg_stop = seg['coords'][0], seg['coords'][1]
             # extract segment sequence
             segment = record[seg_start:seg_stop]
+            if seg['strand'] < 0:
+                segment = segment.reverse_complement()
             segment.id = self.name+"_"+seg['name']
             # write to individual file
             out_file = out_dir+self.name+"_"+seg['name']+".fas"
@@ -53,4 +70,3 @@ class Reference(object):
         ref_log = open(self.logfile, 'a')
         ref_log.write(string)
         ref_log.close()
-        

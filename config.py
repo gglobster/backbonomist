@@ -1,6 +1,6 @@
 import numpy
 
-from configs.BCSL import *
+from configs.thuricins import *
 
 # Project root directory
 base_root = 'data/'+project_id

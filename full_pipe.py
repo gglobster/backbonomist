@@ -6,7 +6,7 @@ from datetime import datetime
 from libs.common import ensure_dir
 from libs.genome_tetris import process_ref, unpack_genomes, add_refs_2g, \
     build_scaffolds
-from libs.blasting import make_genome_DB, basic_batch_blastn
+from libs.blasting import make_genome_DB, basic_batch_blast
 from libs.parsing import glompX_blast_out
 from libs.annotation import annot_genome_contigs
 from libs.mapping import prep_maps
@@ -23,7 +23,7 @@ print "\n", \
 
 if len(argv) > 1 and argv[1] == '-h':
     print "Basic usage: \n", \
-          "$ python full_pipe.py [run_id] [step#]\n", \
+          "$ python full_pipe.py [run_id] [blast_mode] [step#] [g_select]\n", \
           "Note that these arguments are positional: order matters!\n"
     exit()
 
@@ -33,12 +33,17 @@ else:
     run_id = str(int(time.time())) # use timestamp as unique run identifier
 
 if len(argv) > 2:
-    step = int(argv[2])
+    blast_mode = argv[2]
+else:
+    blast_mode = 'n' # nucleotide blast by default
+
+if len(argv) > 3:
+    step = int(argv[3])
 else:
     step = 0
 
-if len(argv) > 3:
-    g_select = argv[3:]
+if len(argv) > 4:
+    g_select = argv[4:]
 else:
     g_select = None
 
@@ -78,7 +83,7 @@ if step is not 0:
 elif step is 0:
     print "\n###", step, ". Set up logging & reporting ###\n"
     log_start_run(run_id, start_timestamp)
-    save_datasumm(run_id, start_timestamp)
+    save_datasumm(run_id, blast_mode, start_timestamp)
     init_reports(run_id, start_timestamp)
     step +=1
 
@@ -108,21 +113,22 @@ if step is 3:
     print "\n###", step, ". Blast reference segments against genomes ###\n"
     for ref in run_refs:
         timestamp = str(datetime.now())
-        basic_batch_blastn(run_gs, ref, run_id, timestamp)
+        basic_batch_blast(run_gs, ref, blast_mode, run_id, timestamp)
     step +=1
 
 if step is 4:
     print "\n###", step, ". Collect Blast results ###\n"
     for ref in run_refs:
         timestamp = str(datetime.now())
-        ref_hits, ctl_scores = glompX_blast_out(run_gs, ref, run_id, timestamp)
+        ref_hits, ctl_scores = glompX_blast_out(run_gs, ref, blast_mode,
+                                                run_id, timestamp)
         ref_matches = {'ref': ref, 'run': run_id, 'hits': ref_hits,
                        'ctl': ctl_scores}
         run_matches.append(ref_matches)
     if os.path.exists(match_pickles):
         os.remove(match_pickles)
     pickle.dump(run_matches, open(match_pickles, 'wb'))
-    step +=1 
+    step +=1
 
 if step is 5:
     print "\n###", step, ". Make match results table & graphs ###\n"

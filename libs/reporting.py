@@ -34,7 +34,7 @@ def log_resume_run(run_id, timestamp, step):
     linkline = "".join(set_log_htm)
     open(set_log, 'a').write(linkline)
 
-def save_datasumm(run_id, timestamp):
+def save_datasumm(run_id, blast_mode, timestamp):
     """Save a summary of the dataset composition to file."""
     print " ", run_id,
     report_root = r_root_dir+run_id+"/"+run_dirs['reports']
@@ -52,7 +52,7 @@ def save_datasumm(run_id, timestamp):
     r_header = "\t".join(["## Name", "Segments", "File"])
     r_data = [r_title, r_header]
     for ref in references:
-        try:
+        if ref['seg_mode'] == 'list':
             r_data.append("\t".join([ref['name'], str(len(ref['segs'])),
                                      ref['file']]))
             r_data.append("\t".join(["###", "Segments"]))
@@ -61,17 +61,24 @@ def save_datasumm(run_id, timestamp):
                 r_data.append("\t".join(["", seg['name'],
                                          str(seg['coords'][0]),
                                          str(seg['coords'][1])]))
-        except KeyError:
+        else:
             r_data.append("\t".join([ref['name'], ref['file']]))
-            r_data.append("\t".join(["###", "Segments generated from size",
+            if ref['seg_mode'] == 'chop':
+                r_data.append("\t".join(["###", "Segments generated from size",
                                      str(ref['chop_size'])]))
+            elif  ref['seg_mode'] == 'feats':
+                r_data.append("\t".join(["###", "Segments generated from ",
+                                         ref['feat_type'], "features"]))
+            else:
+                r_data.append("\t".join(["###", "Unknown segmenting scheme"]))
     r_block = "\n".join(r_data)
     # text block
     txt = ["# Project", project_id,
            "# Run ID", run_id,
            "# Date generated", project_date,
            "# Date processing initiated", timestamp,
-           "# Dataset composition", g_block, r_block]
+           "# Dataset composition", g_block, r_block,
+           "# Blast mode", blast_mode]
     # write to file
     open(param_file, 'w').write("\n".join(txt))
     print "dataset summary saved to file"

@@ -82,12 +82,17 @@ phages = [
 {'name': 'pGIL01', 'input': 'gbk', 'file': 'AJ536073.gbk',
  'acc': 'AJ536073', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
 {'name': 'pBClin15', 'input': 'gbk', 'file': 'NC_004721.gbk',
- 'acc': 'NC_004721', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []} 
+ 'acc': 'NC_004721', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []}
 ]
 
 thuricins = [
 {'name': 'NEB17', 'input': 'gbk', 'file': 'FJ159242.gbk',
- 'acc': 'FJ159242', 'seg_mode': 'chop', 'chop_size': 350, 'capture': [1, 2]},
+ 'acc': 'FJ159242', 'seg_mode': 'feats', 'feat_type': 'CDS', 'capture': [1, 2]},
 #{'name': 'SF361', 'input': 'gbk', 'file': 'FJ977580.gbk',
 # 'acc': 'FJ977580', 'seg_mode': 'chop', 'chop_size': 1000, 'capture': [5]},
+]
+
+zwitter = [
+{'name': 'ZmA', 'input': 'gbk', 'file': 'zwitter.gbk',
+ 'acc': 'FJ430564', 'seg_mode': 'feats', 'feat_type': 'CDS', 'capture': []},
 ]

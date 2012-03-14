@@ -3,8 +3,8 @@ project_id = 'BCSL'
 project_date = '2012'
 prot_db_name = 'Bacteria_prot'
 
-from sets.thuricins import all as genomes
-from sets.references import thuricins as references
+from sets.thuricins import zwitts as genomes
+from sets.references import zwitter as references
 
 # segment context capture
 capture_span = 500
@@ -14,8 +14,12 @@ ref_annot_flag = False
 
 # Blast parameters
 blast_prefs = {'evalue': 0.01, 'outfmt_pref': 6}
-min_match = 200     # min size for a blast hit to be considered relevant
-min_score = 600     # min score for a blast hit to be considered relevant
+min_nt_match = 300     # min size for a NT blast hit to be relevant
+min_nt_score = 100     # min score (NT)
+min_nt_idp = 50        # min identity percentage (NT)
+min_aa_match = 10      # min size for an AA blast hit to be relevant
+min_aa_score = 50      # min score (AA)
+min_aa_idp = 50        # min identity percentage (AA)
 
 # Proximity thresholds for clumping
 prox_D = 2000   # for ballpark estimation
