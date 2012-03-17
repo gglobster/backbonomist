@@ -1,5 +1,5 @@
 ##############################################################################
-### Backbonomist v. 0.2                                                    ###
+### Backbonomist v. 0.3                                                    ###
 ### Copyright 2011 Geraldine A. Van der Auwera                             ###
 ##############################################################################
 
@@ -18,11 +18,7 @@ STATUS: The code is operational up to scaffold production and annotation. It
 does require setting up some files and config parameters manually. This
 procedure is not yet described in the documentation.
 
-As of 25 Oct 2011 development is in active development.
-
-The next step in development will be to:
-
-- Add generation of pairwise alignments with graphical output
+As of 17 Mar 2012 development is in testing/application phase.
 
 A feature that is desired but not currently on the list of next steps is:
 
