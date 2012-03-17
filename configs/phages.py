@@ -3,8 +3,8 @@ project_id = 'BCSL'
 project_date = '2012'
 prot_db_name = 'Bacteria_prot'
 
-from sets.thuricins import zwitts as genomes
-from sets.references import zwitter as references
+from sets.BCSL import all as genomes
+from sets.references import tectiviri as references
 
 # segment context capture
 capture_span = 500

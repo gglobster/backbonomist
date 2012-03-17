@@ -76,13 +76,15 @@ middies = [
  'acc': 'NC_011656', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []}
 ]
 
-phages = [
-{'name': 'AP50', 'input': 'gbk', 'file': 'NC_011523.gbk',
- 'acc': 'NC_011523', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
-{'name': 'pGIL01', 'input': 'gbk', 'file': 'AJ536073.gbk',
- 'acc': 'AJ536073', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
-{'name': 'pBClin15', 'input': 'gbk', 'file': 'NC_004721.gbk',
- 'acc': 'NC_004721', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []}
+tectiviri = [
+{'name': 'AP50', 'input': 'gbk', 'file': 'AP50.gbk',
+ 'acc': 'NC_011523', 'seg_mode': 'feats', 'feat_type': 'CDS', 'capture': []},
+{'name': 'pGIL01', 'input': 'gbk', 'file': 'pGIL01.gbk',
+ 'acc': 'AJ536073', 'seg_mode': 'feats', 'feat_type': 'CDS', 'capture': []},
+{'name': 'pBClin15', 'input': 'gbk', 'file': 'pBClin15.gbk',
+ 'acc': 'AE016878', 'seg_mode': 'feats', 'feat_type': 'CDS', 'capture': []},
+{'name': 'GIL16c', 'input': 'gbk', 'file': 'GIL16c.gbk',
+ 'acc': 'NC_006945', 'seg_mode': 'feats', 'feat_type': 'CDS', 'capture': []}
 ]
 
 thuricins = [

@@ -15,3 +15,7 @@ libs/.DS_Store
 
 .projectFilesBackup/*
 .projectFilesBackup/**
+
+.idea/misc.xml
+
+.idea/workspace.xml
