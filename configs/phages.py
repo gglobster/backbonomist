@@ -3,7 +3,7 @@ project_id = 'BCSL'
 project_date = '2012'
 prot_db_name = 'Bacteria_prot'
 
-from sets.BCSL import all as genomes
+from sets.phage_trio import all as genomes
 from sets.references import tectiviri as references
 
 # segment context capture

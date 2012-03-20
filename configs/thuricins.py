@@ -1,9 +1,9 @@
 # Project data
-project_id = 'BCSL'
+project_id = 'nonBCSL'
 project_date = '2012'
 prot_db_name = 'Bacteria_prot'
 
-from sets.thuricins import zwitts as genomes
+from sets.non_bcsl import complete as genomes
 from sets.references import zwitter as references
 
 # segment context capture

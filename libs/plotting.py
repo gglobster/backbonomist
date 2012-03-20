@@ -55,7 +55,7 @@ def hits_heatmap_multi(ref_n, segs, g_names, contigs, scores, imgfile):
         grid[i].yaxis.set_major_locator(MaxNLocator(len(scores[i])))
         grid.cbar_axes[i].colorbar(hmap)
         grid.cbar_axes[i].set_xticks([-1, -0.5, 0])
-        grid.cbar_axes[i].set_xticklabels(['Low', 'Medium', 'High'])
+        grid.cbar_axes[i].set_xticklabels(['High', 'Medium', 'Low'])
         grid[i].set_xticklabels(segs, size='small')
         grid[i].set_xlabel(ref_n+" reference segments", size='small')
         grid[i].set_title(g_names[i], size='small')

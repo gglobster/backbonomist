@@ -55,7 +55,7 @@ def unpack_genomes(genome):
     mfas_file = mfas_dir+g_name+"_contigs.fas"
     records = []
     # select unpacking method
-    if genome['input'] is 'mfas':
+    if genome['input'] is 'fas':
         try: path.exists(inpath) is True
         except ValueError: raise Exception("Bad input file path")
         genome_recs = load_multifasta(inpath)
@@ -71,7 +71,7 @@ def unpack_genomes(genome):
             records.append(new_rec)  # for multifasta output
             fas_file = fas_dir+new_id+".fas"
             write_fasta(fas_file, new_rec)
-    elif genome['input'] is 'cgbk':
+    elif genome['input'] is 'gbk':
         # load in genome data
         genome_rec = load_genbank(inpath)
         g_string = genome_rec.seq
