@@ -76,7 +76,7 @@ all = [
         {'name': '03BB102', 'input': 'gbk', 'file': 'NC_012472.gbk', 'acc': 'NC_012472', 'size': 5270, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus 03BB102 chromosome'},
         {'name': 'CI', 'input': 'gbk', 'file': 'NC_014335.gbk', 'acc': 'NC_014335', 'size': 5196, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus cereus biovar anthracis str. CI chromosome'},
 
-    # Broad assembly
+    # Broad assembly (15+ for pXO1, 11+ for pXO2)
         {'name': 'and1407', 'input': 'mfas', 'file': 'broadsc_1.fas', 'acc': 'and1407', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'and1407'},
         {'name': 'atcc_14579', 'input': 'mfas', 'file': 'broadsc_2.fas', 'acc': 'atcc_14579', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'atcc_14579'},
         {'name': 'bag1o-2', 'input': 'mfas', 'file': 'broadsc_3.fas', 'acc': 'bag1o-2', 'size': 0, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'bag1o-2'},

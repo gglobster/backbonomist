@@ -31,9 +31,9 @@ pXO2 = [
 
 pXO12 = [
 {'name': 'pXO1', 'input': 'gbk', 'file': 'NC_007322.gbk',
- 'acc': 'NC_007322', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []},
+ 'acc': 'NC_007322', 'seg_mode': 'chop', 'chop_size': 5000, 'capture': []},
 {'name': 'pXO2', 'input': 'gbk', 'file': 'NC_007323.gbk',
- 'acc': 'NC_007323', 'seg_mode': 'chop', 'chop_size': 2000, 'capture': []}
+ 'acc': 'NC_007323', 'seg_mode': 'chop', 'chop_size': 3000, 'capture': []}
 ]
 
 biggies = [

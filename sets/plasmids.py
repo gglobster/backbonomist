@@ -12,11 +12,12 @@ pXO1s = [
 ]
 
 pXO2s = [
-{'name': 'pXO2', 'input': 'cgbk', 'file': 'NC_007323.gbk', 'acc': 'NC_007323', 'size': 95, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus anthracis str. Ames Ancestor plasmid pXO2'},
-{'name': 'pCI-XO2', 'input': 'cgbk', 'file': 'NC_014332.gbk', 'acc': 'NC_014332', 'size': 94, 'offset': (0,898), 'ignore': (0, 0), 'defline': 'Bacillus cereus biovar anthracis str. CI plasmid pCI-XO2'},
-{'name': 'pAW63', 'input': 'cgbk', 'file': 'DQ025752.gbk', 'acc': 'DQ025752', 'size': 72, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv kurstaki str. HD73 plasmid pAW63'},
-{'name': 'pBT9727', 'input': 'cgbk', 'file': 'NC_006578.gbk', 'acc': 'NC_006578', 'size': 77, 'offset': (0,76547), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv konkukian str. 97-27 plasmid pBT9727'},
-{'name': 'pBWB402', 'input': 'cgbk', 'file': 'NC_010181.gbk', 'acc': 'NC_010181', 'size': 75, 'offset': (0,34253), 'ignore': (0, 0), 'defline': 'Bacillus weihenstephanensis KBAB4 plasmid pBWB402'},
+{'name': 'pXO2', 'input': 'gbk', 'file': 'NC_007323.gbk', 'acc': 'NC_007323', 'size': 95, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus anthracis str. Ames Ancestor plasmid pXO2'},
+{'name': 'pCI-XO2', 'input': 'gbk', 'file': 'NC_014332.gbk', 'acc': 'NC_014332', 'size': 94, 'offset': (0,898), 'ignore': (0, 0), 'defline': 'Bacillus cereus biovar anthracis str. CI plasmid pCI-XO2'},
+{'name': 'pAW63', 'input': 'gbk', 'file': 'DQ025752.gbk', 'acc': 'DQ025752', 'size': 72, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv kurstaki str. HD73 plasmid pAW63'},
+{'name': 'pBT9727', 'input': 'gbk', 'file': 'NC_006578.gbk', 'acc': 'NC_006578', 'size': 77, 'offset': (0,76547), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis sv konkukian str. 97-27 plasmid pBT9727'},
+{'name': 'pFR55', 'input': 'gbk', 'file': 'NC_010283.gbk', 'acc': 'NC_010283',  'size': 55, 'offset': (0,0), 'ignore': (0, 0), 'defline': 'Bacillus thuringiensis INTA-FR7-4 plasmid pFR55'},
+{'name': 'pBWB402', 'input': 'gbk', 'file': 'NC_010181.gbk', 'acc': 'NC_010181', 'size': 75, 'offset': (0,34253), 'ignore': (0, 0), 'defline': 'Bacillus weihenstephanensis KBAB4 plasmid pBWB402'},
 ]
 
 above_100 = [

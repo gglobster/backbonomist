@@ -3,7 +3,7 @@ project_id = 'BCSL'
 project_date = '2011'
 prot_db_name = 'Bacteria_prot'
 
-from sets.broad_draft import all as genomes
+from sets.wgs import pXO2_positives as genomes
 from sets.references import pXO2 as references
 
 # segment context capture
@@ -14,10 +14,12 @@ ref_annot_flag = False
 
 # Blast parameters
 blast_prefs = {'evalue': 0.01, 'outfmt_pref': 6}
-min_nt_match = 500     # min size for a NT blast hit to be relevant
-min_nt_score = 300     # min score for a NT blast hit to be relevant
+min_nt_match = 300     # min size for a NT blast hit to be relevant (1000)
+min_nt_score = 100     # min score for a NT blast hit to be relevant
+min_nt_idp = 50        # min identity percentage (NT)
 min_aa_match = 50      # min size for an AA blast hit to be relevant
 min_aa_score = 100     # min score for an AA blast hit to be relevant
+min_aa_idp = 50        # min identity percentage (AA)
 
 # Proximity thresholds for clumping
 prox_D = 2000   # for ballpark estimation
