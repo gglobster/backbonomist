@@ -6,7 +6,7 @@ from loaders import load_genbank, load_multifasta
 from writers import write_genbank, write_fasta
 from string_ops import multisplit_finder
 from common import ensure_dir
-from config import separator, fixed_dirs, run_dirs, r_root_dir, genomes, \
+from backbonomist.config import separator, fixed_dirs, run_dirs, r_root_dir, \
     prox_D, ref_annot_flag
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature, FeatureLocation
@@ -158,7 +158,7 @@ def process_ref(ref, run_id, timestamp):
     run_ref.log(logstring)
     return run_ref
 
-def build_scaffolds(run_ref, run_id, timestamp):
+def build_scaffolds(run_ref, genomes, run_id, timestamp):
     """Build a scaffold of contigs based on the reference.
 
     This takes contigs that gave positive hits when blasted with reference

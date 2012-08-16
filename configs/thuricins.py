@@ -3,8 +3,8 @@ project_id = 'nonBCSL'
 project_date = '2012'
 prot_db_name = 'Bacteria_prot'
 
-from sets.non_bcsl import complete as genomes
-from sets.references import zwitter as references
+from genome_sets.non_bcsl import complete as genomes
+from genome_sets.references import zwitter as references
 
 # segment context capture
 capture_span = 500

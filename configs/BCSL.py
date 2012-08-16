@@ -3,9 +3,6 @@ project_id = 'BCSL'
 project_date = '2011'
 prot_db_name = 'Bacteria_prot'
 
-from sets.wgs import pXO2_positives as genomes
-from sets.references import pXO2 as references
-
 # segment context capture
 capture_span = 1000
 

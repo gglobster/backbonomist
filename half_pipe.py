@@ -9,7 +9,10 @@ from libs.blasting import make_genome_DB, basic_batch_blast
 from libs.parsing import glompX_blast_out
 from libs.reporting import save_datasumm, log_start_run, log_end_run, \
     init_reports, log_resume_run, matches_table
-from config import references, genomes, run_dirs, fixed_dirs, r_root_dir
+from config import run_dirs, fixed_dirs, r_root_dir
+
+from genome_sets.wgs import pXO2_positives as genomes
+from genome_sets.references import pXO2 as references
 
 print "\n", \
       "##################################################\n", \

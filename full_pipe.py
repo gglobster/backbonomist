@@ -13,7 +13,10 @@ from libs.mapping import prep_maps
 from libs.aligning import align_cstrct2ref, align_ctg2ref
 from libs.reporting import save_datasumm, log_start_run, log_end_run, \
     init_reports, log_resume_run, matches_table
-from config import references, genomes, run_dirs, fixed_dirs, r_root_dir
+from config import run_dirs, fixed_dirs, r_root_dir
+
+from genome_sets.wgs import pXO2_positives as genomes
+from genome_sets.references import pXO2 as references
 
 print "\n", \
       "##################################################\n", \
@@ -155,7 +158,7 @@ if step is 8:
     print "\n###", step, ". Construct backbone-based scaffolds ###\n"
     for ref in run_refs:
         timestamp = str(datetime.now())
-        build_scaffolds(ref, run_id, timestamp)
+        build_scaffolds(ref, genomes, run_id, timestamp)
     step +=1
 
 if step is 9:

@@ -3,8 +3,8 @@ project_id = 'serratia'
 project_date = '2012'
 prot_db_name = 'Bacteria_prot'
 
-from sets.serratia import genomes
-from sets.serratia import references
+from genome_sets.serratia import genomes
+from genome_sets.serratia import references
 
 # re-annotation flag -- only set to False is the original ref format is gbk
 ref_annot_flag = False
