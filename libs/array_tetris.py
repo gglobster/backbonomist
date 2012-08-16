@@ -1,5 +1,4 @@
 import numpy as np
-from config import mtype, segtype
 
 def extract_nonzero(array_o, array_d):
     """Extract rows that are non-zero into an array of same shape."""
@@ -11,7 +10,7 @@ def extract_nonzero(array_o, array_d):
             array_d = np.append(array_d, row)
     return array_d
 
-def clump_rows(array, dist):
+def clump_rows(array, dist, mtype):
     """Collapse rows of coordinates that are close and in same orientation."""
     # sort array to ensure optimal clumping
     array = np.sort(array, order=mtype[0][0])
@@ -54,7 +53,7 @@ def clump_rows(array, dist):
         new_len = len(array)
     return array
 
-def chop_rows(uncut_array, max_size, chop_mode):
+def chop_rows(uncut_array, max_size, chop_mode, mtype):
     """Chop rows of coordinates that span too large segments."""
     # set up an array stub to receive new rows
     all_rows_list = []
@@ -175,7 +174,7 @@ def get_anchor_loc(quad_array):
     anchor = sl_array[0]
     return anchor
 
-def offset_q2r_coords(data_array, q_len, value_pair):
+def offset_q2r_coords(data_array, q_len, value_pair, segtype):
     """Offset segment coordinates in array to specified values.
 
     This is tailored for pairwise alignments in which the reference and

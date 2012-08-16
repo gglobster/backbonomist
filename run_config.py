@@ -3,13 +3,13 @@ import numpy
 from configs.BCSL import *
 
 # Project root directory
-base_root = '../data/'
-g_root_dir = base_root+'genomes/'
-r_root_dir = base_root+project_id+'/backbonomist/'
+base_root = 'data/'+project_id
+g_root_dir = base_root+'/genomes/'
+r_root_dir = base_root+'/backbonomist/'
 
 # run-independent directories
 fixed_dirs = {
-'ref_dbs_dir': base_root+'ref_dbs/',
+'ref_dbs_dir': base_root+'/ref_dbs/',
 'ori_g_dir': g_root_dir+'original/',
 'gbk_contigs_dir': g_root_dir+'genbank_ctgs/',
 'fas_contigs_dir': g_root_dir+'fasta_ctgs/',

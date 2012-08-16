@@ -3,15 +3,15 @@ from os import listdir, path
 from shutil import copyfile
 from loaders import read_array, td_txt_file_load, load_fasta
 from writers import write_fasta
-from config import fixed_dirs, run_dirs, r_root_dir, blast_dtypes, mtype, \
-    min_nt_match, min_nt_score, min_nt_idp, min_aa_match, min_aa_score, \
-    min_aa_idp, capture_span
 from common import ensure_dir
 from array_tetris import extract_nonzero, clump_rows
 from Bio.Blast import NCBIXML
 from Bio.SeqRecord import SeqRecord
 
-def glompX_blast_out(genomes, run_ref, blast_mode, run_id, timestamp):
+def glompX_blast_out(genomes, run_ref, blast_mode, r_root_dir, run_dirs,
+                     run_id, fixed_dirs, blast_dtypes, references,
+                     min_nt_match, min_nt_score, min_nt_idp, min_aa_match,
+                     min_aa_score, min_aa_idp, capture_span, timestamp):
     """Collect Blast results and extract match contigs."""
     # load inputs
     ref_n = run_ref.name
@@ -49,7 +49,6 @@ def glompX_blast_out(genomes, run_ref, blast_mode, run_id, timestamp):
             if len(rec_array) > 0:  # take qualified hits
                 p_cnt = 0
                 n_cnt = 0
-                from config import references
                 if g_name in [ref['name'] for ref in references]:
                     copyfile(genome_ctg_dir+g_name+"_1.fas",
                              matches_dir+g_name+".fas")
@@ -145,7 +144,7 @@ def glompX_blast_out(genomes, run_ref, blast_mode, run_id, timestamp):
         print ""
     return ref_hits, control_scores
 
-def mauver_load2_k0(file, threshold):
+def mauver_load2_k0(file, threshold, mtype):
     """Parse Mauve coordinates file to extract segment coordinates.
 
     This loads the coordinates data into a Numpy array. All rows that contain
@@ -166,7 +165,7 @@ def mauver_load2_k0(file, threshold):
     except TypeError:
         nz_array = np.append(stub_array, raw_array)
     # collapse rows
-    cl_array = clump_rows(nz_array, threshold)
+    cl_array = clump_rows(nz_array, threshold, mtype)
     return cl_array
 
 def collect_cogs(blast_out):

@@ -1,6 +1,4 @@
 import os
-from config import genomes, fixed_dirs, run_dirs, blast_prefs, \
-    prot_db_name, project_id, r_root_dir
 import re, subprocess
 from loaders import load_multifasta, load_fasta, load_genbank
 from writers import write_genbank
@@ -29,7 +27,9 @@ def run_prodigal(in_file, an_gbk, an_aa, trn_file, mode):
     output, error = child.communicate()
     return output
 
-def annot_genome_contigs(run_ref, run_id, timestamp):
+def annot_genome_contigs(run_ref, prot_db_name, fixed_dirs, r_root_dir,
+                         run_id, run_dirs, genomes, project_id, timestamp,
+                         blast_prefs): 
     """Annotate genome contigs (predict ORFs and assign function)."""
     # locate the COG database
     prot_db = fixed_dirs['ref_dbs_dir']+prot_db_name
@@ -92,7 +92,7 @@ def annot_genome_contigs(run_ref, run_id, timestamp):
                         l_tag_base = g_name+"_"+ctg_num
                         record = annot_ctg(g_file, ctg_fas, annot_gbk,
                                            annot_aa, training_file, prot_db,
-                                           blast_out, l_tag_base)
+                                           blast_out, l_tag_base, blast_prefs)
                         record.description = g_name+"_"+ctg_num
                         record.name = g_name+"_"+ctg_num
                         record.dbxrefs = ["Project: "+project_id+"/"+ref_n
@@ -102,7 +102,8 @@ def annot_genome_contigs(run_ref, run_id, timestamp):
                     copyfile(g_ctg_gbk, r_ctg_gbk)
         print ""
 
-def annot_ref(ref_name, ctg_fas):
+def annot_ref(ref_name, ctg_fas, prot_db_name, fixed_dirs, project_id,
+              blast_prefs):
     """Annotate reference contig (predict ORFs and assign function)."""
     # locate the COG database
     prot_db = fixed_dirs['ref_dbs_dir']+prot_db_name
@@ -125,7 +126,7 @@ def annot_ref(ref_name, ctg_fas):
         l_tag_base = ref_name+"_1"
         record = annot_ctg(ctg_fas, ctg_fas, annot_gbk,
                            annot_aa, trn_file, prot_db,
-                           blast_out, l_tag_base)
+                           blast_out, l_tag_base, blast_prefs)
         record.description = ref_name+"_re-annotated"
         record.name = ref_name+"_1"
         record.dbxrefs = ["Project: "+project_id+"/"+ref_name
@@ -137,7 +138,7 @@ def annot_ref(ref_name, ctg_fas):
     return record
 
 def annot_ctg(g_file, ctg_fas, annot_gbk, annot_aa, trn_file, prot_db,
-              blast_out, l_tag_base):
+              blast_out, l_tag_base, blast_prefs):
     """Do functional annotation of contig from Fasta file, return record."""
     # gene prediction
     if not path.exists(trn_file):

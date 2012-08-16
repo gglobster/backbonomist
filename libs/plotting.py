@@ -4,10 +4,9 @@
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 from mpl_toolkits.axes_grid1 import AxesGrid#, make_axes_locatable, Size
-from config import ctg_thresholds
 import numpy as np
 
-def plot_ctg_stats(ctg_cats, fname):
+def plot_ctg_stats(ctg_cats, fname, ctg_thresholds):
     """Plot distribution statistics of contigs per genome."""
     small_ctgs, mid_ctgs, big_ctgs = ctg_cats
     kb1, kb2, kb3 = ctg_thresholds

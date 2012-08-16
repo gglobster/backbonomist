@@ -2,7 +2,6 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm
 from reportlab.lib.colors import black, white, HexColor
 from loaders import load_genbank
-from config import fct_flags, fct_colors, idpt, min_size
 from array_tetris import offset_coord, nudge_coord, shade_split, \
     coord_flipper
 
@@ -73,7 +72,8 @@ def canvasser(hCan,vCan,transX,transY,outfile) :
     return canvasN
 
 def base_draw(canvas, cName, cLen, feats, key, dop_Y, Y0, X_shift,
-             map_mode, annot_cnt, offset, offset_mode, seq_len, annot_mode) :
+             map_mode, annot_cnt, offset, offset_mode, seq_len,
+             annot_mode, fct_flags, fct_colors) :
     """Draw contig baseline and features."""
     # draw plasmid baseline
     baseliner(cLen, canvas, Y0, offset, offset_mode)
@@ -376,7 +376,8 @@ def annot_color(fct_flags, annotation):
             i +=1
     return fct_key
 
-def contig_draw(cName, in_file, out_file, annot_mode, key):
+def contig_draw(cName, in_file, out_file, annot_mode, key, fct_flags,
+                fct_colors):
     """Draw sequence map of a single contig to file."""
     # load contig record
     seq_record = load_genbank(in_file)
@@ -407,7 +408,8 @@ def contig_draw(cName, in_file, out_file, annot_mode, key):
     canvas = canvasser(hCan, vCan, transX, transY, out_file)
     # draw contig baseline and features
     base_draw(canvas, cName, ctg_len, feats, key, -doLdn, ctg_Y, 0, 'single',
-             annot_cnt, None, None, seq_len, annot_mode)
+             annot_cnt, None, None, seq_len, annot_mode, fct_flags,
+             fct_colors)
     # draw scale
     seq_scale(canvas, (ctg_len*u)-pNsize, incrT, incrN, dip, dop)
     # write to file and finalize the figure
@@ -415,7 +417,8 @@ def contig_draw(cName, in_file, out_file, annot_mode, key):
     canvas.save()
 
 def pairwise_draw(ref_name, q_name, ref_file, q_file, segs, map_file, q_inv,
-                 g_offset, mode1, mode2, annot_mode, key1, key2):
+                 g_offset, mode1, mode2, annot_mode, key1, key2, min_size,
+                 fct_flags, fct_colors, idpt):
     """Draw pairwise alignment map with similarity shading."""
     # load ref and query records
     # ref first
@@ -483,37 +486,41 @@ def pairwise_draw(ref_name, q_name, ref_file, q_file, segs, map_file, q_inv,
     # draw scale
     seq_scale(m_canvas, (ctg_len*u)-pNsize, incrT, incrN, dip, dop )
     # draw shading legend
-    heatkey(m_canvas, -pNsize, -pNsize/2)
+    heatkey(m_canvas, -pNsize, -pNsize/2, idpt)
     # draw ref baseline and features
     base_draw(m_canvas, ref_name, ref_len, ref_feat, key1, doLup, ref_Y,
-             0, mode1, annot_cnt, g_offset[0], 'nudge', seq_len, annot_mode)
+             0, mode1, annot_cnt, g_offset[0], 'nudge', seq_len,
+             annot_mode, fct_flags, fct_colors)
     # draw query baseline and features
     base_draw(m_canvas, q_name, q_len, q_feat, key2, -doLdn, query_Y,
               seq_len/2, mode2, annot_cnt, g_offset[1], 'loop', seq_len,
-              annot_mode)
+              annot_mode, fct_flags, fct_colors)
     # draw pairwise similarity shading
     try:
         for xa, xb, xc, xd, idp in segs:
             # evaluate color shading category
-            sh_color = HexColor(simcolor(idp))
+            sh_color = HexColor(simcolor(idp, idpt))
             # check for split
             if abs(xa) > abs(xb) or abs(xc) > abs(xd):
                 coords1, coords2 = shade_split(xa, xb, xc, xd, q_len)
                 xa1, xb1, xc1, xd1 = coords1
                 xa2, xb2, xc2, xd2 = coords2
                 # draw shading
-                shadowfax(m_canvas, xa1, xb1, xc1, xd1, ref_Y, query_Y, sh_color)
-                shadowfax(m_canvas, xa2, xb2, xc2, xd2, ref_Y, query_Y, sh_color)
+                shadowfax(m_canvas, xa1, xb1, xc1, xd1, ref_Y, query_Y,
+                          sh_color, min_size)
+                shadowfax(m_canvas, xa2, xb2, xc2, xd2, ref_Y, query_Y,
+                          sh_color, min_size)
             else:
                 # draw shading
-                shadowfax(m_canvas, xa, xb, xc, xd, ref_Y, query_Y, sh_color)
+                shadowfax(m_canvas, xa, xb, xc, xd, ref_Y, query_Y,
+                          sh_color, min_size)
     except TypeError:
         pass
     # write to file and finalize the figure
     m_canvas.showPage()
     m_canvas.save()
 
-def shadowfax(canvas_def, xa, xb, xc, xd, aby0, cdy0, sh_color):
+def shadowfax(canvas_def, xa, xb, xc, xd, aby0, cdy0, sh_color, min_size):
     """Draw shaded area between homologous segments."""
     # cancel drawing if segments too small to draw
     if abs(xb)-abs(xa) < min_size:
@@ -556,13 +563,13 @@ def shadowfax(canvas_def, xa, xb, xc, xd, aby0, cdy0, sh_color):
         canvas_def.drawPath(puck, stroke=1, fill=0)
         puck.close()
 
-def simcolor(idp):
+def simcolor(idp, idpt):
     """Evaluate class of similarity."""
     id_cats = [x for x in idpt if idp>=x]
     sh_hex = idpt[max(id_cats)]
     return sh_hex
 
-def heatkey(canvas, hkX, hkY):
+def heatkey(canvas, hkX, hkY, idpt):
     """Draw color key for the heat map."""
     canvas.setLineWidth(1)
     canvas.setLineCap(0)

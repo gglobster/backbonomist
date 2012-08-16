@@ -1,5 +1,4 @@
 from Bio import SeqIO, GenBank
-from config import fixed_dirs
 from os import listdir
 import numpy, re
 
@@ -94,11 +93,10 @@ def read_array(filename, dtype, separator='\t'):
         data[i] = cast[dtype[i]](data[i])
     return numpy.rec.array(data, dtype=dtype)
 
-def from_dir(): # TODO: make poly-use
+def from_dir(dir): # TODO: make poly-use
     """Load filenames in a directory."""
     # get directory contents
-    ori_dir = fixed_dirs['ori_g_dir']
-    contents = listdir(ori_dir)
+    contents = listdir(dir)
     it_names = []
     for item in contents:
         # rule out hidden files

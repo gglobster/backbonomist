@@ -13,10 +13,9 @@ from libs.mapping import prep_maps
 from libs.aligning import align_cstrct2ref, align_ctg2ref
 from libs.reporting import save_datasumm, log_start_run, log_end_run, \
     init_reports, log_resume_run, matches_table
-from config import run_dirs, fixed_dirs, r_root_dir
 
-from genome_sets.wgs import pXO2_positives as genomes
-from genome_sets.references import pXO2 as references
+from run_config import *
+from run_sets import references, genomes
 
 print "\n", \
       "##################################################\n", \
@@ -81,20 +80,22 @@ except IOError:
 ## pipeline
 
 if step is not 0:
-    log_resume_run(run_id, start_timestamp, step)
+    log_resume_run(run_id, base_root, project_id, start_timestamp, step)
 
 elif step is 0:
     print "\n###", step, ". Set up logging & reporting ###\n"
-    log_start_run(run_id, start_timestamp)
-    save_datasumm(run_id, blast_mode, start_timestamp)
-    init_reports(run_id, start_timestamp)
+    log_start_run(run_id, base_root, project_id, run_dirs, start_timestamp)
+    save_datasumm(run_id, blast_mode, r_root_dir, run_dirs, genomes,
+                  references, project_id, project_date, start_timestamp)
+    init_reports(run_id, fixed_dirs, ctg_thresholds, start_timestamp)
     step +=1
 
 if step is 1:
     print "\n###", step, ". Prepare references ###\n"
     for ref in references:
         timestamp = str(datetime.now())
-        ref_obj = process_ref(ref, run_id, timestamp)
+        ref_obj = process_ref(ref, ref_annot_flag, r_root_dir, fixed_dirs,
+                              run_dirs, run_id, timestamp)
         run_refs.append(ref_obj)
     if os.path.exists(ref_pickles):
         os.remove(ref_pickles)
@@ -104,7 +105,7 @@ if step is 1:
 if step is 2:
     print "\n###", step, ". Prepare genomes ###\n"
     for genome in genomes:
-        unpack_genomes(genome)
+        unpack_genomes(genome, separator, fixed_dirs)
         make_genome_DB(genome)
     run_gs = add_refs_2g(genomes, references)
     if os.path.exists(genome_pickles):
@@ -137,14 +138,15 @@ if step is 5:
     print "\n###", step, ". Make match results table & graphs ###\n"
     for match_dict in run_matches:
         timestamp = str(datetime.now())
-        matches_table(match_dict, timestamp)
+        matches_table(match_dict, r_root_dir, run_dirs, timestamp)
     step +=1
 
 if step is 6:
     print "\n###", step, ". Annotate matching contigs ###\n"
     for ref in run_refs:
         timestamp = str(datetime.now())
-        annot_genome_contigs(ref, run_id, timestamp)
+        annot_genome_contigs(ref, prot_db_name, fixed_dirs, r_root_dir,
+                         run_id, run_dirs, genomes, project_id, timestamp)
     step +=1
 
 if step is 7:
@@ -158,7 +160,7 @@ if step is 8:
     print "\n###", step, ". Construct backbone-based scaffolds ###\n"
     for ref in run_refs:
         timestamp = str(datetime.now())
-        build_scaffolds(ref, genomes, run_id, timestamp)
+        build_scaffolds(ref, r_root_dir, run_dirs, prox_D, separator, genomes, run_id, timestamp)
     step +=1
 
 if step is 9:
@@ -177,6 +179,6 @@ if step is 10:
 
 if step > 10:
     stop_timestamp = str(datetime.now())
-    log_end_run(run_id, stop_timestamp)
+    log_end_run(run_id, base_root, project_id, stop_timestamp)
     print "\n### Nothing more to do! ###\n"
 

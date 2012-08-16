@@ -2,8 +2,6 @@ import os, subprocess, re
 from os import listdir
 from Bio.Align.Applications import ClustalwCommandline
 from Bio.Align.Applications import MuscleCommandline
-from config import mauve_exec, fixed_dirs, run_dirs, r_root_dir, genomes, \
-    max_size, chop_mode
 from common import ensure_dir
 from parsing import mauver_load2_k0, parse_clustal_idstars
 from array_tetris import chop_rows
@@ -29,7 +27,7 @@ def align_muscle(infile_name, outfile_name, log_file):
     # TODO: should set up something to parse MUSCLE errors
     return report
 
-def align_mauve(file_list, output):
+def align_mauve(file_list, output, mauve_exec):
     """Make external call to Mauve aligner."""
     input_files = ' '.join(file_list)
     cline = mauve_exec+" --output="+ output +" "+input_files
@@ -39,7 +37,8 @@ def align_mauve(file_list, output):
     # TODO: should set up something to parse Mauve errors
     return report
 
-def align_ctg2ref(run_ref, run_id, timestamp):
+def align_ctg2ref(run_ref, run_id, timestamp, r_root_dir, run_dirs,
+                  genomes, mauve_exec, max_size, chop_mode, mtype):
     """Align contigs pairwise to the reference contig."""
     # set inputs and outputs
     ref_n = run_ref.name
@@ -92,17 +91,19 @@ def align_ctg2ref(run_ref, run_id, timestamp):
                     run_ref.log(msg)
                     print msg
                 else:
-                    align_mauve(file_list, mauve_outfile)
+                    align_mauve(file_list, mauve_outfile, mauve_exec)
                     try:
                         # parse Mauve output (without initial clumping)
-                        coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
+                        coords = mauver_load2_k0(mauve_outfile+".backbone",
+                                                 0, mtype)
                         # chop segments that are too long
-                        chop_array = chop_rows(coords, max_size, chop_mode)
+                        chop_array = chop_rows(coords, max_size, chop_mode,
+                                               mtype)
                         # make detailed pairwise alignments of the segments
                         ref_rec = load_genbank(ref_ctg_file)
                         query_rec = load_fasta(q_contig)
-                        iter_align(chop_array, ref_rec, query_rec, aln_segs_dir,
-                                   segfile)
+                        iter_align(chop_array, ref_rec, query_rec,
+                                   aln_segs_dir, segfile)
                     except IOError:
                         msg = "\nERROR: Mauve alignment failed\n\t\t\t"
                         run_ref.log(msg)
@@ -113,7 +114,8 @@ def align_ctg2ref(run_ref, run_id, timestamp):
                         print msg
         print ""
 
-def align_cstrct2ref(run_ref, run_id, timestamp):
+def align_cstrct2ref(run_ref, run_id, timestamp, r_root_dir, run_dirs,
+                     genomes, max_size, chop_mode, mtype, mauve_exec):
     """Align constructs pairwise to the reference contig."""
     # set inputs and outputs
     ref_n = run_ref.name
@@ -166,15 +168,15 @@ def align_cstrct2ref(run_ref, run_id, timestamp):
                 try: os.remove(sslist_file)
                 except Exception: raise
             # do Mauve alignment
-            align_mauve(file_list, mauve_outfile)
+            align_mauve(file_list, mauve_outfile, mauve_exec)
             try:
                 # parse Mauve output (without initial clumping)
-                coords = mauver_load2_k0(mauve_outfile+".backbone", 0)
+                coords = mauver_load2_k0(mauve_outfile+".backbone", 0, mtype)
                 print len(coords), '->',
                 logstring = "".join(["\t", str(len(coords))])
                 run_ref.log(logstring)
                 # chop segments that are too long
-                chop_array = chop_rows(coords, max_size, chop_mode)
+                chop_array = chop_rows(coords, max_size, chop_mode, mtype)
                 print len(chop_array), 'segments <', max_size, 'bp',
                 logstring = "".join(["\t", str(len(chop_array))])
                 run_ref.log(logstring)

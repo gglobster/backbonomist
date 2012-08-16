@@ -1,11 +1,9 @@
 from os import path
-from config import fixed_dirs, run_dirs, r_root_dir, base_root, project_id, \
-    genomes, project_date, references, ctg_thresholds
 from common import ensure_dir
 from plotting import plot_ctg_stats, hits_heatmap_multi
 import numpy as np
 
-def log_start_run(run_id, timestamp):
+def log_start_run(run_id, base_root, project_id, run_dirs, timestamp):
     """Record run initiated in the dataset log."""
     set_log = base_root+"/"+project_id+"_log.html"
     param_file = run_id+"/"+run_dirs['reports']+run_id+"_dataset.txt"
@@ -17,7 +15,7 @@ def log_start_run(run_id, timestamp):
         open(set_log, 'w').write(header)
     open(set_log, 'a').write(linkline)
 
-def log_end_run(run_id, timestamp):
+def log_end_run(run_id, base_root, project_id, timestamp):
     """Record run in the dataset log."""
     set_log = base_root+"/"+project_id+"_log.html"
     run_report = run_id+"/"+run_id+"_report.html"
@@ -26,7 +24,7 @@ def log_end_run(run_id, timestamp):
     linkline = "".join(set_log_htm)
     open(set_log, 'a').write(linkline)
 
-def log_resume_run(run_id, timestamp, step):
+def log_resume_run(run_id, base_root, project_id, timestamp, step):
     """Record run resumed in the dataset log."""
     set_log = base_root+"/"+project_id+"_log.html"
     set_log_htm = ["<li><b>", run_id, "</b>", "&nbsp;- resumed ", timestamp,
@@ -34,7 +32,8 @@ def log_resume_run(run_id, timestamp, step):
     linkline = "".join(set_log_htm)
     open(set_log, 'a').write(linkline)
 
-def save_datasumm(run_id, blast_mode, timestamp):
+def save_datasumm(run_id, blast_mode, r_root_dir, run_dirs, genomes,
+                  references, project_id, project_date, timestamp):
     """Save a summary of the dataset composition to file."""
     print " ", run_id,
     report_root = r_root_dir+run_id+"/"+run_dirs['reports']
@@ -83,7 +82,7 @@ def save_datasumm(run_id, blast_mode, timestamp):
     open(param_file, 'w').write("\n".join(txt))
     print "dataset summary saved to file"
 
-def init_reports(run_id, timestamp):
+def init_reports(run_id, fixed_dirs, ctg_thresholds, timestamp):
     """Record run info in the logs."""
     # set inputs and outputs
     ctg_stats_file = fixed_dirs['ctg_stats']+"contig_stats.txt"
@@ -99,7 +98,7 @@ def init_reports(run_id, timestamp):
               "\t[>", str(kb3), "]"]
     open(ctg_stats_file, 'a').write("".join(cs_txt))
 
-def ctg_stats(g_name, records):
+def ctg_stats(g_name, fixed_dirs, ctg_thresholds, records):
     """Report on size distribution of contigs in a genome."""
     i = 1000
     kb1, kb2, kb3 = ctg_thresholds
@@ -116,9 +115,9 @@ def ctg_stats(g_name, records):
     # make figure
     fname = fixed_dirs['ctg_stats']+g_name+"_ctg_stats.png"
     ctg_cats = small_ctgs, mid_ctgs, big_ctgs
-    plot_ctg_stats(ctg_cats, fname)
+    plot_ctg_stats(ctg_cats, fname, ctg_thresholds)
 
-def matches_table(match_dict, timestamp):
+def matches_table(match_dict, r_root_dir, run_dirs, timestamp):
     """Compile tables and graphs of contig matches."""
     # unpack results
     run_ref = match_dict['ref']

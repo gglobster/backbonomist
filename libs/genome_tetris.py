@@ -6,8 +6,6 @@ from loaders import load_genbank, load_multifasta
 from writers import write_genbank, write_fasta
 from string_ops import multisplit_finder
 from common import ensure_dir
-from backbonomist.config import separator, fixed_dirs, run_dirs, r_root_dir, \
-    prox_D, ref_annot_flag
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from Bio.Alphabet import generic_dna
@@ -18,7 +16,7 @@ from reporting import ctg_stats
 from classes import Reference
 from blasting import make_ref_DB
 
-def unpack_genomes(genome):
+def unpack_genomes(genome, separator, fixed_dirs, ctg_thresholds):
     """Unpack genome files.
 
     Here, unpacking means extracting data and producing specific files to
@@ -94,9 +92,10 @@ def unpack_genomes(genome):
     # write master file
     write_fasta(mfas_file, records)
     # pass records to stats logger
-    ctg_stats(g_name, records)
+    ctg_stats(g_name, fixed_dirs, ctg_thresholds, records)
 
-def process_ref(ref, run_id, timestamp):
+def process_ref(ref, ref_annot_flag, r_root_dir, fixed_dirs, run_dirs,
+                run_id, timestamp, prot_db_name, project_id):
     """Re-annotate contig and extract reference segments using coordinates."""
     # set inputs and outputs
     run_root = r_root_dir+run_id+"/"
@@ -134,11 +133,12 @@ def process_ref(ref, run_id, timestamp):
             run_ref.log(msg)
             raise Exception(msg)
     # make a BLAST DB
-    make_ref_DB(ref, run_id)
+    make_ref_DB(ref, run_id, fixed_dirs, r_root_dir, run_dirs)
     copyfile(ref_fas, genome_fas)
     # re-annotate ref contig
     if ref_annot_flag:
-        record = annot_ref(ref_name, ref_fas)
+        record = annot_ref(ref_name, ref_fas, prot_db_name, fixed_dirs,
+                           project_id)
     else: ## bypass re-annotation ONLY IF ORIGINAL INPUT IS GBK #todo: fix
         record = load_genbank(in_file)
     # load or generate segment definitions
@@ -158,7 +158,8 @@ def process_ref(ref, run_id, timestamp):
     run_ref.log(logstring)
     return run_ref
 
-def build_scaffolds(run_ref, genomes, run_id, timestamp):
+def build_scaffolds(run_ref, r_root_dir, run_dirs, prox_D, separator,
+                    genomes, run_id, timestamp, mtype):
     """Build a scaffold of contigs based on the reference.
 
     This takes contigs that gave positive hits when blasted with reference
@@ -235,7 +236,7 @@ def build_scaffolds(run_ref, genomes, run_id, timestamp):
                         bb_file = mauve_file+".backbone"
                         try:
                             # parse Mauve output
-                            coords = mauver_load2_k0(bb_file, prox_D)
+                            coords = mauver_load2_k0(bb_file, prox_D, mtype)
                             # determine which segment to use as anchor
                             anchor_seg = get_anchor_loc(coords)
                             anchors_array = np.insert(anchors_array, 0,

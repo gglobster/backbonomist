@@ -1,5 +1,4 @@
 import subprocess
-from config import blast_prefs, fixed_dirs, run_dirs, r_root_dir
 from common import ensure_dir
 from loaders import load_fasta
 from writers import write_fasta
@@ -87,7 +86,7 @@ def remote_blastp_2file(query_string, database, outfile, evalue):
     save_file.close()
     result_handle.close()
 
-def make_genome_DB(genome):
+def make_genome_DB(genome, fixed_dirs):
     """Make a Blast DB from a genome FastA file."""
     # load inputs
     fas_dir = fixed_dirs['mfas_contigs_dir']
@@ -97,7 +96,7 @@ def make_genome_DB(genome):
     # make DB
     make_blastDB(db_dir+g_name, fas_dir+g_name+'_contigs.fas', 'nucl')
 
-def make_ref_DB(reference, run_id):
+def make_ref_DB(reference, run_id, fixed_dirs, r_root_dir, run_dirs):
     """Make a Blast DB from a reference FastA file."""
     # load inputs
     fas_dir = r_root_dir+run_id+"/"+run_dirs['ref_fas_dir']
@@ -107,7 +106,8 @@ def make_ref_DB(reference, run_id):
     # make DB
     make_blastDB(db_dir+g_name, fas_dir+g_name+'.fas', 'nucl')
 
-def basic_batch_blast(genomes, run_ref, blast_mode, run_id, timestamp):
+def basic_batch_blast(genomes, run_ref, blast_mode, r_root_dir, run_dirs,
+                      fixed_dirs, blast_prefs, run_id, timestamp):
     """Send batch jobs to Blast. Muxes to multiple reference DBs."""
     # load inputs
     ref_n = run_ref.name
