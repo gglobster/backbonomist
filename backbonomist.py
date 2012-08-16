@@ -16,13 +16,24 @@ from libs.reporting import save_datasumm, log_start_run, log_end_run, \
 from run_config import *
 from run_sets import references, genomes
 
+i_msg = "\n", \
+        "##################################################\n", \
+        "### Backbonomist v. 0.9                        ###\n", \
+        "### Copyright 2012 Geraldine A. Van der Auwera ###\n", \
+        "##################################################\n"
+
 def usage():
     print "Usage: python gobble.py bb_fish -args (don't call this directly!)"
+
+def info():
+    print i_msg
 
 def get_arg(args, key):
     return args[args.index(key)+1]
 
 def main(args=None):
+
+    info()
 
     if args is None:
         args = sys.argv[1:]
@@ -53,12 +64,15 @@ def main(args=None):
     else:
         limit = 100 # unnecessarily high cap
 
+    if "-ctg" in args:
+        ctg_subset = get_arg(args, "-ctg")
+    else:
+        ctg_subset = 'exclude'
+
     if "-g" in args:
         g_select = get_arg(args, "-g")
     else:
         g_select = None
-
-    print "bleh", args
 
     start_timestamp = str(datetime.now())
 
@@ -226,7 +240,8 @@ def main(args=None):
             for ref in run_refs:
                 timestamp = str(datetime.now())
                 build_scaffolds(ref, r_root_dir, run_dirs, prox_D,
-                                separator, genomes, run_id, timestamp, mtype)
+                                separator, genomes, run_id, timestamp,
+                                mtype, ctg_subset)
             step +=1
 
         elif step is 9:

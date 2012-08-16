@@ -159,7 +159,7 @@ def process_ref(ref, ref_annot_flag, r_root_dir, fixed_dirs, run_dirs,
     return run_ref
 
 def build_scaffolds(run_ref, r_root_dir, run_dirs, prox_D, separator,
-                    genomes, run_id, timestamp, mtype):
+                    genomes, run_id, timestamp, mtype, mode):
     """Build a scaffold of contigs based on the reference.
 
     This takes contigs that gave positive hits when blasted with reference
@@ -175,11 +175,15 @@ def build_scaffolds(run_ref, r_root_dir, run_dirs, prox_D, separator,
     maps should help diagnose any such problems. The order can be fixed
     manually using the Mauve Contig Mover, which is part of Mauve 2.
 
-    In some cases it is clear from looking at the maps generated further on
-    that some contigs are included based on spurious hits. It is possible to
-    make them be ignored and left out of the scaffold by listing their ID
-    number in the genome dictionaries in the config file then rerunning the
-    pipeline from this step.
+    Note that not all hit contigs are "real" hits, so filtering should be
+    applied before scaffolding to generate constructs.
+
+    Model-based filtering produces a list of contigs that will be passed to
+    the scaffolder. If filtering manually by looking at the maps,
+    there are two options available: either select exclusively OR exclude a
+    subset of contigs for the scaffolding process. This is done by listing
+    their ID number in the genome dictionaries in the config file then
+    resuming the pipeline from this step.
 
     """
     # set inputs and outputs
@@ -212,48 +216,73 @@ def build_scaffolds(run_ref, r_root_dir, run_dirs, prox_D, separator,
                                            ('start', 'i4'),
                                            ('end', 'i4'),
                                            ('orient', 'i2')])
+        # identify contigs we want to select
+        subset = []
         for item in dir_contents:
             pattern = re.compile(r'.*_(\d*)\.gbk$')
             match = pattern.match(item)
             if match:
                 ctg_num = match.group(1)
-                while True:
+
+                if mode == "exclude":
                     try:
-                        if int(ctg_num) in genome['ignore']:
+                        if int(ctg_num) in genome[mode]:
                             msg = "("+ctg_num+")"
                             print msg,
                             run_ref.log(msg)
-                            break
+                        else:
+                            subset.append(ctg_num)
                     except KeyError:
-                        msg = "WARNING: no ignored segments list"
+                        msg = "WARNING: no ignored segments list, including all"
                         print msg
-                    else:
-                        print ctg_num,
-                        logstring = "".join(["\t", ctg_num])
-                        run_ref.log(logstring)
-                        # set inputs
-                        mauve_file = mauve_dir+ctg_num+".mauve"
-                        bb_file = mauve_file+".backbone"
-                        try:
-                            # parse Mauve output
-                            coords = mauver_load2_k0(bb_file, prox_D, mtype)
-                            # determine which segment to use as anchor
-                            anchor_seg = get_anchor_loc(coords)
-                            anchors_array = np.insert(anchors_array, 0,
-                                                      (ctg_num,
-                                                       anchor_seg['start'],
-                                                       anchor_seg['end'],
-                                                       anchor_seg['orient']))
-                        except IOError:
-                            msg = "\tERROR: Mauve alignment not found\n\t"
-                            print msg
+                        msg = ctg_num
+                        print msg,
+                        subset.append(ctg_num)
+                        run_ref.log(msg)
+                elif mode == "select":
+                    try:
+                        if int(ctg_num) in genome[mode]:
+                            msg = ctg_num
+                            print msg,
                             run_ref.log(msg)
-                        except Exception:
-                            msg = "\tERROR: Iteration failure\n\t"
-                            print msg
+                            subset.append(ctg_num)
+                        else:
+                            msg = "("+ctg_num+")"
+                            print msg,
                             run_ref.log(msg)
-                    finally:
-                        break
+                    except KeyError:
+                        msg = "WARNING: no selected segments list, including all"
+                        print msg
+                        msg = ctg_num
+                        print msg,
+                        subset.append(ctg_num)
+                        run_ref.log(msg)
+        # at this point we should have a subset of contigs selected
+        for ctg_num in subset:
+            logstring = "".join(["\t", ctg_num])
+            run_ref.log(logstring)
+            # set inputs
+            mauve_file = mauve_dir+ctg_num+".mauve"
+            bb_file = mauve_file+".backbone"
+            try:
+                # parse Mauve output
+                coords = mauver_load2_k0(bb_file, prox_D, mtype)
+                # determine which segment to use as anchor
+                anchor_seg = get_anchor_loc(coords)
+                anchors_array = np.insert(anchors_array, 0,
+                                          (ctg_num,
+                                           anchor_seg['start'],
+                                           anchor_seg['end'],
+                                           anchor_seg['orient']))
+            except IOError:
+                msg = "\tERROR: Mauve alignment not found\n\t"
+                print msg
+                run_ref.log(msg)
+            except Exception:
+                msg = "\tERROR: Iteration failure\n\t"
+                print msg
+                run_ref.log(msg)
+
         # abort if there is no valid contig to proceed with
         try:
             assert len(anchors_array) > 1 # always 1 left from stub
